@@ -277,8 +277,8 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-6 shadow-inner shadow-black/20">
               <p className="text-sm text-slate-400">One-time setup</p>
-              <p className="mt-2 text-3xl font-semibold text-white">$99 Express Scan</p>
-              <p className="mt-1 text-sm text-slate-400">Delivered same-day, Monday–Saturday.</p>
+              <p className="mt-2 text-3xl font-semibold text-white">$29.99 Limited Offer</p>
+              <p className="mt-1 text-sm text-slate-400">Limited-time launch price. Delivered same-day, Monday–Saturday.</p>
               <a
                 href="https://buy.stripe.com/6oU5kD1qjdVp3M8aAi"
                 target="_blank"
