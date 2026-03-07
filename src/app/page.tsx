@@ -1,0 +1,261 @@
+const stats = [
+  { label: "Avg response time", value: "2 min" },
+  { label: "Jacksonville leads processed", value: "480+" },
+  { label: "Automations deployed", value: "120" },
+];
+
+const services = [
+  {
+    title: "Lead Funnel Kit",
+    description:
+      "Done-for-you landing page, intake form, and follow-up automations that turn cold clicks into booked estimates.",
+    bullets: ["Carrd / Vercel ready", "SMS + email follow-ups", "Notion pipeline"],
+  },
+  {
+    title: "Compliance Guard",
+    description:
+      "Track licenses, insurance, OSHA trainings, and send reminders so crews stay bid-ready without paperwork chaos.",
+    bullets: ["Auto reminders", "Shareable dashboard", "Instant PDF packet"],
+  },
+  {
+    title: "AI Deal Desk",
+    description:
+      "24/7 intake concierge that qualifies homeowners, estimates square footage, and books calendar slots while crews pour concrete.",
+    bullets: ["Voice + chat", "CRM sync", "Contract-ready briefs"],
+  },
+];
+
+const steps = [
+  {
+    number: "01",
+    title: "Blueprint Call",
+    body: "Drop your priorities (driveways, HOAs, compliance) and we map workflows in under 30 minutes.",
+  },
+  {
+    number: "02",
+    title: "Build + Automate",
+    body: "We deploy the landing page, intake forms, reminders, and dashboards—fully white-labeled.",
+  },
+  {
+    number: "03",
+    title: "Scale + Report",
+    body: "Daily deal desk summaries, live dashboards, and refinement loops keep revenue compounding.",
+  },
+];
+
+export default function Home() {
+  return (
+    <main className="min-h-screen bg-slate-950 text-slate-100">
+      <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-14 lg:py-20">
+        <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
+          <div className="space-y-6">
+            <span className="text-sm uppercase tracking-[0.4em] text-orange-300">
+              Tauschus · Operator Studio
+            </span>
+            <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
+              Deal desks, compliance, and lead funnels for Northeast Florida projects.
+            </h1>
+            <p className="text-lg text-slate-300">
+              We engineer autonomous systems that capture every homeowner lead,
+              qualify commercial inquiries, and surface the next pour before
+              your crew washes out the mixer.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <a
+                href="#blueprint-form"
+                className="rounded-full bg-orange-400 px-6 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
+              >
+                Start Blueprint Intake
+              </a>
+              <button className="rounded-full border border-slate-600 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-400">
+                Download Offer Kit
+              </button>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-3">
+              {stats.map((stat) => (
+                <div key={stat.label} className="rounded-2xl border border-slate-800 bg-slate-900/50 p-4">
+                  <p className="text-2xl font-semibold text-white">{stat.value}</p>
+                  <p className="text-sm text-slate-400">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-3xl border border-slate-800 bg-gradient-to-br from-slate-900 to-slate-800 p-6 shadow-2xl shadow-black/50">
+            <div
+              id="intake-form"
+              className="rounded-2xl bg-slate-950/70 p-6"
+            >
+              <p className="text-sm uppercase tracking-[0.3em] text-slate-400">
+                Homeowner Intake
+              </p>
+              <form
+                action="#"
+                method="POST"
+                className="mt-6 space-y-4"
+              >
+                <label className="block text-sm text-slate-300">
+                  Full Name
+                  <input
+                    name="name"
+                    type="text"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    placeholder="Jordan Matthews"
+                    required
+                  />
+                </label>
+                <label className="block text-sm text-slate-300">
+                  Phone
+                  <input
+                    name="phone"
+                    type="tel"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    placeholder="904-555-1020"
+                    required
+                  />
+                </label>
+                <label className="block text-sm text-slate-300">
+                  Email
+                  <input
+                    name="email"
+                    type="email"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    placeholder="you@email.com"
+                    required
+                  />
+                </label>
+                <label className="block text-sm text-slate-300">
+                  Project Address
+                  <input
+                    name="address"
+                    type="text"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    placeholder="1234 Atlantic Blvd, Jacksonville"
+                    required
+                  />
+                </label>
+                <label className="block text-sm text-slate-300">
+                  Surface Dimensions
+                  <input
+                    name="dimensions"
+                    type="text"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    placeholder="e.g. 10x40 driveway"
+                  />
+                </label>
+                <label className="block text-sm text-slate-300">
+                  Timeline & Notes
+                  <textarea
+                    name="timeline"
+                    className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-900/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none"
+                    rows={3}
+                    placeholder="Need poured before June. Existing slab cracking near garage."
+                  />
+                </label>
+                <button className="mt-4 w-full rounded-xl bg-orange-400 py-3 font-semibold text-slate-950 shadow-lg shadow-orange-500/30">
+                  Get My Quote
+                </button>
+                <p className="text-xs text-slate-500">
+                  We’ll confirm within 2 minutes during business hours. SMS + email notifications enabled.
+                </p>
+              </form>
+            </div>
+            <div className="mt-6 rounded-2xl border border-slate-800 bg-slate-950/80 p-5 text-sm text-slate-300">
+              <p className="font-semibold text-white">Pipeline Snapshot</p>
+              <ul className="mt-3 space-y-2 text-slate-400">
+                <li>Lead → Qualified → Quote → Crew Scheduled</li>
+                <li>Automated SMS &amp; inbox monitoring</li>
+                <li>Shareable dashboards for HOAs + property managers</li>
+              </ul>
+            </div>
+          </div>
+        </section>
+
+        <section id="blueprint-form" className="rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="space-y-4">
+              <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Automatic onboarding</p>
+              <h2 className="text-3xl font-semibold text-white">Blueprint intake runs without meetings.</h2>
+              <p className="text-slate-300">Drop the basics and our ops stack spins up the right workflow—homeowner drip, commercial proposal, or HOA compliance kit.</p>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li>• Instant confirmation + Slack/SMS alerts</li>
+                <li>• Auto-created Notion board with next steps</li>
+                <li>• Calendar slot suggestions if a call is needed</li>
+              </ul>
+            </div>
+            <form action="#" method="POST" className="space-y-4">
+              <label className="block text-sm text-slate-300">
+                Company / Crew Name
+                <input name="company" type="text" className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none" placeholder="Florida Concrete Alliance" required />
+              </label>
+              <label className="block text-sm text-slate-300">
+                Contact Email
+                <input name="contactEmail" type="email" className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none" placeholder="ops@yourcompany.com" required />
+              </label>
+              <label className="block text-sm text-slate-300">
+                Primary Focus
+                <select name="focus" className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white focus:border-orange-400 focus:outline-none">
+                  <option>Residential driveways / patios</option>
+                  <option>Commercial / HOA repairs</option>
+                  <option>Both residential + commercial</option>
+                </select>
+              </label>
+              <label className="block text-sm text-slate-300">
+                Target Start
+                <input name="targetStart" type="text" className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none" placeholder="Need live within 14 days" />
+              </label>
+              <label className="block text-sm text-slate-300">
+                Notes
+                <textarea name="notes" rows={3} className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none" placeholder="Drop current pain points, tools, budget, etc."></textarea>
+              </label>
+              <button className="w-full rounded-xl bg-orange-400 py-3 font-semibold text-slate-950 shadow-lg shadow-orange-500/30">Spin Up My Deal Desk</button>
+            </form>
+          </div>
+        </section>
+
+        <section className="space-y-8">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-semibold text-white">Systems we deploy</h2>
+            <span className="text-sm text-slate-400">Built once, cloned for each market</span>
+          </div>
+          <div className="grid gap-6 lg:grid-cols-3">
+            {services.map((service) => (
+              <div key={service.title} className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
+                <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Build</p>
+                <h3 className="mt-3 text-2xl font-semibold text-white">{service.title}</h3>
+                <p className="mt-3 text-sm text-slate-300">{service.description}</p>
+                <ul className="mt-4 space-y-2 text-sm text-slate-400">
+                  {service.bullets.map((bullet) => (
+                    <li key={bullet} className="flex gap-2">
+                      <span className="text-orange-300">•</span>
+                      <span>{bullet}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
+          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <h2 className="text-3xl font-semibold text-white">From Jacksonville to St. Augustine</h2>
+              <p className="mt-3 text-slate-300">
+                We operate like an in-house chief of staff for Florida concrete crews serving homeowners, HOAs, and commercial sites—Duval, Nassau, Clay, St. Johns, and beyond.
+              </p>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {steps.map((step) => (
+                <div key={step.number} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+                  <p className="text-sm text-orange-300">{step.number}</p>
+                  <h3 className="mt-2 text-xl font-semibold text-white">{step.title}</h3>
+                  <p className="mt-2 text-sm text-slate-300">{step.body}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  );
+}
