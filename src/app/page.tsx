@@ -237,14 +237,17 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
                     <p className="mt-3 text-sm text-slate-300">{service.description}</p>
                   </div>
                   {service.title === "Lead Funnel Kit" && (
-                    <a
-                      href="https://buy.stripe.com/14AaEX6KD7x1fuQeQy"
-                      className="rounded-full bg-orange-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      Buy Now
-                    </a>
+                    <div className="rounded-xl border border-slate-800 bg-slate-900/60 p-3 text-right">
+                      <p className="text-xs text-orange-200">Limited offer · $99.99</p>
+                      <a
+                        href="https://buy.stripe.com/14AaEX6KD7x1fuQeQy"
+                        className="mt-2 inline-flex items-center justify-center rounded-full bg-orange-400 px-4 py-2 text-xs font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
+                        target="_blank"
+                        rel="noreferrer"
+                      >
+                        Buy Lead Funnel Kit
+                      </a>
+                    </div>
                   )}
                 </div>
                 <ul className="mt-4 space-y-2 text-sm text-slate-400">
