@@ -12,12 +12,6 @@ const services = [
     bullets: ["Carrd / Vercel ready", "SMS + email follow-ups", "Notion pipeline"],
   },
   {
-    title: "Compliance Guard",
-    description:
-      "Track licenses, insurance, OSHA trainings, and send reminders so crews stay bid-ready without paperwork chaos.",
-    bullets: ["Auto reminders", "Shareable dashboard", "Instant PDF packet"],
-  },
-  {
     title: "AI Deal Desk",
     description:
       "24/7 intake concierge that qualifies homeowners, estimates square footage, and books calendar slots while crews pour concrete.",
