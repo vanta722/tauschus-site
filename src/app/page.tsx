@@ -281,6 +281,37 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
         <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-3">
+              <p className="text-sm uppercase tracking-[0.4em] text-orange-300">AI Deal Desk</p>
+              <h2 className="text-3xl font-semibold text-white">24/7 intake concierge + briefing packs.</h2>
+              <p className="text-slate-300">
+                We wire up voice/chat bots that capture leads, estimate footage, and drop contract-ready briefs in Notion and Slack so crews only say “yes/no.”
+              </p>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li>• Voice + chat capture with CRM sync</li>
+                <li>• Auto-generated scope + quote briefs</li>
+                <li>• Calendar + SMS coordination</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-6 shadow-inner shadow-black/20">
+              <p className="text-sm text-slate-400">One-time setup</p>
+              <p className="mt-2 text-3xl font-semibold text-white">$199 Limited Offer</p>
+              <p className="mt-1 text-sm text-slate-400">Includes bot prompts, integrations, and a live test call.</p>
+              <a
+                href="https://buy.stripe.com/4gMcN50mf4kPbeA8sa"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-orange-400 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
+              >
+                Buy AI Deal Desk Setup
+              </a>
+              <p className="mt-3 text-xs text-slate-500">Add-on automations (Zendesk, ServiceTitan, etc.) quoted after install.</p>
+            </div>
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="space-y-3">
               <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Compliance Guard Express</p>
               <h2 className="text-3xl font-semibold text-white">Same-day license + insurance packets.</h2>
               <p className="text-slate-300">
