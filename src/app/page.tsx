@@ -225,7 +225,7 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
             {services.map((service) => (
               <div key={service.title} className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
                 <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Build</p>
-                {service.title === "Lead Funnel Kit" ? (
+                {service.title === "Lead Funnel Kit" && (
                   <div className="space-y-4">
                     <div>
                       <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
@@ -253,23 +253,6 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
                       </a>
                     </div>
                   </div>
-                ) : (
-                  <>
-                    <div className="mt-3 flex items-start justify-between gap-4">
-                      <div>
-                        <h3 className="text-2xl font-semibold text-white">{service.title}</h3>
-                        <p className="mt-3 text-sm text-slate-300">{service.description}</p>
-                      </div>
-                    </div>
-                    <ul className="mt-4 space-y-2 text-sm text-slate-400">
-                      {service.bullets.map((bullet) => (
-                        <li key={bullet} className="flex gap-2">
-                          <span className="text-orange-300">•</span>
-                          <span>{bullet}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
                 )}
               </div>
             ))}
