@@ -224,7 +224,6 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
           <div className="grid gap-6 lg:grid-cols-3">
             {services.map((service) => (
               <div key={service.title} className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
-                <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Build</p>
                 {service.title === "Lead Funnel Kit" && (
                   <div className="space-y-4">
                     <div>
