@@ -48,8 +48,11 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
     <main className="min-h-screen bg-slate-950 text-slate-100">
       <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-14 lg:py-20">
         {searchParams?.submitted === "1" && (
-          <div className="rounded-2xl border border-green-500/40 bg-green-500/10 p-4 text-sm text-green-200">
-            Form received. We’ll respond via SMS/email right away.
+          <div className="rounded-2xl border border-green-500/40 bg-green-500/10 p-5 text-sm text-green-200">
+            <p className="text-base font-semibold text-green-100">Thank you!
+            </p>
+            <p className="mt-1">Form received. We’ll respond via SMS/email right away with next steps.
+            </p>
           </div>
         )}
         <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
@@ -254,6 +257,38 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
                 </ul>
               </div>
             ))}
+          </div>
+        </section>
+
+        <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
+          <div className="grid gap-8 lg:grid-cols-2">
+            <div className="space-y-3">
+              <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Compliance Guard Express</p>
+              <h2 className="text-3xl font-semibold text-white">Same-day license + insurance packets.</h2>
+              <p className="text-slate-300">
+                Drop your license numbers and carrier info. We build a shareable dashboard, renewal reminders,
+                and a PDF packet you can send to HOAs, GC bids, and inspectors—delivered within hours.
+              </p>
+              <ul className="space-y-2 text-sm text-slate-400">
+                <li>• License + insurance tracker in Notion</li>
+                <li>• Automated renewal email/SMS reminders</li>
+                <li>• Ready-to-send compliance packet (PDF)</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-6 shadow-inner shadow-black/20">
+              <p className="text-sm text-slate-400">One-time setup</p>
+              <p className="mt-2 text-3xl font-semibold text-white">$99 Express Scan</p>
+              <p className="mt-1 text-sm text-slate-400">Delivered same-day, Monday–Saturday.</p>
+              <a
+                href="https://buy.stripe.com/6oU5kD1qjdVp3M8aAi"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-orange-400 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
+              >
+                Buy Compliance Guard Express
+              </a>
+              <p className="mt-3 text-xs text-slate-500">Need ongoing monitoring? Mention it in the notes and we’ll upgrade you to the annual plan.</p>
+            </div>
           </div>
         </section>
 
