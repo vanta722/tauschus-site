@@ -43,10 +43,15 @@ const steps = [
   },
 ];
 
-export default function Home() {
+export default function Home({ searchParams }: { searchParams: { submitted?: string } }) {
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
-      <div className="mx-auto flex max-w-6xl flex-col gap-16 px-6 py-14 lg:py-20">
+      <div className="mx-auto flex max-w-6xl flex-col gap-8 px-6 py-14 lg:py-20">
+        {searchParams?.submitted === "1" && (
+          <div className="rounded-2xl border border-green-500/40 bg-green-500/10 p-4 text-sm text-green-200">
+            Form received. We’ll respond via SMS/email right away.
+          </div>
+        )}
         <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div className="space-y-6">
             <span className="text-sm uppercase tracking-[0.4em] text-orange-300">
@@ -89,10 +94,11 @@ export default function Home() {
                 Homeowner Intake
               </p>
               <form
-                action="#"
+                action="/api/intake"
                 method="POST"
                 className="mt-6 space-y-4"
               >
+                <input type="hidden" name="formType" value="homeowner" />
                 <label className="block text-sm text-slate-300">
                   Full Name
                   <input
@@ -182,7 +188,8 @@ export default function Home() {
                 <li>• Calendar slot suggestions if a call is needed</li>
               </ul>
             </div>
-            <form action="#" method="POST" className="space-y-4">
+            <form action="/api/intake" method="POST" className="space-y-4">
+              <input type="hidden" name="formType" value="blueprint" />
               <label className="block text-sm text-slate-300">
                 Company / Crew Name
                 <input name="company" type="text" className="mt-2 w-full rounded-xl border border-slate-800 bg-slate-950/70 px-4 py-3 text-base text-white placeholder-slate-500 focus:border-orange-400 focus:outline-none" placeholder="Florida Concrete Alliance" required />
