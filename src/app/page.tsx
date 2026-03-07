@@ -260,7 +260,7 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
 
 
 
-        <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
+        <section id="offers" className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-3">
               <p className="text-sm uppercase tracking-[0.4em] text-orange-300">AI Deal Desk</p>
@@ -323,21 +323,36 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
           </div>
         </section>
         <section className="rounded-3xl border border-slate-800 bg-slate-900/70 p-8">
-          <div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <h2 className="text-3xl font-semibold text-white">From Jacksonville to St. Augustine</h2>
-              <p className="mt-3 text-slate-300">
-                We operate like an in-house chief of staff for Florida concrete crews serving homeowners, HOAs, and commercial sites—Duval, Nassau, Clay, St. Johns, and beyond.
-              </p>
+          <div className="space-y-6">
+            <div className="lg:flex lg:items-center lg:justify-between">
+              <div className="max-w-2xl">
+                <h2 className="text-3xl font-semibold text-white">Jacksonville crews, zero missed opportunities</h2>
+                <p className="mt-3 text-slate-300">
+                  We act like your chief of staff: every homeowner or HOA ping is captured, the offer goes out automatically, and you wake up with booked work instead of unanswered DMs.
+                </p>
+              </div>
+              <div className="mt-4 rounded-2xl border border-orange-400/40 bg-orange-400/10 p-5 text-orange-100 lg:mt-0 lg:w-80">
+                <p className="text-sm uppercase tracking-[0.3em]">Fast action bonus</p>
+                <p className="mt-2 text-2xl font-semibold text-white">Buy 2 kits → get AI Deal Desk at $149</p>
+                <p className="mt-1 text-sm">Ping us “BUNDLE” after purchase and we’ll send the discounted link.</p>
+              </div>
             </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              {steps.map((step) => (
-                <div key={step.number} className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
-                  <p className="text-sm text-orange-300">{step.number}</p>
-                  <h3 className="mt-2 text-xl font-semibold text-white">{step.title}</h3>
-                  <p className="mt-2 text-sm text-slate-300">{step.body}</p>
-                </div>
-              ))}
+            <div className="grid gap-4 sm:grid-cols-3">
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+                <p className="text-sm text-orange-300">01</p>
+                <h3 className="mt-2 text-xl font-semibold text-white">Blueprint Call</h3>
+                <p className="mt-2 text-sm text-slate-300">Drop your driveways, HOAs, compliance pain. We map workflows in &lt;30 minutes.</p>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+                <p className="text-sm text-orange-300">02</p>
+                <h3 className="mt-2 text-xl font-semibold text-white">Launch in 24 hrs</h3>
+                <p className="mt-2 text-sm text-slate-300">Landing page, intake forms, reminders, dashboards—fully white-labeled and live.</p>
+              </div>
+              <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+                <p className="text-sm text-orange-300">03</p>
+                <h3 className="mt-2 text-xl font-semibold text-white">Scale + Report</h3>
+                <p className="mt-2 text-sm text-slate-300">Daily AI desk summaries, live dashboards, and refinement loops keep revenue compounding.</p>
+              </div>
             </div>
           </div>
         </section>
