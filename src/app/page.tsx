@@ -52,7 +52,7 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
         <section className="grid gap-10 lg:grid-cols-2 lg:items-center">
           <div className="space-y-6">
             <span className="text-sm uppercase tracking-[0.4em] text-orange-300">
-              Tauschus · Operator Studio
+              Tauschus · AI Operator Studio
             </span>
             <h1 className="text-4xl font-semibold leading-tight text-white sm:text-5xl">
               Deal desks, compliance, and lead funnels for Northeast Florida projects.
