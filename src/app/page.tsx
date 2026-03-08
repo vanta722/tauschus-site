@@ -296,6 +296,36 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
           </div>
         </section>
 
+        <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-6">
+          <div className="grid gap-6 lg:grid-cols-2">
+            <div>
+              <p className="text-sm uppercase tracking-[0.4em] text-orange-300">Blueprint drop</p>
+              <h2 className="text-3xl font-semibold text-white">Concrete AI Ops Blueprint</h2>
+              <p className="mt-3 text-slate-300">
+                A 10-section guide that breaks down the exact workflow we run for Florida crews: audits, funnel launch, compliance autopilot, OpenClaw agent setup, AI deal desk, and the weekly ops rhythm that keeps crews booked.
+              </p>
+              <ul className="mt-3 space-y-2 text-sm text-slate-400">
+                <li>• Step-by-step automation sprint</li>
+                <li>• Compliance board template + reminders</li>
+                <li>• AI desk scripts and escalation flows</li>
+              </ul>
+            </div>
+            <div className="rounded-2xl border border-slate-800 bg-slate-950/80 p-5">
+              <p className="text-sm text-slate-400">Instant download ($3.99)</p>
+              <p className="mt-2 text-lg text-white">Get the PDF + delivery email immediately after checkout.</p>
+              <a
+                href="https://buy.stripe.com/fZueVd1qj5oTciEcIq8k80c"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-orange-400 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
+              >
+                Buy Concrete AI Ops Blueprint
+              </a>
+              <p className="mt-2 text-xs text-slate-500">Includes lifetime PDF updates (we refresh it whenever we ship new playbooks).</p>
+            </div>
+          </div>
+        </section>
+
         <section className="rounded-3xl border border-slate-800 bg-slate-900/60 p-8">
           <div className="grid gap-8 lg:grid-cols-2">
             <div className="space-y-3">
