@@ -69,9 +69,14 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
               >
                 Start Blueprint Intake
               </a>
-              <button className="rounded-full border border-slate-600 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-400">
-                Download Offer Kit
-              </button>
+              <a
+                href="https://buy.stripe.com/fZueVd1qj5oTciEcIq8k80c"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full border border-slate-600 px-6 py-3 text-sm font-semibold text-slate-100 transition hover:border-slate-400"
+              >
+                Concrete AI Ops Blueprint
+              </a>
             </div>
             <div className="grid gap-4 sm:grid-cols-3">
               {stats.map((stat) => (
