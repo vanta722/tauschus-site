@@ -279,7 +279,7 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
               <p className="mt-2 text-3xl font-semibold text-white">$199 Limited Offer</p>
               <p className="mt-1 text-sm text-slate-400">Includes bot prompts, integrations, and a live test call.</p>
               <a
-                href="https://buy.stripe.com/4gMcN50mf4kPbeA8sa"
+                href="https://buy.stripe.com/4gMcN50mf4kPbeA8sa8k80b"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-orange-400 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
