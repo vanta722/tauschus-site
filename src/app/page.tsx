@@ -311,7 +311,7 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
               <p className="mt-2 text-3xl font-semibold text-white">$29.99 Limited Offer</p>
               <p className="mt-1 text-sm text-slate-400">Limited-time launch price. Delivered same-day, Monday–Saturday.</p>
               <a
-                href="https://buy.stripe.com/6oU5kD1qjdVp3M8aAi"
+                href="https://buy.stripe.com/6oU5kD1qjdVp3M8aAi8k80a"
                 target="_blank"
                 rel="noreferrer"
                 className="mt-4 inline-flex w-full items-center justify-center rounded-xl bg-orange-400 py-3 text-sm font-semibold text-slate-950 shadow-lg shadow-orange-500/30 transition hover:bg-orange-300"
