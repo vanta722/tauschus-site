@@ -175,8 +175,6 @@ export default function Dashboard() {
     );
   }
 
-  const totalAUM = CRYPTO_ASSETS.reduce((sum, a) => sum + (prices[a.symbol]?.raw || 0), 0);
-
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 px-4 py-10">
       <div className="mx-auto max-w-6xl space-y-8">
@@ -188,15 +186,9 @@ export default function Dashboard() {
             <h1 className="mt-1 text-3xl font-black text-white">Operations Dashboard</h1>
             <p className="text-xs text-slate-500 mt-1">Auto-refreshes every 60s · Last updated: {lastUpdated || "—"}</p>
           </div>
-          <div className="flex gap-3">
-            <div className="rounded-2xl border border-slate-800 bg-slate-900/60 px-5 py-3 text-center">
-              <p className="text-xs text-slate-500">Portfolio Value</p>
-              <p className="text-xl font-black text-orange-400">${totalAUM > 0 ? totalAUM.toLocaleString("en-US", { maximumFractionDigits: 0 }) : "—"}</p>
-            </div>
-            <button onClick={fetchData} className="rounded-2xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-300 hover:border-orange-400 hover:text-orange-400 transition">
-              ↻ Refresh
-            </button>
-          </div>
+          <button onClick={fetchData} className="rounded-2xl border border-slate-700 bg-slate-800 px-4 py-3 text-sm font-semibold text-slate-300 hover:border-orange-400 hover:text-orange-400 transition">
+            ↻ Refresh
+          </button>
         </div>
 
         {/* Crypto Prices + Sparklines */}
