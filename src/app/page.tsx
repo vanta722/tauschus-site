@@ -62,6 +62,26 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
               qualify commercial or facilities inquiries, and surface the next job before
               your crew even rolls up.
             </p>
+            {/* ── FREE PLAYBOOK BANNER ── */}
+            <a
+              href="https://vantaai3.gumroad.com/l/AIplaybook1"
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-4 rounded-2xl border border-orange-400/40 bg-orange-400/10 p-4 transition hover:bg-orange-400/20"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-orange-400 text-2xl shadow-lg shadow-orange-500/30">
+                📘
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-300">Free Download</p>
+                <p className="text-sm font-semibold text-white">The Concrete Contractor's AI Estimating Playbook 2026</p>
+                <p className="text-xs text-slate-400">5 AI tools · 6-step workflow · Ready-to-use prompts</p>
+              </div>
+              <span className="shrink-0 rounded-full bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 shadow transition group-hover:bg-orange-300">
+                Get It Free →
+              </span>
+            </a>
+
             <div className="flex flex-wrap gap-4">
               <a
                 href="#blueprint-form"
