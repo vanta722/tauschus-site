@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const VPS_IP = "187.124.71.71";
-const VPS_PORT = "3031";
+const MEMORY_BASE = "https://floridaconcretealliance.com/api/memory";
 const API_KEY = "mac-memory-2026";
 
 export async function GET(req: NextRequest) {
@@ -9,8 +8,8 @@ export async function GET(req: NextRequest) {
   const file = searchParams.get("file");
 
   const vpsUrl = file
-    ? `http://${VPS_IP}:${VPS_PORT}/api/memory/${encodeURIComponent(file)}`
-    : `http://${VPS_IP}:${VPS_PORT}/api/memory`;
+    ? `${MEMORY_BASE}?file=${encodeURIComponent(file)}`
+    : MEMORY_BASE;
 
   try {
     const res = await fetch(vpsUrl, {
