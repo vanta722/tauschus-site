@@ -34,8 +34,8 @@ const TASKS = [
   { task: "Upgrade Twitter to Basic API tier ($100/mo) at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
-const MEMORY_API = "https://app.tauschus.com/api/memory";
-const MEMORY_API_KEY = "mac-memory-2026";
+const MEMORY_API = "/api/memory";
+const MEMORY_API_KEY = "";
 
 const FCA_PIPELINE = [
   { stage: "New Leads", count: 0, color: "#f97316" },
@@ -144,12 +144,14 @@ export default function Dashboard() {
   };
 
   const fetchMemFiles = useCallback(async () => {
+    setMemError(null);
     try {
-      const r = await fetch(`${MEMORY_API}`, { headers: { "x-api-key": MEMORY_API_KEY } });
+      const r = await fetch(`${MEMORY_API}`);
       const d = await r.json();
+      if (d.error) { setMemError(d.error); return; }
       setMemFiles(d.files || []);
     } catch {
-      setMemError("Could not reach Memory API. Check that app.tauschus.com is reachable.");
+      setMemError("Could not reach Memory API.");
     }
   }, []);
 
@@ -159,7 +161,7 @@ export default function Dashboard() {
     setFileContent("");
     setFileUpdatedAt("");
     try {
-      const r = await fetch(`${MEMORY_API}/${encodeURIComponent(key)}`, { headers: { "x-api-key": MEMORY_API_KEY } });
+      const r = await fetch(`${MEMORY_API}?file=${encodeURIComponent(key)}`);
       const d = await r.json();
       if (d.error) { setMemError(d.error); }
       else {
