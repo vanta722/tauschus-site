@@ -26,10 +26,10 @@ const TASKS = [
   { task: "Update @Vanta69 Twitter bio + set website to Gumroad link", priority: "HIGH", pillar: "Online" },
   { task: "Fund Polymarket with $70 USDC → Clarity Act YES + Recession hedge", priority: "HIGH", pillar: "Crypto" },
   { task: "Post 3 FCA Marketplace listings", priority: "HIGH", pillar: "FCA" },
+  { task: "Get Facebook App ID + App Secret from developers.facebook.com → send to Mac for 60-day token", priority: "HIGH", pillar: "FCA" },
   { task: "Drop products in 2–3 contractor Facebook groups", priority: "MED", pillar: "Online" },
   { task: "Set up Google Business Profile for FCA", priority: "MED", pillar: "FCA" },
   { task: "Generate Crypto.com API secret key for live balance on dashboard", priority: "MED", pillar: "Crypto" },
-  { task: "Refresh Facebook Page token before next post (~60 day expiry)", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier ($100/mo) at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
