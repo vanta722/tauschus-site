@@ -23,10 +23,11 @@ const CRON_JOBS = [
 ];
 
 const TASKS = [
+  { task: "Vercel: promote build a18b89b to production — vercel.com → tauschus-site → Deployments → a18b89b → 3 dots → Promote to Production", priority: "HIGH", pillar: "Online" },
+  { task: "Facebook 60-day token: get App ID + App Secret from developers.facebook.com → send to Mac", priority: "HIGH", pillar: "FCA" },
   { task: "Update @Vanta69 Twitter bio + set website to Gumroad link", priority: "HIGH", pillar: "Online" },
   { task: "Fund Polymarket with $70 USDC → Clarity Act YES + Recession hedge", priority: "HIGH", pillar: "Crypto" },
   { task: "Post 3 FCA Marketplace listings", priority: "HIGH", pillar: "FCA" },
-  { task: "Get Facebook App ID + App Secret from developers.facebook.com → send to Mac for 60-day token", priority: "HIGH", pillar: "FCA" },
   { task: "Drop products in 2–3 contractor Facebook groups", priority: "MED", pillar: "Online" },
   { task: "Set up Google Business Profile for FCA", priority: "MED", pillar: "FCA" },
   { task: "Generate Crypto.com API secret key for live balance on dashboard", priority: "MED", pillar: "Crypto" },
@@ -356,11 +357,13 @@ export default function Dashboard() {
           <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Alerts & Next Moves</p>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {[
+              { alert: "Vercel: promote build a18b89b to production — tauschus.com homepage is staged but NOT live", urgency: "HIGH" },
+              { alert: "Facebook token expires daily — go to developers.facebook.com → get App ID + App Secret → send to Mac for 60-day token", urgency: "HIGH" },
               { alert: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge", urgency: "HIGH" },
               { alert: "Twitter bio update needed — add Gumroad link", urgency: "HIGH" },
               { alert: "3 FCA Marketplace listings — demand live in Jacksonville", urgency: "HIGH" },
               { alert: "Labor Shortage Guide live at $9 — tweet campaign running today", urgency: "INFO" },
-              { alert: "tauschus.com homepage rebuild deploying now", urgency: "INFO" },
+              { alert: "tauschus.com homepage rebuild ready — pending Vercel promote", urgency: "INFO" },
               { alert: "Overnight builder ran Mar 26 — new product + 5 tweets", urgency: "INFO" },
               { alert: "ONDO $0.26 — RWA narrative intact, target $0.73 EOY", urgency: "INFO" },
               { alert: "FCA Facebook page posted + website Facebook link live", urgency: "INFO" },
