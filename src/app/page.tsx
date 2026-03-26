@@ -82,6 +82,26 @@ export default function Home({ searchParams }: { searchParams: { submitted?: str
               </span>
             </a>
 
+            {/* ── PAID GUIDE BANNER ── */}
+            <a
+              href="https://vantaai3.gumroad.com/l/pdcsgr"
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-center gap-4 rounded-2xl border border-slate-600/60 bg-slate-800/60 p-4 transition hover:border-orange-400/40 hover:bg-slate-800"
+            >
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-slate-700 text-2xl shadow-lg">
+                🦺
+              </div>
+              <div className="flex-1">
+                <p className="text-xs font-bold uppercase tracking-widest text-slate-400">$9 Guide</p>
+                <p className="text-sm font-semibold text-white">The Labor Shortage Survival Guide for Concrete Contractors</p>
+                <p className="text-xs text-slate-500">7 AI systems · Run lean · Win more jobs in 2026</p>
+              </div>
+              <span className="shrink-0 rounded-full border border-slate-500 px-4 py-2 text-xs font-bold text-slate-300 shadow transition group-hover:border-orange-400 group-hover:text-orange-300">
+                Get It $9 →
+              </span>
+            </a>
+
             <div className="flex flex-wrap gap-4">
               <a
                 href="#blueprint-form"
