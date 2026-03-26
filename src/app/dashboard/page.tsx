@@ -17,9 +17,9 @@ const POLY_MARKETS = [
 ];
 
 const CRON_JOBS = [
-  { name: "🌙 Overnight Product Builder", schedule: "11:00 PM ET nightly", status: "ACTIVE", last: "Last run: Mar 26 3AM UTC ✅" },
-  { name: "📊 Market Scan 6AM ET", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 26 6AM ET ✅" },
-  { name: "📊 Market Scan 6PM ET", schedule: "6:00 PM ET daily", status: "ACTIVE", last: "Last run: Mar 25 6PM ET ✅" },
+  { name: "🌙 Overnight Product Builder", schedule: "11:00 PM ET nightly", status: "ACTIVE", last: "Last run: Mar 26 3AM UTC" },
+  { name: "📊 Market Scan 6AM ET", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 26 6AM ET" },
+  { name: "📊 Market Scan 6PM ET", schedule: "6:00 PM ET daily", status: "ACTIVE", last: "Last run: Mar 25 6PM ET" },
 ];
 
 const TASKS = [
@@ -284,7 +284,7 @@ export default function Dashboard() {
           </section>
 
           <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">✅ Active Tasks</p>
+            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">Active Tasks</p>
             <div className="space-y-2 max-h-72 overflow-y-auto">
               {TASKS.map((t, i) => (
                 <div key={i} className="flex items-center gap-3 rounded-xl bg-slate-800/60 px-4 py-2.5">
@@ -329,7 +329,7 @@ export default function Dashboard() {
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">12+ posted/scheduled</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">2 (Free + $9)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">API tier</span><span className="text-yellow-400 font-semibold">Free → upgrade at 50 followers</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET ✅</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET</span></div>
               </div>
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
@@ -361,12 +361,12 @@ export default function Dashboard() {
               { alert: "3 FCA Marketplace listings — demand live in Jacksonville", urgency: "HIGH" },
               { alert: "Labor Shortage Guide live at $9 — tweet campaign running today", urgency: "INFO" },
               { alert: "tauschus.com homepage rebuild deploying now", urgency: "INFO" },
-              { alert: "Overnight builder ran Mar 26 — new product + 5 tweets ✅", urgency: "INFO" },
+              { alert: "Overnight builder ran Mar 26 — new product + 5 tweets", urgency: "INFO" },
               { alert: "ONDO $0.26 — RWA narrative intact, target $0.73 EOY", urgency: "INFO" },
-              { alert: "FCA Facebook page posted + website Facebook link live ✅", urgency: "INFO" },
+              { alert: "FCA Facebook page posted + website Facebook link live", urgency: "INFO" },
             ]}.map((a, i) => (
               <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : "bg-slate-800/60"}`}>
-                <span className={a.urgency === "HIGH" ? "text-red-400 shrink-0" : "text-slate-500 shrink-0"}>{a.urgency === "HIGH" ? "⚠️" : "ℹ️"}</span>
+                <span className={a.urgency === "HIGH" ? "text-red-400 shrink-0" : "text-slate-500 shrink-0"}>{a.urgency === "HIGH" ? "(!)" : "(i)"}</span>
                 <span className={a.urgency === "HIGH" ? "text-red-200" : "text-slate-400"}>{a.alert}</span>
               </div>
             ))}
