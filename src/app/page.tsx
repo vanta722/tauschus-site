@@ -39,7 +39,7 @@ export default function Home() {
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 text-sm font-black text-slate-950">V</div>
-            <span className="font-bold tracking-wide text-white">Vanta AI</span>
+            <span className="font-bold tracking-wide text-white">Tauschus AI</span>
           </div>
           <div className="flex items-center gap-3">
             <a href="#products" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Products</a>
@@ -129,7 +129,7 @@ export default function Home() {
       <section className="border-y border-slate-800 bg-slate-900/40">
         <div className="mx-auto max-w-6xl px-6 py-16">
           <div className="mb-12 text-center">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Why Vanta AI</p>
+            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Why Tauschus AI</p>
             <h2 className="text-3xl font-black text-white">Not Another Generic AI Guide</h2>
           </div>
           <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -148,7 +148,7 @@ export default function Home() {
       <section id="about" className="mx-auto max-w-6xl px-6 py-16">
         <div className="grid items-center gap-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-8 lg:grid-cols-2 lg:p-12">
           <div>
-            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">About Vanta AI</p>
+            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">About Tauschus AI</p>
             <h2 className="mb-4 text-3xl font-black text-white">Built by People Who Work With Contractors</h2>
             <p className="mb-4 text-slate-400">We build AI systems for small trades businesses — the kind of tools that actually get used on job sites and in truck cabs, not just in boardrooms.</p>
             <p className="mb-6 text-slate-400">Everything we publish is tested against real problems: bad estimates, slow follow-up, labor shortages, margin compression. If it does not solve a real problem, we do not publish it.</p>
@@ -197,7 +197,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 text-sm font-black text-slate-950">V</div>
             <div>
-              <p className="text-sm font-bold text-white">Vanta AI</p>
+              <p className="text-sm font-bold text-white">Tauschus AI</p>
               <p className="text-xs text-slate-500">Digital products for the trades</p>
             </div>
           </div>
@@ -207,7 +207,7 @@ export default function Home() {
             <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">X / Twitter</a>
             <a href="https://vantaai3.gumroad.com" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">All Products</a>
           </div>
-          <p className="w-full text-center text-xs text-slate-600 lg:w-auto lg:text-right">© 2026 Vanta AI. Built for real contractors.</p>
+          <p className="w-full text-center text-xs text-slate-600 lg:w-auto lg:text-right">© 2026 Tauschus AI. Built for real contractors.</p>
         </div>
       </footer>
 
