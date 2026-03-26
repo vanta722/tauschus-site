@@ -1,9 +1,4 @@
-import type { Metadata } from "next";
 
-export const metadata: Metadata = {
-  title: "Vanta AI — Digital Products for Trades & Builders",
-  description: "AI playbooks, systems guides, and tools built specifically for concrete contractors and trades businesses. Download instantly.",
-};
 
 const PRODUCTS = [
   {
@@ -41,7 +36,8 @@ const BENEFITS = [
   { icon: "📈", title: "Real ROI", body: "From cutting 3 hours off your estimating to automating follow-up — these tools pay for themselves fast." },
 ];
 
-export default function Home() {
+export default function Home({ searchParams: _s }: { searchParams?: Record<string, string> }) {
+  void _s;
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100">
 
