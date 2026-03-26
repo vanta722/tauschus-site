@@ -355,16 +355,16 @@ export default function Dashboard() {
         <section className="rounded-2xl border border-orange-400/30 bg-orange-400/5 p-5">
           <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🔔 Alerts & Next Moves</p>
           <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            [
+            {[
               { alert: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge", urgency: "HIGH" },
               { alert: "Twitter bio update needed — add Gumroad link", urgency: "HIGH" },
               { alert: "3 FCA Marketplace listings — demand live in Jacksonville", urgency: "HIGH" },
               { alert: "Labor Shortage Guide live at $9 — tweet campaign running today", urgency: "INFO" },
-              { alert: "tauschus.com: both product banners live on homepage ✅", urgency: "INFO" },
+              { alert: "tauschus.com homepage rebuild deploying now", urgency: "INFO" },
               { alert: "Overnight builder ran Mar 26 — new product + 5 tweets ✅", urgency: "INFO" },
               { alert: "ONDO $0.26 — RWA narrative intact, target $0.73 EOY", urgency: "INFO" },
               { alert: "FCA Facebook page posted + website Facebook link live ✅", urgency: "INFO" },
-            ].map((a, i) => (
+            ]}.map((a, i) => (
               <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : "bg-slate-800/60"}`}>
                 <span className={a.urgency === "HIGH" ? "text-red-400 shrink-0" : "text-slate-500 shrink-0"}>{a.urgency === "HIGH" ? "⚠️" : "ℹ️"}</span>
                 <span className={a.urgency === "HIGH" ? "text-red-200" : "text-slate-400"}>{a.alert}</span>
