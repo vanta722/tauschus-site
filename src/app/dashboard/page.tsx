@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
 
@@ -33,6 +33,9 @@ const TASKS = [
   { task: "Generate Crypto.com API secret key for live balance on dashboard", priority: "MED", pillar: "Crypto" },
   { task: "Upgrade Twitter to Basic API tier ($100/mo) at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
+
+const MEMORY_API = "https://app.tauschus.com/api/memory";
+const MEMORY_API_KEY = "mac-memory-2026";
 
 const FCA_PIPELINE = [
   { stage: "New Leads", count: 0, color: "#f97316" },
@@ -77,6 +80,15 @@ export default function Dashboard() {
   const [lastUpdated, setLastUpdated] = useState("");
   const [loading, setLoading] = useState(true);
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
+
+  // Memory viewer state
+  const [activeTab, setActiveTab] = useState<"ops" | "memory">("ops");
+  const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string>("");
+  const [fileUpdatedAt, setFileUpdatedAt] = useState<string>("");
+  const [memLoading, setMemLoading] = useState(false);
+  const [memError, setMemError] = useState<string | null>(null);
 
   const tryAuth = () => {
     if (pw === PASS) { setAuthed(true); setPwErr(false); }
@@ -130,6 +142,45 @@ export default function Dashboard() {
     setLastUpdated(new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
     setLoading(false);
   };
+
+  const fetchMemFiles = useCallback(async () => {
+    try {
+      const r = await fetch(`${MEMORY_API}`, { headers: { "x-api-key": MEMORY_API_KEY } });
+      const d = await r.json();
+      setMemFiles(d.files || []);
+    } catch {
+      setMemError("Could not reach Memory API. Check that app.tauschus.com is reachable.");
+    }
+  }, []);
+
+  const fetchFileContent = useCallback(async (key: string) => {
+    setMemLoading(true);
+    setMemError(null);
+    setFileContent("");
+    setFileUpdatedAt("");
+    try {
+      const r = await fetch(`${MEMORY_API}/${encodeURIComponent(key)}`, { headers: { "x-api-key": MEMORY_API_KEY } });
+      const d = await r.json();
+      if (d.error) { setMemError(d.error); }
+      else {
+        setFileContent(d.content || "");
+        setFileUpdatedAt(d.updatedAt ? new Date(d.updatedAt).toLocaleString() : "");
+      }
+    } catch {
+      setMemError("Failed to load file.");
+    }
+    setMemLoading(false);
+  }, []);
+
+  useEffect(() => {
+    if (authed && activeTab === "memory" && memFiles.length === 0) {
+      fetchMemFiles();
+    }
+  }, [authed, activeTab, memFiles.length, fetchMemFiles]);
+
+  useEffect(() => {
+    if (selectedFile) fetchFileContent(selectedFile);
+  }, [selectedFile, fetchFileContent]);
 
   useEffect(() => { if (authed) { fetchData(); const iv = setInterval(fetchData, 60000); return () => clearInterval(iv); } }, [authed]);
 
@@ -191,6 +242,119 @@ export default function Dashboard() {
             ↻ Refresh
           </button>
         </div>
+
+        {/* Tab switcher */}
+        <div className="flex gap-2 border-b border-slate-800 pb-0">
+          {(["ops", "memory"] as const).map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-5 py-2.5 text-sm font-bold rounded-t-xl transition border-b-2 ${
+                activeTab === tab
+                  ? "border-orange-400 text-orange-400 bg-slate-900/60"
+                  : "border-transparent text-slate-500 hover:text-slate-300"
+              }`}
+            >
+              {tab === "ops" ? "⚙️ Operations" : "🧠 Mac's Memory"}
+            </button>
+          ))}
+        </div>
+
+        {activeTab === "memory" && (
+          <section className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Mac&apos;s Memory Files</p>
+              <button
+                onClick={() => { setMemFiles([]); fetchMemFiles(); }}
+                className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 hover:border-orange-400 hover:text-orange-400 transition"
+              >
+                ↻ Reload Files
+              </button>
+            </div>
+
+            {memError && !memLoading && (
+              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-sm text-red-300">{memError}</div>
+            )}
+
+            <div className="grid gap-4 lg:grid-cols-4">
+              {/* File list sidebar */}
+              <div className="lg:col-span-1 space-y-2">
+                {memFiles.length === 0 && !memError && (
+                  <div className="text-xs text-slate-600 py-4 text-center">Loading files…</div>
+                )}
+
+                {/* Core files */}
+                {memFiles.filter(f => f.group === "core").length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Core</p>
+                    {memFiles.filter(f => f.group === "core").map(f => (
+                      <button
+                        key={f.key}
+                        onClick={() => setSelectedFile(f.key)}
+                        className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-semibold transition ${
+                          selectedFile === f.key
+                            ? "bg-orange-400/20 text-orange-300 border border-orange-400/30"
+                            : "bg-slate-800/60 text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Daily logs */}
+                {memFiles.filter(f => f.group === "daily").length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Daily Logs</p>
+                    <div className="max-h-64 overflow-y-auto space-y-1">
+                      {memFiles.filter(f => f.group === "daily").map(f => (
+                        <button
+                          key={f.key}
+                          onClick={() => setSelectedFile(f.key)}
+                          className={`w-full text-left rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                            selectedFile === f.key
+                              ? "bg-orange-400/20 text-orange-300 border border-orange-400/30"
+                              : "bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* File content viewer */}
+              <div className="lg:col-span-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 min-h-[400px]">
+                {!selectedFile && (
+                  <div className="flex items-center justify-center h-full text-slate-600 text-sm">
+                    ← Select a file to view
+                  </div>
+                )}
+                {selectedFile && memLoading && (
+                  <div className="flex items-center justify-center h-full text-slate-500 text-sm animate-pulse">
+                    Loading {selectedFile}…
+                  </div>
+                )}
+                {selectedFile && !memLoading && fileContent && (
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm font-bold text-white">{selectedFile}</p>
+                      {fileUpdatedAt && <p className="text-xs text-slate-500">Updated: {fileUpdatedAt}</p>}
+                    </div>
+                    <pre className="text-xs text-slate-300 whitespace-pre-wrap font-mono leading-relaxed overflow-auto max-h-[600px]">
+                      {fileContent}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {activeTab === "ops" && <>
 
         {/* Crypto Prices + Sparklines */}
         <section>
@@ -379,6 +543,9 @@ export default function Dashboard() {
         <div className="border-t border-slate-800 pt-4 text-center">
           <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
         </div>
+
+        </> }
+
       </div>
     </main>
   );
