@@ -21,6 +21,7 @@ const CRON_JOBS = [
   { name: "📊 Market Scan 6AM ET", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 26 6AM ET" },
   { name: "📊 Market Scan 6PM ET", schedule: "6:00 PM ET daily", status: "ACTIVE", last: "Last run: Mar 25 6PM ET" },
   { name: "🐦 Daily Tweet Autopilot", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 27 10PM UTC" },
+  { name: "📘 FCA Facebook Post", schedule: "🔄 Recurring daily @ 10:00 AM ET", status: "ACTIVE", last: "7-angle content rotation + new product priority" },
 ];
 
 const TASKS = [
@@ -522,25 +523,36 @@ export default function Dashboard() {
         </section>
 
         {/* Alerts */}
-        <section className="rounded-2xl border border-orange-400/30 bg-orange-400/5 p-5">
-          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Alerts & Next Moves</p>
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {[
-              { alert: "Facebook token expires daily — go to developers.facebook.com → get App ID + App Secret → send to Mac for 60-day token", urgency: "HIGH" },
-              { alert: "Twitter bio update needed — add Gumroad link + set website field to Gumroad store", urgency: "HIGH" },
-              { alert: "ETH broke below $2,000 — DCA trigger live, BTC at $66.6K approaching $65K support", urgency: "HIGH" },
-              { alert: "Drop products in 2–3 contractor Facebook groups — free traffic lever", urgency: "HIGH" },
-              { alert: "tauschus.com live ✅ · 3 Gumroad products live · FCA listings posted ✅", urgency: "INFO" },
-              { alert: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge — still pending", urgency: "HIGH" },
-              { alert: "Data Center Concrete Playbook ($17) — 5 tweets live, link active at vantaai3.gumroad.com/l/datacenter26", urgency: "INFO" },
-              { alert: "ONDO $0.26 — RWA narrative intact, target $0.73 EOY", urgency: "INFO" },
-              { alert: "Overnight builder active — 11PM ET nightly, next run tonight", urgency: "INFO" },
-            ].map((a, i) => (
-              <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : "bg-slate-800/60"}`}>
-                <span className={a.urgency === "HIGH" ? "text-red-400 shrink-0" : "text-slate-500 shrink-0"}>{a.urgency === "HIGH" ? "(!)" : "(i)"}</span>
-                <span className={a.urgency === "HIGH" ? "text-red-200" : "text-slate-400"}>{a.alert}</span>
-              </div>
-            ))}
+        <section className="rounded-2xl border border-orange-400/30 bg-orange-400/5 p-5 space-y-5">
+          <div>
+            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
+            <div className="space-y-2">
+              {[
+                { alert: "🔴 HIGH: FB Page Token expires daily — refresh at developers.facebook.com/tools/explorer when FCA posts fail", urgency: "HIGH" },
+                { alert: "🟡 MED: ETH below $2,000 since noon Mar 27 — DCA entry window open", urgency: "MED" },
+                { alert: "🟡 MED: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge)", urgency: "MED" },
+              ].map((a, i) => (
+                <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
+                  <span className={a.urgency === "HIGH" ? "text-red-200" : "text-yellow-200"}>{a.alert}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div>
+            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
+            <div className="space-y-2">
+              {[
+                { move: "🥇 Create Google Business Profile for FCA (20 min, free, direct leads)" },
+                { move: "🥈 Monitor Gumroad for first sale — check analytics weekly" },
+                { move: "🥉 Build property manager outreach list — 20-30 targets in NE Florida" },
+                { move: "🔲 Fund Polymarket account with $70 USDC" },
+                { move: "🔲 Consider ETH DCA entry (currently ~$1,979)" },
+              ].map((m, i) => (
+                <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
+                  <span className="text-slate-200">{m.move}</span>
+                </div>
+              ))}
+            </div>
           </div>
         </section>
 
