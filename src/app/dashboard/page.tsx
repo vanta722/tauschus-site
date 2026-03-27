@@ -20,15 +20,12 @@ const CRON_JOBS = [
   { name: "🌙 Overnight Product Builder", schedule: "11:00 PM ET nightly", status: "ACTIVE", last: "Last run: Mar 26 3AM UTC" },
   { name: "📊 Market Scan 6AM ET", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 26 6AM ET" },
   { name: "📊 Market Scan 6PM ET", schedule: "6:00 PM ET daily", status: "ACTIVE", last: "Last run: Mar 25 6PM ET" },
+  { name: "🐦 Daily Tweet Autopilot", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 27 10PM UTC" },
 ];
 
 const TASKS = [
   { task: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge ($70 USDC total)", priority: "HIGH", pillar: "Crypto" },
-  { task: "Facebook 60-day token: get App ID + App Secret from developers.facebook.com → send to Mac", priority: "HIGH", pillar: "FCA" },
-  { task: "Update @Vanta69 Twitter bio + set website to Gumroad link", priority: "HIGH", pillar: "Online" },
-  { task: "Drop products in 2–3 contractor Facebook groups", priority: "MED", pillar: "Online" },
   { task: "Set up Google Business Profile for FCA", priority: "MED", pillar: "FCA" },
-  { task: "Generate Crypto.com API secret key for live balance on dashboard", priority: "MED", pillar: "Crypto" },
   { task: "Upgrade Twitter to Basic API tier ($100/mo) at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
@@ -485,14 +482,22 @@ export default function Dashboard() {
                 <p className="text-xs text-orange-400 mt-1">vantaai3.gumroad.com/l/pdcsgr</p>
                 <p className="text-xs text-slate-500 mt-1">7 AI systems · Launched Mar 26 · Tweet campaign live</p>
               </div>
+              <div className="rounded-xl bg-slate-800/60 p-3">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold text-white">🏗️ Data Center Concrete Playbook</p>
+                  <span className="text-xs font-bold text-orange-400">$9</span>
+                </div>
+                <p className="text-xs text-orange-400 mt-1">vantaai3.gumroad.com/l/datacenter26</p>
+                <p className="text-xs text-slate-500 mt-1">Land data center concrete work — fastest-growing segment in 2026</p>
+              </div>
             </div>
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
               <p className="text-xs text-slate-400">Twitter @Vanta69</p>
               <p className="mt-1 text-sm font-bold text-white">Content Machine</p>
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Account age</span><span className="text-white font-semibold">17 days</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">12+ posted/scheduled</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">2 (Free + $9)</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">20+ posted/scheduled</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">3 (Free + $9 + $9)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">API tier</span><span className="text-yellow-400 font-semibold">Free → upgrade at 50 followers</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET</span></div>
               </div>
