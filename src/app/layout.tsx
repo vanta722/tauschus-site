@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Vanta AI — Digital Products for Trades & Builders",
+  title: "Tauschus AI — Digital Products for Trades & Builders",
   description: "AI playbooks and systems for concrete contractors. Instant download.",
 };
 

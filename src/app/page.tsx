@@ -21,6 +21,17 @@ const PRODUCTS = [
     url: "https://vantaai3.gumroad.com/l/pdcsgr",
     tag: "New Release",
   },
+  {
+    badge: "$17",
+    badgeGreen: false,
+    icon: "🏗️",
+    title: "Data Center Concrete: The Small Contractor's Playbook",
+    description: "$300B in data centers are being built right now. Small concrete contractors can access civil and site scopes — if they know how to find and bid them.",
+    bullets: ["How to find data center projects near you", "Bidding strategy & pricing benchmarks", "AI tools to compete against larger GCs"],
+    cta: "Get It for $17 →",
+    url: "https://vantaai3.gumroad.com/l/datacenter26",
+    tag: "Hot Topic",
+  },
 ];
 
 const BENEFITS = [
@@ -90,7 +101,7 @@ export default function Home() {
           <h2 className="text-3xl font-black text-white">Tools That Pay for Themselves</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-400">Every product is built around a real problem contractors face. Actionable, specific, and ready to use today.</p>
         </div>
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className="grid gap-6 lg:grid-cols-3">
           {PRODUCTS.map((p) => (
             <div key={p.title} className="group flex flex-col rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition-all duration-300 hover:border-orange-400/40">
               <div className="mb-5 flex items-center justify-between">
@@ -165,8 +176,8 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
-              { num: "2", label: "Products Live on Gumroad" },
-              { num: "12+", label: "Tweets driving traffic daily" },
+              { num: "3", label: "Products Live on Gumroad" },
+              { num: "17+", label: "Tweets driving traffic daily" },
               { num: "349K", label: "Workers short — the problem we solve" },
               { num: "$0", label: "Cost to get started (free playbook)" },
             ].map((s) => (
