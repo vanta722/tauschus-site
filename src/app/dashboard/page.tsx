@@ -23,6 +23,7 @@ const CRON_JOBS = [
 ];
 
 const TASKS = [
+  { task: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge ($70 USDC total)", priority: "HIGH", pillar: "Crypto" },
   { task: "Facebook 60-day token: get App ID + App Secret from developers.facebook.com → send to Mac", priority: "HIGH", pillar: "FCA" },
   { task: "Update @Vanta69 Twitter bio + set website to Gumroad link", priority: "HIGH", pillar: "Online" },
   { task: "Drop products in 2–3 contractor Facebook groups", priority: "MED", pillar: "Online" },
@@ -524,7 +525,8 @@ export default function Dashboard() {
               { alert: "Twitter bio update needed — add Gumroad link + set website field to Gumroad store", urgency: "HIGH" },
               { alert: "ETH broke below $2,000 — DCA trigger live, BTC at $66.6K approaching $65K support", urgency: "HIGH" },
               { alert: "Drop products in 2–3 contractor Facebook groups — free traffic lever", urgency: "HIGH" },
-              { alert: "tauschus.com live ✅ · 3 Gumroad products live · FCA listings posted · Polymarket funded", urgency: "INFO" },
+              { alert: "tauschus.com live ✅ · 3 Gumroad products live · FCA listings posted ✅", urgency: "INFO" },
+              { alert: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge — still pending", urgency: "HIGH" },
               { alert: "Data Center Concrete Playbook ($17) — 5 tweets live, link active at vantaai3.gumroad.com/l/datacenter26", urgency: "INFO" },
               { alert: "ONDO $0.26 — RWA narrative intact, target $0.73 EOY", urgency: "INFO" },
               { alert: "Overnight builder active — 11PM ET nightly, next run tonight", urgency: "INFO" },
