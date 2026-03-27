@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 const PRODUCTS = [
   {
     badge: "FREE",
@@ -25,12 +29,12 @@ const PRODUCTS = [
     badge: "$9",
     badgeGreen: false,
     icon: "🏗️",
-    title: "Data Center Concrete: The Small Contractor's Playbook",
-    description: "$300B in data centers are being built right now. Small concrete contractors can access civil and site scopes — if they know how to find and bid them.",
-    bullets: ["How to find data center projects near you", "Bidding strategy & pricing benchmarks", "AI tools to compete against larger GCs"],
+    title: "The Data Center Concrete Playbook",
+    description: "Data centers are being built at record pace. Learn exactly how to position your concrete business to land data center work — the fastest-growing construction segment in 2026.",
+    bullets: ["How to find data center projects near you", "Bid strategy for large commercial pours", "Key contacts & procurement process"],
     cta: "Get It for $9 →",
     url: "https://vantaai3.gumroad.com/l/datacenter26",
-    tag: "Hot Topic",
+    tag: "Hot Market",
   },
 ];
 
@@ -40,6 +44,63 @@ const BENEFITS = [
   { icon: "🔧", title: "Actionable Systems", body: "Step-by-step workflows with real prompts you can copy and use today. No fluff." },
   { icon: "📈", title: "Real ROI", body: "From cutting 3 hours off your estimating to automating follow-up — these tools pay for themselves fast." },
 ];
+
+function EmailCapture() {
+  const [email, setEmail] = useState("");
+  const [submitted, setSubmitted] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("email", email);
+      formData.append("formType", "email_signup");
+      await fetch("/api/intake", { method: "POST", body: formData });
+    } catch (_) {
+      // fail silently
+    } finally {
+      setLoading(false);
+      setSubmitted(true);
+    }
+  }
+
+  return (
+    <section className="mx-auto max-w-6xl px-6 py-16">
+      <div className="rounded-3xl border border-orange-400/30 bg-slate-900/80 p-10 text-center">
+        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Stay Ahead</p>
+        <h2 className="mb-4 text-3xl font-black text-white">Get New Playbooks Before Anyone Else</h2>
+        <p className="mx-auto mb-8 max-w-xl text-slate-400">
+          Drop your email and we&apos;ll let you know when new AI tools and guides drop. No spam. Unsubscribe anytime.
+        </p>
+        {submitted ? (
+          <div className="inline-flex items-center gap-2 rounded-full bg-orange-400/20 px-6 py-3 text-sm font-bold text-orange-300">
+            ✓ You&apos;re in! We&apos;ll be in touch.
+          </div>
+        ) : (
+          <form onSubmit={handleSubmit} className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row">
+            <input
+              type="email"
+              required
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="your@email.com"
+              className="flex-1 rounded-2xl border border-slate-700 bg-slate-950 px-5 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-400 transition"
+            />
+            <button
+              type="submit"
+              disabled={loading}
+              className="rounded-2xl bg-orange-400 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-orange-300 disabled:opacity-60 whitespace-nowrap"
+            >
+              {loading ? "Sending…" : "Notify Me →"}
+            </button>
+          </form>
+        )}
+      </div>
+    </section>
+  );
+}
 
 export default function Home() {
   return (
@@ -101,7 +162,7 @@ export default function Home() {
           <h2 className="text-3xl font-black text-white">Tools That Pay for Themselves</h2>
           <p className="mx-auto mt-3 max-w-xl text-slate-400">Every product is built around a real problem contractors face. Actionable, specific, and ready to use today.</p>
         </div>
-        <div className="grid gap-6 lg:grid-cols-3">
+        <div className="grid gap-6 lg:grid-cols-2">
           {PRODUCTS.map((p) => (
             <div key={p.title} className="group flex flex-col rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition-all duration-300 hover:border-orange-400/40">
               <div className="mb-5 flex items-center justify-between">
@@ -135,6 +196,9 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* EMAIL CAPTURE */}
+      <EmailCapture />
 
       {/* BENEFITS */}
       <section className="border-y border-slate-800 bg-slate-900/40">
@@ -177,7 +241,7 @@ export default function Home() {
           <div className="space-y-4">
             {[
               { num: "3", label: "Products Live on Gumroad" },
-              { num: "17+", label: "Tweets driving traffic daily" },
+              { num: "20+", label: "Tweets driving traffic daily" },
               { num: "349K", label: "Workers short — the problem we solve" },
               { num: "$0", label: "Cost to get started (free playbook)" },
             ].map((s) => (
