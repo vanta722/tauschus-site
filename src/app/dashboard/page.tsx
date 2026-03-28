@@ -17,12 +17,44 @@ const POLY_MARKETS = [
 ];
 
 const CRON_JOBS = [
-  { name: "🌙 Overnight Product Builder", schedule: "11:00 PM ET nightly", status: "ACTIVE", last: "Last run: Mar 26 3AM UTC" },
-  { name: "📊 Market Scan 6AM ET", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 26 6AM ET" },
-  { name: "📊 Market Scan 6PM ET", schedule: "6:00 PM ET daily", status: "ACTIVE", last: "Last run: Mar 25 6PM ET" },
-  { name: "🐦 Daily Tweet Autopilot", schedule: "6:00 AM ET daily", status: "ACTIVE", last: "Last run: Mar 27 10PM UTC" },
-  { name: "📘 FCA Facebook Post", schedule: "🔄 Recurring daily @ 10:00 AM ET", status: "ACTIVE", last: "7-angle content rotation + new product priority" },
+  {
+    name: "🌙 Overnight Product Builder",
+    schedule: "Daily 11:00 PM ET",
+    status: "ACTIVE",
+    last: "Last run: OK",
+    detail: "Researches trending construction topics → builds PDF product → posts 5 tweets → reports to Telegram",
+  },
+  {
+    name: "📊 Market Scan — 6AM ET",
+    schedule: "Daily 6:00 AM ET",
+    status: "ACTIVE",
+    last: "Last run: OK",
+    detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
+  },
+  {
+    name: "📊 Market Scan — 6PM ET",
+    schedule: "Daily 6:00 PM ET",
+    status: "ACTIVE",
+    last: "Last run: OK",
+    detail: "Same as 6AM scan — second daily pulse",
+  },
+  {
+    name: "🐦 Daily Tweet Autopilot",
+    schedule: "Daily 6:00 AM ET (10:00 UTC)",
+    status: "ACTIVE",
+    last: "First tweet: Mar 27",
+    detail: "Checks memory for overnight new products → tweets first → else rotates 24-tweet library (7×AI Estimating, 7×Labor Shortage, 7×Data Center, 3×Brand)",
+  },
+  {
+    name: "📘 FCA Daily Facebook Post",
+    schedule: "Daily 10:00 AM ET (14:00 UTC)",
+    status: "ACTIVE",
+    last: "Next run: Mar 28 10AM ET",
+    detail: "Checks memory for new products → promotes first → else rotates 7 content angles · NE Florida · floridaconcretealliance.com · Token: PERMANENT",
+  },
 ];
+
+const CRON_LAST_UPDATED = "2026-03-28 01:00 UTC";
 
 const TASKS = [
   { task: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge ($70 USDC total)", priority: "HIGH", pillar: "Crypto" },
@@ -431,16 +463,22 @@ export default function Dashboard() {
         {/* Cron Jobs + Tasks */}
         <div className="grid gap-4 lg:grid-cols-2">
           <section className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">Automated Systems</p>
+            <div className="flex items-center justify-between mb-4">
+              <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Automated Systems</p>
+              <p className="text-xs text-slate-600">Last updated: {CRON_LAST_UPDATED}</p>
+            </div>
             <div className="space-y-3">
               {CRON_JOBS.map((j, i) => (
-                <div key={i} className="flex items-center justify-between rounded-xl bg-slate-800/60 px-4 py-3">
-                  <div>
-                    <p className="text-sm font-semibold text-white">{j.name}</p>
-                    <p className="text-xs text-slate-500">{j.schedule}</p>
-                    <p className="text-xs text-slate-600">{j.last}</p>
+                <div key={i} className="rounded-xl bg-slate-800/60 px-4 py-3">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-white">{j.name}</p>
+                      <p className="text-xs text-slate-500">{j.schedule}</p>
+                      <p className="text-xs text-slate-600">{j.last}</p>
+                    </div>
+                    <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400 shrink-0 ml-3">{j.status}</span>
                   </div>
-                  <span className="rounded-full bg-green-500/20 px-3 py-1 text-xs font-bold text-green-400">{j.status}</span>
+                  {j.detail && <p className="text-xs text-slate-500 mt-1.5 border-t border-slate-700/50 pt-1.5">{j.detail}</p>}
                 </div>
               ))}
             </div>
