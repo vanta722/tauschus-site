@@ -1,4 +1,5 @@
 "use client";
+// Memory API: CRONS.md added to core file list (2026-03-28)
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
