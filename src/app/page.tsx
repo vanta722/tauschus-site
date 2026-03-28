@@ -209,6 +209,82 @@ export default function Home() {
         </div>
       </section>
 
+      {/* AI CHIEF OF STAFF SERVICE */}
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <div className="relative overflow-hidden rounded-3xl border border-orange-400/40 bg-gradient-to-br from-slate-900 via-slate-900 to-orange-950/30 p-8 lg:p-12">
+          {/* Decorative gradient orb */}
+          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-orange-400/10 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-orange-500/10 blur-2xl" />
+
+          <div className="relative">
+            {/* Badge */}
+            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/50 bg-orange-400/15 px-4 py-1.5 text-xs font-bold text-orange-300">
+              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
+              New Service
+            </div>
+
+            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
+              {/* Left: text */}
+              <div>
+                <h2 className="mb-4 text-3xl font-black leading-tight text-white lg:text-4xl">
+                  Want This Running for<br />
+                  <span className="text-orange-400">Your Business?</span>
+                </h2>
+                <p className="mb-8 text-slate-300 leading-relaxed">
+                  We built a fully automated AI marketing system for Florida Concrete Alliance — daily social posts, lead capture, 5-minute lead response, and a live dashboard. Now we&apos;re installing it for other contractors.
+                </p>
+
+                <ul className="mb-8 space-y-3">
+                  {[
+                    "Live in 7 days — fully done for you",
+                    "Daily Facebook + social posts on autopilot",
+                    "Lead capture, follow-up & dashboard included",
+                  ].map((item) => (
+                    <li key={item} className="flex items-center gap-3 text-sm font-medium text-slate-200">
+                      <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-orange-400/20 text-xs font-black text-orange-400">✓</span>
+                      {item}
+                    </li>
+                  ))}
+                </ul>
+
+                <p className="mb-8 text-sm font-semibold text-orange-300">
+                  Starting at $97/mo — no contracts, cancel anytime
+                </p>
+
+                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                  <a
+                    href="/ai-chief-of-staff"
+                    className="rounded-2xl bg-orange-400 px-8 py-4 text-base font-black text-slate-950 shadow-xl shadow-orange-500/25 transition hover:bg-orange-300"
+                  >
+                    See How It Works →
+                  </a>
+                </div>
+                <p className="mt-4 text-xs text-slate-500">
+                  Used by Florida Concrete Alliance · Built on real results
+                </p>
+              </div>
+
+              {/* Right: feature highlights */}
+              <div className="space-y-4">
+                {[
+                  { icon: "📲", title: "Daily Social Posts", body: "AI writes and schedules your Facebook & social content automatically — every single day." },
+                  { icon: "⚡", title: "5-Minute Lead Response", body: "Every lead gets followed up within minutes, day or night. Never lose a job to slow response again." },
+                  { icon: "📊", title: "Live Dashboard", body: "See your leads, posts, and performance in one place. Full visibility, zero guesswork." },
+                ].map((f) => (
+                  <div key={f.title} className="flex items-start gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/70 p-5">
+                    <span className="text-2xl">{f.icon}</span>
+                    <div>
+                      <p className="mb-1 font-bold text-white">{f.title}</p>
+                      <p className="text-sm text-slate-400">{f.body}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* EMAIL CAPTURE */}
       <EmailCapture />
 
