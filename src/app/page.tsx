@@ -127,6 +127,7 @@ export default function Home() {
           <div className="flex items-center gap-3">
             <a href="#products" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Products</a>
             <a href="#about" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">About</a>
+            <a href="/ai-chief-of-staff" className="hidden text-sm font-semibold text-orange-400 transition hover:text-orange-300 sm:block">For Contractors</a>
             <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer"
               className="rounded-full bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-orange-300">
               Free Playbook →
