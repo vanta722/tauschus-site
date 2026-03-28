@@ -587,12 +587,12 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🔴 HIGH: FB Page Token expires daily — refresh at developers.facebook.com/tools/explorer when FCA posts fail", urgency: "HIGH" },
-                { alert: "🟡 MED: ETH below $2,000 since noon Mar 27 — DCA entry window open", urgency: "MED" },
+                { alert: "🟡 MED: ETH below $2,000 — DCA entry window open", urgency: "MED" },
                 { alert: "🟡 MED: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge)", urgency: "MED" },
+                { alert: "✅ Google Business Profile — LIVE as of Mar 28", urgency: "OK" },
               ].map((a, i) => (
-                <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
-                  <span className={a.urgency === "HIGH" ? "text-red-200" : "text-yellow-200"}>{a.alert}</span>
+                <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : a.urgency === "OK" ? "bg-green-500/10 border border-green-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
+                  <span className={a.urgency === "HIGH" ? "text-red-200" : a.urgency === "OK" ? "text-green-200" : "text-yellow-200"}>{a.alert}</span>
                 </div>
               ))}
             </div>
@@ -601,11 +601,11 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 Create Google Business Profile for FCA (20 min, free, direct leads)" },
-                { move: "🥈 Monitor Gumroad for first sale — check analytics weekly" },
-                { move: "🥉 Build property manager outreach list — 20-30 targets in NE Florida" },
-                { move: "🔲 Fund Polymarket account with $70 USDC" },
-                { move: "🔲 Consider ETH DCA entry (currently ~$1,979)" },
+                { move: "🥇 Ask past customers for Google reviews — text 3-5 people today. Even 2 reviews boosts local ranking fast. (FCA / HIGH)" },
+                { move: "🥈 Post $1.99 Margin Protection Playbook in contractor FB groups — follow up on yesterday's free playbook post. (Online / HIGH)" },
+                { move: "🥉 Check Gumroad analytics — did yesterday's group posts drive downloads? Data tells us where to focus. (Online / MED)" },
+                { move: "🔲 Follow up on any open FCA Marketplace leads — \"Still need that quote?\" converts. (FCA / HIGH)" },
+                { move: "🔲 Add job site photos to Google Business Profile — profiles with photos get 35%+ more clicks. (FCA / MED)" },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
                   <span className="text-slate-200">{m.move}</span>
