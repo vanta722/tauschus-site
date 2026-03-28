@@ -15,6 +15,17 @@ const PRODUCTS = [
     tag: "Most Downloaded",
   },
   {
+    badge: "$1.99",
+    badgeGreen: false,
+    icon: "💰",
+    title: "The Concrete Contractor's Margin Protection Playbook",
+    description: "Material costs are up 7.1% annualized in 2026. Steel, rebar, diesel, cement — all moving against you. This playbook gives you 5 systems to protect your profits when costs spike.",
+    bullets: ["Price escalation clauses for every bid", "Material pre-purchasing strategy", "AI cost tracking tools (free)"],
+    cta: "Get It for $1.99 →",
+    url: "https://vantaai3.gumroad.com/l/marginplaybook26",
+    tag: "Best Value",
+  },
+  {
     badge: "$9",
     badgeGreen: false,
     icon: "🦺",
@@ -240,7 +251,7 @@ export default function Home() {
           </div>
           <div className="space-y-4">
             {[
-              { num: "3", label: "Products Live on Gumroad" },
+              { num: "4", label: "Products Live on Gumroad" },
               { num: "20+", label: "Tweets driving traffic daily" },
               { num: "349K", label: "Workers short — the problem we solve" },
               { num: "$0", label: "Cost to get started (free playbook)" },
