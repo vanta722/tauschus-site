@@ -58,8 +58,10 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-03-28 01:00 UTC";
 
 const TASKS = [
-  { task: "Fund Polymarket → $40 Clarity Act YES + $30 Recession hedge ($70 USDC total)", priority: "HIGH", pillar: "Crypto" },
-  { task: "Set up Google Business Profile for FCA", priority: "MED", pillar: "FCA" },
+  { task: "🔴 Post AI Chief of Staff in contractor FB groups — first client target this week (tauschus.com/ai-chief-of-staff)", priority: "HIGH", pillar: "Online" },
+  { task: "🟡 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge)", priority: "MED", pillar: "Crypto" },
+  { task: "🟡 Ask past FCA customers for Google reviews — boosts local ranking", priority: "MED", pillar: "FCA" },
+  { task: "🟡 Check Gumroad analytics — track downloads/sales weekly", priority: "MED", pillar: "Online" },
   { task: "Upgrade Twitter to Basic API tier ($100/mo) at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
@@ -556,8 +558,9 @@ export default function Dashboard() {
               <p className="mt-1 text-sm font-bold text-white">Content Machine</p>
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Account age</span><span className="text-white font-semibold">17 days</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">20+ posted/scheduled</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">25+ posted/scheduled</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">4 (Free + $1.99 + $9 + $9)</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Service live</span><span className="text-green-400 font-semibold">AI Chief of Staff ($97/mo)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">API tier</span><span className="text-yellow-400 font-semibold">Free → upgrade at 50 followers</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET</span></div>
               </div>
@@ -587,9 +590,9 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🟡 MED: ETH below $2,000 — DCA entry window open", urgency: "MED" },
                 { alert: "🟡 MED: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge)", urgency: "MED" },
-                { alert: "✅ Google Business Profile — LIVE as of Mar 28", urgency: "OK" },
+                { alert: "🟢 INFO: AI Chief of Staff sales page LIVE — tauschus.com/ai-chief-of-staff", urgency: "OK" },
+                { alert: "🟢 INFO: Google Business Profile LIVE — Florida Concrete Alliance", urgency: "OK" },
               ].map((a, i) => (
                 <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : a.urgency === "OK" ? "bg-green-500/10 border border-green-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
                   <span className={a.urgency === "HIGH" ? "text-red-200" : a.urgency === "OK" ? "text-green-200" : "text-yellow-200"}>{a.alert}</span>
@@ -601,11 +604,11 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 Ask past customers for Google reviews — text 3-5 people today. Even 2 reviews boosts local ranking fast. (FCA / HIGH)" },
-                { move: "🥈 Post $1.99 Margin Protection Playbook in contractor FB groups — follow up on yesterday's free playbook post. (Online / HIGH)" },
-                { move: "🥉 Check Gumroad analytics — did yesterday's group posts drive downloads? Data tells us where to focus. (Online / MED)" },
-                { move: "🔲 Follow up on any open FCA Marketplace leads — \"Still need that quote?\" converts. (FCA / HIGH)" },
-                { move: "🔲 Add job site photos to Google Business Profile — profiles with photos get 35%+ more clicks. (FCA / MED)" },
+                { move: "🥇 Post AI Chief of Staff offer in contractor FB groups — first $97/mo client (tauschus.com/ai-chief-of-staff)" },
+                { move: "🥈 Ask 3-5 past FCA customers for Google reviews today — even 2 reviews boosts local ranking fast" },
+                { move: "🥉 Check Gumroad analytics — 48hrs since group posts, see if traffic converted" },
+                { move: "🔲 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge" },
+                { move: "🔲 Add job photos to Google Business Profile — profiles with photos get 35%+ more clicks" },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
                   <span className="text-slate-200">{m.move}</span>
