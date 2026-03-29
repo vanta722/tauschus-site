@@ -509,7 +509,7 @@ export default function Dashboard() {
             <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
               <div className="flex items-center justify-between">
                 <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Gumroad Products</p>
-                <span className="text-xs font-bold text-slate-400">4 products · sorted by price</span>
+                <span className="text-xs font-bold text-slate-400">5 products · sorted by price</span>
               </div>
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
@@ -520,6 +520,16 @@ export default function Dashboard() {
                   <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-bold text-green-300 border border-green-500/30">Most Downloaded</span>
                 </div>
                 <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noopener noreferrer" className="text-xs text-orange-400 mt-1 block hover:underline">vantaai3.gumroad.com/l/AIplaybook1</a>
+              </div>
+              <div className="rounded-xl bg-slate-800/60 p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <p className="text-xs font-bold text-white">📊 The Job Costing Fix for Concrete Contractors</p>
+                  <span className="text-xs font-bold text-green-400">FREE</span>
+                </div>
+                <div className="flex items-center gap-2 mt-1">
+                  <span className="rounded-full bg-green-500/20 px-2 py-0.5 text-xs font-bold text-green-300 border border-green-500/30">New Release</span>
+                </div>
+                <a href="https://vantaai3.gumroad.com/l/jobcostingfix26" target="_blank" rel="noopener noreferrer" className="text-xs text-orange-400 mt-1 block hover:underline">vantaai3.gumroad.com/l/jobcostingfix26</a>
               </div>
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
@@ -535,7 +545,7 @@ export default function Dashboard() {
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-bold text-white">🦺 The Labor Shortage Survival Guide</p>
-                  <span className="text-xs font-bold text-orange-400">$9</span>
+                  <span className="text-xs font-bold text-orange-400">$2.99</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="rounded-full bg-purple-500/20 px-2 py-0.5 text-xs font-bold text-purple-300 border border-purple-500/30">New Release</span>
@@ -545,7 +555,7 @@ export default function Dashboard() {
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-bold text-white">🏗️ The Data Center Concrete Playbook</p>
-                  <span className="text-xs font-bold text-orange-400">$9</span>
+                  <span className="text-xs font-bold text-orange-400">$2.99</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="rounded-full bg-orange-500/20 px-2 py-0.5 text-xs font-bold text-orange-300 border border-orange-500/30">Hot Market</span>
@@ -559,7 +569,7 @@ export default function Dashboard() {
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Account age</span><span className="text-white font-semibold">17 days</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">25+ posted/scheduled</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">4 (Free + $1.99 + $9 + $9)</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">5 (2×Free + $1.99 + $2.99 + $2.99)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Service live</span><span className="text-green-400 font-semibold">AI Chief of Staff ($97/mo)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">API tier</span><span className="text-yellow-400 font-semibold">Free → upgrade at 50 followers</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET</span></div>
