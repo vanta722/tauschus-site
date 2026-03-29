@@ -545,7 +545,7 @@ export default function Dashboard() {
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-bold text-white">🦺 The Labor Shortage Survival Guide</p>
-                  <span className="text-xs font-bold text-orange-400">$2.99</span>
+                  <span className="text-xs font-bold text-orange-400">$9</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="rounded-full bg-purple-500/20 px-2 py-0.5 text-xs font-bold text-purple-300 border border-purple-500/30">New Release</span>
@@ -555,7 +555,7 @@ export default function Dashboard() {
               <div className="rounded-xl bg-slate-800/60 p-3">
                 <div className="flex items-center justify-between gap-2">
                   <p className="text-xs font-bold text-white">🏗️ The Data Center Concrete Playbook</p>
-                  <span className="text-xs font-bold text-orange-400">$2.99</span>
+                  <span className="text-xs font-bold text-orange-400">$9</span>
                 </div>
                 <div className="flex items-center gap-2 mt-1">
                   <span className="rounded-full bg-orange-500/20 px-2 py-0.5 text-xs font-bold text-orange-300 border border-orange-500/30">Hot Market</span>
@@ -569,7 +569,7 @@ export default function Dashboard() {
               <div className="mt-3 space-y-1">
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Account age</span><span className="text-white font-semibold">17 days</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets (2 days)</span><span className="text-white font-semibold">25+ posted/scheduled</span></div>
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">5 (2×Free + $1.99 + $2.99 + $2.99)</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Products promoted</span><span className="text-white font-semibold">5 (2×Free + $1.99 + $9 + $9)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Service live</span><span className="text-green-400 font-semibold">AI Chief of Staff ($97/mo)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">API tier</span><span className="text-yellow-400 font-semibold">Free → upgrade at 50 followers</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Overnight builder</span><span className="text-green-400 font-semibold">ACTIVE 11PM ET</span></div>
