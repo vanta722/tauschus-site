@@ -60,6 +60,58 @@ const PRODUCTS = [
   },
 ];
 
+// ── OpenClaw Skills ──────────────────────────────────────────────────────────
+// To add a new skill: append one object to this array and redeploy. That's it.
+const SKILLS = [
+  {
+    icon: "📋",
+    title: "OpenClaw Quick-Start Checklist",
+    tag: "Email Capture",
+    tagColor: "blue",
+    description: "Top-of-funnel — every download = an email contact. The fastest way to start building your list inside OpenClaw.",
+    price: "FREE",
+    priceGreen: true,
+    url: "https://tauschus.gumroad.com/l/dwbmym",
+  },
+  {
+    icon: "🚀",
+    title: "Twitter Autopilot for OpenClaw",
+    tag: "No Ban Risk",
+    tagColor: "purple",
+    description: "API-based Twitter automation — 30+ days live, zero failures. Rotates a content library, posts on schedule, tracks state across restarts.",
+    price: "$9",
+    priceGreen: false,
+    url: "https://tauschus.gumroad.com/l/Twitterautopilot",
+  },
+  {
+    icon: "⏰",
+    title: "Cron Starter Kit",
+    tag: "Background Tasks",
+    tagColor: "teal",
+    description: "4-file pattern + 3 real production examples. Drop-in cron jobs for OpenClaw — heartbeats, market scans, overnight builders.",
+    price: "$9",
+    priceGreen: false,
+    url: "https://tauschus.gumroad.com/l/yqvhl",
+  },
+  {
+    icon: "⚙️",
+    title: "Small Business Ops Bundle",
+    tag: "7 Files",
+    tagColor: "orange",
+    description: "Full production workspace in 5 minutes — battle-tested. SOUL, HEARTBEAT, MEMORY, TOOLS, AGENTS, SECURITY, and FINANCE all pre-wired.",
+    price: "$19",
+    priceGreen: false,
+    url: "https://tauschus.gumroad.com/l/gikcus",
+  },
+];
+
+const TAG_COLORS: Record<string, string> = {
+  blue:   "bg-blue-500/20 text-blue-300 border border-blue-500/30",
+  purple: "bg-purple-500/20 text-purple-300 border border-purple-500/30",
+  teal:   "bg-teal-500/20 text-teal-300 border border-teal-500/30",
+  orange: "bg-orange-400/20 text-orange-300 border border-orange-400/30",
+};
+
 const BENEFITS = [
   { icon: "⚡", title: "Instant Download", body: "No waiting, no shipping. Every product is delivered the moment you check out." },
   { icon: "🎯", title: "Built for Trades", body: "Not generic AI content. Every guide is built specifically for concrete contractors and trades businesses." },
@@ -137,6 +189,7 @@ export default function Home() {
           </div>
           <div className="flex items-center gap-3">
             <a href="#products" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Products</a>
+            <a href="#skills" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Skills</a>
             <a href="#about" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">About</a>
             <a href="/ai-chief-of-staff" className="hidden text-sm font-semibold text-orange-400 transition hover:text-orange-300 sm:block">For Contractors</a>
             <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer"
@@ -219,6 +272,79 @@ export default function Home() {
           </p>
         </div>
       </section>
+
+      {/* ── OPENCLAW SKILLS ──────────────────────────────────────────────── */}
+      <section id="skills" className="mx-auto max-w-6xl px-6 py-16">
+        {/* Header */}
+        <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800/60 px-3 py-1.5 text-xs font-bold text-slate-300">
+              <span className="text-base">🦾</span> OpenClaw Skills
+              <span className="ml-1 rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-bold text-slate-400">
+                {SKILLS.length} live
+              </span>
+            </div>
+            <h2 className="text-3xl font-black text-white">Installable Agent Skills</h2>
+            <p className="mt-2 max-w-xl text-slate-400">
+              Drop-in automations for OpenClaw operators. Battle-tested in production — Twitter, cron jobs, ops systems. Install in minutes, not days.
+            </p>
+          </div>
+          <a
+            href="https://tauschus.gumroad.com"
+            target="_blank"
+            rel="noreferrer"
+            className="shrink-0 rounded-full border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-orange-400 hover:text-orange-300"
+          >
+            All Skills on Gumroad ↗
+          </a>
+        </div>
+
+        {/* Skills grid — data-driven: add to SKILLS array above to add a card */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
+          {SKILLS.map((s) => (
+            <a
+              key={s.title}
+              href={s.url}
+              target="_blank"
+              rel="noreferrer"
+              className="group flex items-start gap-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 transition-all duration-200 hover:border-slate-600 hover:bg-slate-900"
+            >
+              {/* Icon */}
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-2xl">
+                {s.icon}
+              </div>
+
+              {/* Content */}
+              <div className="flex flex-1 flex-col gap-2">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-base font-bold text-white leading-snug group-hover:text-orange-300 transition-colors">
+                    {s.title}
+                  </h3>
+                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${s.priceGreen ? "bg-green-500 text-white" : "bg-orange-400 text-slate-950"}`}>
+                    {s.price}
+                  </span>
+                </div>
+                <span className={`w-fit rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${TAG_COLORS[s.tagColor] ?? TAG_COLORS.orange}`}>
+                  {s.tag}
+                </span>
+                <p className="text-sm text-slate-400 leading-relaxed">{s.description}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+
+        {/* "More coming" footer */}
+        <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-5 text-center">
+          <p className="text-sm text-slate-500">
+            New skills added frequently —{" "}
+            <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">
+              follow @Vanta69
+            </a>{" "}
+            or drop your email above to get notified first.
+          </p>
+        </div>
+      </section>
+      {/* ── END OPENCLAW SKILLS ──────────────────────────────────────────── */}
 
       {/* AI CHIEF OF STAFF SERVICE */}
       <section className="mx-auto max-w-6xl px-6 py-16">
@@ -340,8 +466,8 @@ export default function Home() {
           <div className="space-y-4">
             {[
               { num: "5", label: "Products Live on Gumroad" },
+              { num: "4", label: "OpenClaw Skills Available" },
               { num: "20+", label: "Tweets driving traffic daily" },
-              { num: "349K", label: "Workers short — the problem we solve" },
               { num: "$0", label: "Cost to get started (free playbook)" },
             ].map((s) => (
               <div key={s.label} className="flex items-center gap-5 rounded-2xl border border-slate-800 bg-slate-950/60 px-6 py-4">
@@ -377,6 +503,7 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-slate-500">
             <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
+            <a href="#skills" className="transition hover:text-orange-400">OpenClaw Skills</a>
             <a href="https://vantaai3.gumroad.com/l/pdcsgr" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Labor Guide ($9)</a>
             <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">X / Twitter</a>
             <a href="https://vantaai3.gumroad.com" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">All Products</a>
