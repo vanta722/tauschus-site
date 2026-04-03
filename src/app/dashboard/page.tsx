@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-03-31: OpenClaw product suite added, Side Hustle School tracker, updated crons/tasks/alerts
+// Dashboard updated 2026-04-03: 4AM sync — tasks, crons, alerts, crypto prices, Polymarket refreshed
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -13,9 +13,9 @@ const CRYPTO_ASSETS = [
 ];
 
 const POLY_MARKETS = [
-  { label: "Clarity Act Signed 2026", rec: "YES @ ~62¢", risk: "MEDIUM", riskColor: "text-orange-400", note: "ONDO double dip — direct RWA catalyst", alloc: "$40" },
-  { label: "US Recession by EOY 2026", rec: "YES @ ~35¢", risk: "LOW-MED", riskColor: "text-yellow-400", note: "Portfolio hedge — hawkish Fed + oil at $112", alloc: "$30" },
-  { label: "US x Iran Ceasefire Mar 31", rec: "NO @ ~84¢", risk: "LOW", riskColor: "text-green-400", note: "Ceasefire in 6 days highly unlikely", alloc: "Skip" },
+  { label: "US forces enter Iran by April 30", rec: "CAUTION @ ~66.5¢", risk: "HIGH", riskColor: "text-red-400", note: "Smart money inflow — US strikes + 50K troops deployed. Ceasefire collapsed.", alloc: "WATCH" },
+  { label: "Clarity Act Signed 2026", rec: "YES @ ~62¢", risk: "MEDIUM", riskColor: "text-orange-400", note: "ONDO double dip — direct RWA catalyst. Needs Tash approval.", alloc: "$40" },
+  { label: "US Recession by EOY 2026", rec: "YES @ ~35¢", risk: "LOW-MED", riskColor: "text-yellow-400", note: "Portfolio hedge — hawkish macro + Iran risk premium. Needs Tash approval.", alloc: "$30" },
 ];
 
 const CRON_JOBS = [
@@ -23,49 +23,63 @@ const CRON_JOBS = [
     name: "🌙 Overnight Product Builder",
     schedule: "Daily 11:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: OK",
+    last: "Last run: 2026-04-03 OK · AI Job Costing Playbook built",
     detail: "Researches trending construction topics → builds PDF product → posts 5 tweets → reports to Telegram",
+  },
+  {
+    name: "📊 Dashboard + Memory Sync",
+    schedule: "Daily 4:00 AM ET",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-03 08:00 UTC — RUNNING",
+    detail: "Reads all memory files → pulls live crypto + Polymarket data → updates MEMORY.md → pushes dashboard to GitHub",
   },
   {
     name: "📊 Market Scan — 6AM ET",
     schedule: "Daily 6:00 AM ET",
     status: "ACTIVE",
-    last: "Last run: OK",
+    last: "Last run: 2026-04-03 OK",
     detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
   },
   {
-    name: "📊 Market Scan — 6PM ET",
-    schedule: "Daily 6:00 PM ET",
+    name: "🧠 Self-Learning Loop",
+    schedule: "Daily 7:00 AM ET",
     status: "ACTIVE",
-    last: "Last run: OK",
-    detail: "Same as 6AM scan — second daily pulse",
-  },
-  {
-    name: "🐦 Daily Tweet Autopilot",
-    schedule: "Daily 6:00 AM ET (10:00 UTC)",
-    status: "ACTIVE",
-    last: "40+ tweets posted — 5 product campaigns",
-    detail: "Rotates tweet library (contractor + OpenClaw products). Override mode for urgent posts. API-based (no browser, no ban risk). 30+ days zero failures.",
+    last: "Last run: 2026-04-03 scheduled",
+    detail: "Reviews today's daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
   },
   {
     name: "📘 FCA Daily Facebook Post",
     schedule: "Daily 10:00 AM ET (14:00 UTC)",
     status: "ACTIVE",
-    last: "Running — permanent token",
+    last: "Last run: 2026-04-02 OK",
     detail: "Posts to Florida Concrete Alliance page · NE Florida · floridaconcretealliance.com · Token: PERMANENT (never expires)",
+  },
+  {
+    name: "🐦 Daily Tweet Autopilot",
+    schedule: "Daily 10:00 AM UTC",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-02 OK · 45+ tweets total",
+    detail: "Rotates tweet library (contractor + OpenClaw products). Override mode for new products. API-based (no browser, no ban risk). Zero failures.",
+  },
+  {
+    name: "📊 Market Scan — 6PM ET",
+    schedule: "Daily 6:00 PM ET",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-02 OK",
+    detail: "Same as 6AM scan — second daily pulse. Delivered to Telegram.",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-03-28 01:00 UTC";
+const CRON_LAST_UPDATED = "2026-04-03 08:00 UTC";
 
 const TASKS = [
-  { task: "🔴 Post 3 Reddit replies in r/openclaw + r/AiForSmallBusiness — warm threads with active buyers (context/day-22-distribution.md)", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 Post r/AiForSmallBusiness — first OpenClaw post in highest-traffic sub (content ready, not posted yet)", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 Investigate anomalous tweet (ID: 2039850138131206563) — off-brand 'Hermes' post not from Mac. Another session has Twitter access.", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 Review + approve product approval backlog (4 PDFs built overnight) — AI Job Costing, Labor Shortage v2, Cash Flow Fix, Cost Squeeze Guide", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge)", priority: "HIGH", pillar: "Crypto" },
+  { task: "🟡 First AI Chief of Staff client — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
   { task: "🟡 List Workspace Audit service on Gumroad ($25) — email in inbox, no file needed", priority: "MED", pillar: "Online" },
-  { task: "🟡 Set up Kit (kit.com, free) for email nurture automation — Emails 2-4 written, need platform to fire on schedule", priority: "MED", pillar: "Online" },
-  { task: "🟡 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge)", priority: "MED", pillar: "Crypto" },
-  { task: "🟡 Post AI Chief of Staff in contractor FB groups — first $97/mo client target", priority: "MED", pillar: "Online" },
-  { task: "🟡 Add 'New to OpenClaw? Free checklist →' link to each paid Gumroad listing description", priority: "MED", pillar: "Online" },
+  { task: "🟡 Set up Kit (kit.com, free) for email nurture automation — 4 emails written, needs platform", priority: "MED", pillar: "Online" },
+  { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
   { task: "🟡 Ask past FCA customers for Google reviews — boosts local ranking", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier at 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
@@ -512,15 +526,15 @@ export default function Dashboard() {
           <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎓 Agent Side Hustle School — 28-Day Sprint</p>
           <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
             <div className="flex flex-wrap gap-6">
-              <div><p className="text-xs text-slate-500">Current Day</p><p className="text-3xl font-black text-orange-400">25 / 27</p></div>
-              <div><p className="text-xs text-slate-500">Phase</p><p className="text-sm font-bold text-white">6 — Revenue Sprint</p></div>
+              <div><p className="text-xs text-slate-500">Current Day</p><p className="text-3xl font-black text-orange-400">3 / 28</p></div>
+              <div><p className="text-xs text-slate-500">Phase</p><p className="text-sm font-bold text-white">1 — Foundation (complete)</p></div>
               <div><p className="text-xs text-slate-500">Revenue</p><p className="text-3xl font-black text-green-400">$0</p><p className="text-xs text-slate-500">Target: $100</p></div>
-              <div><p className="text-xs text-slate-500">Email List</p><p className="text-3xl font-black text-white">0</p><p className="text-xs text-slate-500">Capture live</p></div>
-              <div><p className="text-xs text-slate-500">Tweets Sent</p><p className="text-3xl font-black text-white">40+</p></div>
-              <div><p className="text-xs text-slate-500">Reddit Posts</p><p className="text-3xl font-black text-white">3</p><p className="text-xs text-slate-500">+6 ready to post</p></div>
+              <div><p className="text-xs text-slate-500">Products Live</p><p className="text-3xl font-black text-white">9</p><p className="text-xs text-slate-500">Contractor + OpenClaw</p></div>
+              <div><p className="text-xs text-slate-500">Tweets Sent</p><p className="text-3xl font-black text-white">45+</p></div>
+              <div><p className="text-xs text-slate-500">PDFs Built</p><p className="text-3xl font-black text-white">4</p><p className="text-xs text-slate-500">Approval queue</p></div>
             </div>
-            <div className="w-full bg-slate-800 rounded-full h-2"><div className="bg-orange-400 h-2 rounded-full" style={{width: "88%"}} /></div>
-            <p className="text-xs text-slate-500">To $100: need 9 sales (mix of $9/$9/$19/$25). Bottleneck: distribution. Products validated, reach is the gap.</p>
+            <div className="w-full bg-slate-800 rounded-full h-2"><div className="bg-orange-400 h-2 rounded-full" style={{width: "11%"}} /></div>
+            <p className="text-xs text-slate-500">Blockers: Claw Mart seller account + product approval backlog (4 PDFs). Next: approve products → list → distribute.</p>
           </div>
         </section>
 
@@ -613,14 +627,15 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🔴 HIGH: Post r/AiForSmallBusiness now — highest-traffic OpenClaw sub, never posted there. Content ready in day-22-distribution.md", urgency: "HIGH" },
-                { alert: "🔴 HIGH: 3 Reddit replies ready to send — warm buyer threads in r/openclaw + r/AI_Agents. Copy in community-research.md", urgency: "HIGH" },
-                { alert: "🟡 MED: List Workspace Audit service on Gumroad ($25) — email in inbox, 2 min to list, service offer converts fastest with cold audience", urgency: "MED" },
-                { alert: "🟡 MED: Set up Kit email automation (kit.com, free) — 4-email nurture sequence written, just needs platform to fire automatically", urgency: "MED" },
-                { alert: "🟡 MED: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge)", urgency: "MED" },
-                { alert: "🟢 INFO: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
-                { alert: "🟢 INFO: AI Chief of Staff sales page LIVE — tauschus.com/ai-chief-of-staff", urgency: "OK" },
-                { alert: "🟢 INFO: Google Business Profile LIVE — Florida Concrete Alliance · NE Florida", urgency: "OK" },
+                { alert: "🚨 HIGH: Anomalous tweet detected (ID: 2039850138131206563) — 'How good is Hermes? 🧐 #Hermes #Openclaw' posted at 23:39 UTC Apr 2. NOT from Mac. Another session/agent has Twitter access. Investigate immediately.", urgency: "HIGH" },
+                { alert: "🔴 HIGH: 4 products in approval backlog — AI Job Costing Playbook, Labor Shortage Guide v2, Cash Flow Fix Playbook, Cost Squeeze Guide. Built but not listed. Tash approval required.", urgency: "HIGH" },
+                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran market at 66.5% YES and rising.", urgency: "HIGH" },
+                { alert: "🟡 MED: Crypto portfolio under pressure — BTC $67K, ETH $2,066, ONDO $0.262, SOL $79.96. No floor confirmed after Apr 1 dead-cat bounce. Hold all, no adds.", urgency: "MED" },
+                { alert: "🟡 MED: Iran April 30 YES @ 66.5¢ — consistent smart money inflow. Speculative only. Tash approval required.", urgency: "MED" },
+                { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
+                { alert: "🟢 WIN: Overnight cron running clean — AI Job Costing Playbook + case study tweet built on Apr 3", urgency: "OK" },
+                { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
+                { alert: "🟢 WIN: All 7 automated crons running — market scans, product builder, tweet autopilot, FCA posts, self-learning loop", urgency: "OK" },
               ].map((a, i) => (
                 <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : a.urgency === "OK" ? "bg-green-500/10 border border-green-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
                   <span className={a.urgency === "HIGH" ? "text-red-200" : a.urgency === "OK" ? "text-green-200" : "text-yellow-200"}>{a.alert}</span>
@@ -632,12 +647,12 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 Post r/AiForSmallBusiness — free checklist thread, highest-traffic community not yet hit. Copy in day-22-distribution.md" },
-                { move: "🥈 Post 3 Reddit replies (r/openclaw + r/AI_Agents) — warm threads, exact buyers. Copy in community-research.md" },
-                { move: "🥉 List Workspace Audit ($25) on Gumroad — service offer, no file needed, email in inbox" },
-                { move: "🔲 Set up Kit.com (free) — paste the 4-email nurture sequence from passive-income-setup.md. Automation takes 20 min." },
-                { move: "🔲 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge" },
-                { move: "🔲 Post AI Chief of Staff in contractor FB groups — first $97/mo client (tauschus.com/ai-chief-of-staff)" },
+                { move: "🥇 Investigate anomalous Twitter access — check which session/agent posted the Hermes tweet. Review credentials, revoke access if needed." },
+                { move: "🥈 Approve product backlog (4 PDFs) — review and list on Gumroad. AI Job Costing = highest value, suggested $9–$14." },
+                { move: "🥉 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge. Iran at 66.5% is the hot market." },
+                { move: "🔲 Post AI Chief of Staff in contractor FB groups — first $97/mo recurring client (tauschus.com/ai-chief-of-staff)" },
+                { move: "🔲 List Workspace Audit ($25) on Gumroad — no file needed, fastest-converting service offer for cold audience" },
+                { move: "🔲 Set up Kit.com (free) — 4-email nurture sequence is written, just needs platform to activate" },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
                   <span className="text-slate-200">{m.move}</span>
