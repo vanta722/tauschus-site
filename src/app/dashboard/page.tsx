@@ -90,7 +90,7 @@ const MEMORY_API_KEY = "";
 const FCA_PIPELINE = [
   { stage: "New Leads", count: 0, color: "#f97316" },
   { stage: "Quoted", count: 0, color: "#6366f1" },
-  { stage: "Won", count: 0, color: "#22c55e" },
+  { stage: "Won", count: 1, color: "#22c55e" },
   { stage: "Lost", count: 0, color: "#ef4444" },
 ];
 
@@ -627,12 +627,12 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🚨 HIGH: Anomalous tweet detected (ID: 2039850138131206563) — 'How good is Hermes? 🧐 #Hermes #Openclaw' posted at 23:39 UTC Apr 2. NOT from Mac. Another session/agent has Twitter access. Investigate immediately.", urgency: "HIGH" },
-                { alert: "🔴 HIGH: 4 products in approval backlog — AI Job Costing Playbook, Labor Shortage Guide v2, Cash Flow Fix Playbook, Cost Squeeze Guide. Built but not listed. Tash approval required.", urgency: "HIGH" },
-                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran market at 66.5% YES and rising.", urgency: "HIGH" },
-                { alert: "🟡 MED: Crypto portfolio under pressure — BTC $67K, ETH $2,066, ONDO $0.262, SOL $79.96. No floor confirmed after Apr 1 dead-cat bounce. Hold all, no adds.", urgency: "MED" },
-                { alert: "🟡 MED: Iran April 30 YES @ 66.5¢ — consistent smart money inflow. Speculative only. Tash approval required.", urgency: "MED" },
+                { alert: "🎉 WIN: First FCA deal CLOSED — Joseph Noble, Jacksonville FL. 730 sq ft stamped concrete. $6,475 contract. $1,000 deposit received. Pour date: April 8.", urgency: "OK" },
+                { alert: "💰 FCA-001 PAYMENT DUE Mon Apr 6 — $500 remaining deposit. Pour day Apr 8: $3,385. Completion: $1,590. Total remaining: $5,475.", urgency: "MED" },
+                { alert: "🔴 HIGH: 3 products in approval backlog — Cash Flow Fix Playbook, Cost Squeeze Guide, Labor Shortage Guide v2. Built but not listed. Tash approval required.", urgency: "HIGH" },
+                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge).", urgency: "HIGH" },
                 { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
+                { alert: "🟡 MED: Set up Kit.com (free) — 4-email nurture sequence written, just needs platform to activate", urgency: "MED" },
                 { alert: "🟢 WIN: Overnight cron running clean — AI Job Costing Playbook + case study tweet built on Apr 3", urgency: "OK" },
                 { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
                 { alert: "🟢 WIN: All 7 automated crons running — market scans, product builder, tweet autopilot, FCA posts, self-learning loop", urgency: "OK" },
@@ -672,4 +672,5 @@ export default function Dashboard() {
     </main>
   );
 }
+
 
