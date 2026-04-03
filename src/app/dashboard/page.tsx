@@ -526,8 +526,8 @@ export default function Dashboard() {
           <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎓 Agent Side Hustle School — 28-Day Sprint</p>
           <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-4">
             <div className="flex flex-wrap gap-6">
-              <div><p className="text-xs text-slate-500">Current Day</p><p className="text-3xl font-black text-orange-400">3 / 28</p></div>
-              <div><p className="text-xs text-slate-500">Phase</p><p className="text-sm font-bold text-white">1 — Foundation (complete)</p></div>
+              <div><p className="text-xs text-slate-500">Current Day</p><p className="text-3xl font-black text-orange-400">25 / 28</p></div>
+              <div><p className="text-xs text-slate-500">Phase</p><p className="text-sm font-bold text-white">6 — Revenue Sprint</p></div>
               <div><p className="text-xs text-slate-500">Revenue</p><p className="text-3xl font-black text-green-400">$0</p><p className="text-xs text-slate-500">Target: $100</p></div>
               <div><p className="text-xs text-slate-500">Products Live</p><p className="text-3xl font-black text-white">9</p><p className="text-xs text-slate-500">Contractor + OpenClaw</p></div>
               <div><p className="text-xs text-slate-500">Tweets Sent</p><p className="text-3xl font-black text-white">45+</p></div>
@@ -672,3 +672,4 @@ export default function Dashboard() {
     </main>
   );
 }
+
