@@ -139,13 +139,66 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca">("ops");
   const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
   const [fileUpdatedAt, setFileUpdatedAt] = useState<string>("");
   const [memLoading, setMemLoading] = useState(false);
   const [memError, setMemError] = useState<string | null>(null);
+
+  // FCA state
+  type LeadStage = "New Lead" | "Contacted" | "Estimate Sent" | "Follow-Up" | "Booked" | "Lost";
+  type JobStatus = "Scheduled" | "In Progress" | "Completed";
+  interface Lead {
+    id: number; name: string; phone: string; area: string; service: string;
+    value: string; source: string; notes: string; stage: LeadStage;
+  }
+  interface Job {
+    id: number; client: string; location: string; jobType: string;
+    totalPrice: number; depositPaid: number; status: JobStatus; notes: string;
+  }
+  interface Payment { id: number; client: string; amount: number; date: string; notes: string; }
+  interface Expense { id: number; description: string; amount: number; date: string; }
+  interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
+
+  const [leads, setLeads] = useState<Lead[]>([
+    { id: 1, name: "Joseph Noble", phone: "", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "730 sq ft. $1,000 deposit received. Starts Mon Apr 6. Pour Wed Apr 8.", stage: "Booked" },
+  ]);
+  const [jobs, setJobs] = useState<Job[]>([
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete", totalPrice: 6475, depositPaid: 1000, status: "Scheduled", notes: "730 sq ft. Mon Apr 6 start. Pour Apr 8. Remaining: $5,475." },
+  ]);
+  const [payments, setPayments] = useState<Payment[]>([
+    { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
+  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [clients, setClients] = useState<Client[]>([
+    { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
+  ]);
+
+  const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense" | "client">(null);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money" | "clients" | "insights">("kpi");
+
+  const fcaKpi = {
+    leadsWeek: leads.filter(l => l.stage !== "Lost").length,
+    leadsMonth: leads.length,
+    estimatesSent: leads.filter(l => ["Estimate Sent","Follow-Up","Booked"].includes(l.stage)).length,
+    booked: leads.filter(l => l.stage === "Booked").length,
+    completed: jobs.filter(j => j.status === "Completed").length,
+    revenueWeek: payments.reduce((s, p) => s + p.amount, 0),
+    revenueMonth: payments.reduce((s, p) => s + p.amount, 0),
+    outstanding: jobs.reduce((s, j) => s + (j.totalPrice - j.depositPaid), 0),
+    activeJobs: jobs.filter(j => j.status !== "Completed").length,
+    totalExpenses: expenses.reduce((s, e) => s + e.amount, 0),
+  };
+
+  const nextLeadId = () => Math.max(0, ...leads.map(l => l.id)) + 1;
+  const nextJobId = () => Math.max(0, ...jobs.map(j => j.id)) + 1;
+  const nextPayId = () => Math.max(0, ...payments.map(p => p.id)) + 1;
+  const nextExpId = () => Math.max(0, ...expenses.map(e => e.id)) + 1;
+  const nextClientId = () => Math.max(0, ...clients.map(c => c.id)) + 1;
 
   const tryAuth = () => {
     if (pw === PASS) { setAuthed(true); setPwErr(false); }
@@ -303,8 +356,8 @@ export default function Dashboard() {
         </div>
 
         {/* Tab switcher */}
-        <div className="flex gap-2 border-b border-slate-800 pb-0">
-          {(["ops", "memory"] as const).map((tab) => (
+        <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
+          {(["ops", "fca", "memory"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -314,7 +367,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : "🧠 Mac's Memory"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : "🧠 Mac's Memory"}
             </button>
           ))}
         </div>
@@ -430,6 +483,440 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
+          </section>
+        )}
+
+        {activeTab === "fca" && (
+          <section className="space-y-4">
+
+            {/* FCA Sub-nav */}
+            <div className="flex flex-wrap gap-2">
+              {(["kpi","leads","jobs","money","clients","insights"] as const).map(s => (
+                <button key={s} onClick={() => setFcaSection(s)}
+                  className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide transition ${fcaSection === s ? "bg-orange-400 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
+                  {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : s === "money" ? "💰 Money" : s === "clients" ? "👥 Clients" : "💡 Insights"}
+                </button>
+              ))}
+            </div>
+
+            {/* KPI SUMMARY */}
+            {fcaSection === "kpi" && (
+              <div className="space-y-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-400">KPI Summary</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+                  {[
+                    { label: "Leads This Week", val: fcaKpi.leadsWeek, color: "text-orange-400" },
+                    { label: "Leads This Month", val: fcaKpi.leadsMonth, color: "text-orange-400" },
+                    { label: "Estimates Sent", val: fcaKpi.estimatesSent, color: "text-blue-400" },
+                    { label: "Jobs Booked", val: fcaKpi.booked, color: "text-green-400" },
+                    { label: "Jobs Completed", val: fcaKpi.completed, color: "text-green-400" },
+                    { label: "Revenue This Week", val: `$${fcaKpi.revenueWeek.toLocaleString()}`, color: "text-green-400" },
+                    { label: "Revenue This Month", val: `$${fcaKpi.revenueMonth.toLocaleString()}`, color: "text-green-400" },
+                    { label: "Outstanding", val: `$${fcaKpi.outstanding.toLocaleString()}`, color: "text-yellow-400" },
+                    { label: "Active Jobs", val: fcaKpi.activeJobs, color: "text-white" },
+                    { label: "Expenses", val: `$${fcaKpi.totalExpenses.toLocaleString()}`, color: "text-red-400" },
+                  ].map((k, i) => (
+                    <div key={i} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                      <p className="text-xs text-slate-500">{k.label}</p>
+                      <p className={`text-2xl font-black mt-1 ${k.color}`}>{k.val}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* LEADS */}
+            {fcaSection === "leads" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Lead Pipeline</p>
+                  <button onClick={() => { setEditingLead(null); setFcaModal("lead"); }}
+                    className="rounded-xl bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-orange-300 transition">+ Add Lead</button>
+                </div>
+                {(["New Lead","Contacted","Estimate Sent","Follow-Up","Booked","Lost"] as LeadStage[]).map(stage => {
+                  const stageleads = leads.filter(l => l.stage === stage);
+                  return (
+                    <div key={stage}>
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className={`text-xs font-bold uppercase tracking-wide px-2 py-0.5 rounded-full ${stage === "Booked" ? "bg-green-500/20 text-green-300" : stage === "Lost" ? "bg-red-500/20 text-red-300" : stage === "Estimate Sent" ? "bg-blue-500/20 text-blue-300" : "bg-slate-700 text-slate-300"}`}>{stage}</span>
+                        <span className="text-xs text-slate-500">{stageleads.length} leads</span>
+                      </div>
+                      {stageleads.length === 0 && <p className="text-xs text-slate-600 pl-2 mb-3">None</p>}
+                      {stageleads.map(lead => (
+                        <div key={lead.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 mb-2">
+                          <div className="flex items-start justify-between gap-2">
+                            <div>
+                              <p className="text-sm font-bold text-white">{lead.name}</p>
+                              <p className="text-xs text-slate-400">{lead.phone} · {lead.area}</p>
+                              <p className="text-xs text-slate-400">{lead.service} · <span className="text-green-400 font-bold">{lead.value}</span> · {lead.source}</p>
+                              {lead.notes && <p className="text-xs text-slate-500 mt-1">{lead.notes}</p>}
+                            </div>
+                            <div className="flex gap-2 shrink-0">
+                              <button onClick={() => { setEditingLead(lead); setFcaModal("lead"); }}
+                                className="text-xs text-orange-400 hover:text-orange-300">Edit</button>
+                              <button onClick={() => setLeads(prev => prev.filter(l => l.id !== lead.id))}
+                                className="text-xs text-red-400 hover:text-red-300">✕</button>
+                            </div>
+                          </div>
+                          <div className="flex gap-1 mt-2 flex-wrap">
+                            {(["New Lead","Contacted","Estimate Sent","Follow-Up","Booked","Lost"] as LeadStage[]).filter(s => s !== lead.stage).map(s => (
+                              <button key={s} onClick={() => setLeads(prev => prev.map(l => l.id === lead.id ? {...l, stage: s} : l))}
+                                className="text-xs rounded-lg bg-slate-800 px-2 py-1 text-slate-400 hover:text-white transition">→ {s}</button>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
+            {/* JOBS */}
+            {fcaSection === "jobs" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Job Tracker</p>
+                  <button onClick={() => { setEditingJob(null); setFcaModal("job"); }}
+                    className="rounded-xl bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-orange-300 transition">+ Add Job</button>
+                </div>
+                {jobs.map(job => {
+                  const remaining = job.totalPrice - job.depositPaid;
+                  const pct = job.totalPrice > 0 ? Math.round((job.depositPaid / job.totalPrice) * 100) : 0;
+                  return (
+                    <div key={job.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-bold text-white">{job.client}</p>
+                          <p className="text-xs text-slate-400">{job.location} · {job.jobType}</p>
+                          {job.notes && <p className="text-xs text-slate-500 mt-1">{job.notes}</p>}
+                        </div>
+                        <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${job.status === "Completed" ? "bg-green-500/20 text-green-300" : job.status === "In Progress" ? "bg-blue-500/20 text-blue-300" : "bg-yellow-500/20 text-yellow-300"}`}>{job.status}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-3 text-center">
+                        <div className="rounded-xl bg-slate-800/60 p-3">
+                          <p className="text-xs text-slate-500">Total</p>
+                          <p className="text-lg font-black text-white">${job.totalPrice.toLocaleString()}</p>
+                        </div>
+                        <div className="rounded-xl bg-slate-800/60 p-3">
+                          <p className="text-xs text-slate-500">Received</p>
+                          <p className="text-lg font-black text-green-400">${job.depositPaid.toLocaleString()}</p>
+                        </div>
+                        <div className="rounded-xl bg-slate-800/60 p-3">
+                          <p className="text-xs text-slate-500">Remaining</p>
+                          <p className="text-lg font-black text-yellow-400">${remaining.toLocaleString()}</p>
+                        </div>
+                      </div>
+                      <div>
+                        <div className="flex justify-between text-xs text-slate-500 mb-1"><span>Paid</span><span>{pct}%</span></div>
+                        <div className="h-2 bg-slate-800 rounded-full"><div className="h-2 bg-green-500 rounded-full transition-all" style={{width: `${pct}%`}} /></div>
+                      </div>
+                      <div className="flex gap-2 flex-wrap">
+                        {(["Scheduled","In Progress","Completed"] as JobStatus[]).filter(s => s !== job.status).map(s => (
+                          <button key={s} onClick={() => setJobs(prev => prev.map(j => j.id === job.id ? {...j, status: s} : j))}
+                            className="text-xs rounded-xl bg-slate-800 px-3 py-1.5 text-slate-400 hover:text-white transition">→ {s}</button>
+                        ))}
+                        <button onClick={() => { setEditingJob(job); setFcaModal("job"); }}
+                          className="text-xs rounded-xl bg-slate-800 px-3 py-1.5 text-orange-400 hover:text-orange-300 transition">Edit</button>
+                        <button onClick={() => { setFcaModal("payment"); }}
+                          className="text-xs rounded-xl bg-green-500/20 border border-green-500/30 px-3 py-1.5 text-green-300 hover:text-green-200 transition">+ Payment</button>
+                      </div>
+                    </div>
+                  );
+                })}
+                {jobs.length === 0 && <p className="text-slate-600 text-sm">No jobs yet.</p>}
+              </div>
+            )}
+
+            {/* MONEY */}
+            {fcaSection === "money" && (
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs text-slate-500">Total Received</p>
+                    <p className="text-2xl font-black text-green-400">${payments.reduce((s,p) => s+p.amount,0).toLocaleString()}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs text-slate-500">Outstanding</p>
+                    <p className="text-2xl font-black text-yellow-400">${fcaKpi.outstanding.toLocaleString()}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs text-slate-500">Total Expenses</p>
+                    <p className="text-2xl font-black text-red-400">${fcaKpi.totalExpenses.toLocaleString()}</p>
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4">
+                    <p className="text-xs text-slate-500">Net</p>
+                    <p className="text-2xl font-black text-white">${(payments.reduce((s,p) => s+p.amount,0) - fcaKpi.totalExpenses).toLocaleString()}</p>
+                  </div>
+                </div>
+                <div className="grid gap-4 lg:grid-cols-2">
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-bold uppercase tracking-widest text-green-400">Payments Received</p>
+                      <button onClick={() => setFcaModal("payment")} className="text-xs rounded-xl bg-green-500/20 border border-green-500/30 px-3 py-1.5 text-green-300 hover:text-green-200">+ Add</button>
+                    </div>
+                    {payments.length === 0 && <p className="text-xs text-slate-600">No payments yet.</p>}
+                    {payments.map(p => (
+                      <div key={p.id} className="flex items-center justify-between rounded-xl bg-slate-800/60 px-4 py-2.5 mb-2">
+                        <div><p className="text-sm font-semibold text-white">{p.client}</p><p className="text-xs text-slate-500">{p.date} · {p.notes}</p></div>
+                        <div className="flex items-center gap-3">
+                          <p className="text-sm font-black text-green-400">+${p.amount.toLocaleString()}</p>
+                          <button onClick={() => setPayments(prev => prev.filter(x => x.id !== p.id))} className="text-xs text-red-400 hover:text-red-300">✕</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="text-xs font-bold uppercase tracking-widest text-red-400">Expenses</p>
+                      <button onClick={() => setFcaModal("expense")} className="text-xs rounded-xl bg-red-500/20 border border-red-500/30 px-3 py-1.5 text-red-300 hover:text-red-200">+ Add</button>
+                    </div>
+                    {expenses.length === 0 && <p className="text-xs text-slate-600">No expenses logged.</p>}
+                    {expenses.map(e => (
+                      <div key={e.id} className="flex items-center justify-between rounded-xl bg-slate-800/60 px-4 py-2.5 mb-2">
+                        <div><p className="text-sm font-semibold text-white">{e.description}</p><p className="text-xs text-slate-500">{e.date}</p></div>
+                        <div className="flex items-center gap-3">
+                          <p className="text-sm font-black text-red-400">-${e.amount.toLocaleString()}</p>
+                          <button onClick={() => setExpenses(prev => prev.filter(x => x.id !== e.id))} className="text-xs text-red-400 hover:text-red-300">✕</button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* CLIENTS */}
+            {fcaSection === "clients" && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Client List</p>
+                  <button onClick={() => setFcaModal("client")} className="rounded-xl bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-orange-300 transition">+ Add Client</button>
+                </div>
+                {clients.map(c => (
+                  <div key={c.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 flex items-start justify-between gap-2">
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <p className="text-sm font-bold text-white">{c.name}</p>
+                        {c.repeat && <span className="text-xs bg-green-500/20 text-green-300 border border-green-500/30 rounded-full px-2 py-0.5">Repeat</span>}
+                      </div>
+                      <p className="text-xs text-slate-400 mt-0.5">{c.phone} · {c.referral}</p>
+                      <p className="text-xs text-slate-400">{c.jobDone}</p>
+                      {c.notes && <p className="text-xs text-slate-500 mt-1">{c.notes}</p>}
+                    </div>
+                    <button onClick={() => setClients(prev => prev.filter(x => x.id !== c.id))} className="text-xs text-red-400 hover:text-red-300 shrink-0">✕</button>
+                  </div>
+                ))}
+                {clients.length === 0 && <p className="text-slate-600 text-sm">No clients yet.</p>}
+              </div>
+            )}
+
+            {/* INSIGHTS */}
+            {fcaSection === "insights" && (
+              <div className="space-y-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Mac&apos;s Insights — FCA</p>
+                <div className="space-y-3">
+                  {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").length > 0 && (
+                    <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4">
+                      <p className="text-xs font-bold text-yellow-400 mb-2">⚠️ Leads Needing Follow-Up</p>
+                      {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").map(l => (
+                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.stage} — {l.value} — {l.service}</p>
+                      ))}
+                    </div>
+                  )}
+                  {leads.filter(l => {
+                    const v = parseFloat(l.value.replace(/[^0-9.]/g,""));
+                    return !isNaN(v) && v >= 3000;
+                  }).length > 0 && (
+                    <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-4">
+                      <p className="text-xs font-bold text-green-400 mb-2">💰 High Value Opportunities</p>
+                      {leads.filter(l => { const v = parseFloat(l.value.replace(/[^0-9.]/g,"")); return !isNaN(v) && v >= 3000; }).map(l => (
+                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.value} — {l.stage}</p>
+                      ))}
+                    </div>
+                  )}
+                  {jobs.filter(j => j.totalPrice - j.depositPaid > 0).length > 0 && (
+                    <div className="rounded-2xl border border-orange-500/30 bg-orange-500/5 p-4">
+                      <p className="text-xs font-bold text-orange-400 mb-2">💵 Outstanding Payments</p>
+                      {jobs.filter(j => j.totalPrice - j.depositPaid > 0).map(j => (
+                        <p key={j.id} className="text-xs text-slate-300">· {j.client} — ${(j.totalPrice - j.depositPaid).toLocaleString()} remaining — {j.status}</p>
+                      ))}
+                    </div>
+                  )}
+                  {leads.filter(l => l.stage === "Lost").length > 0 && (
+                    <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-4">
+                      <p className="text-xs font-bold text-red-400 mb-2">❌ Lost Leads</p>
+                      {leads.filter(l => l.stage === "Lost").map(l => (
+                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.service} — {l.value}</p>
+                      ))}
+                    </div>
+                  )}
+                  {leads.filter(l => l.stage !== "Lost" && l.stage !== "Booked").length === 0 && jobs.filter(j => j.totalPrice - j.depositPaid === 0).length === jobs.length && (
+                    <div className="rounded-2xl border border-slate-700 bg-slate-900/40 p-4">
+                      <p className="text-xs text-slate-500">All clear — no immediate flags.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* MODALS */}
+            {fcaModal === "lead" && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-white">{editingLead ? "Edit Lead" : "Add Lead"}</p>
+                    <button onClick={() => { setFcaModal(null); setEditingLead(null); }} className="text-slate-400 hover:text-white">✕</button>
+                  </div>
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    const f = e.currentTarget;
+                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
+                    if (editingLead) {
+                      setLeads(prev => prev.map(l => l.id === editingLead.id ? {...l, name:get("name"),phone:get("phone"),area:get("area"),service:get("service"),value:get("value"),source:get("source"),notes:get("notes"),stage:get("stage") as LeadStage} : l));
+                    } else {
+                      setLeads(prev => [...prev, {id:nextLeadId(),name:get("name"),phone:get("phone"),area:get("area"),service:get("service"),value:get("value"),source:get("source"),notes:get("notes"),stage:get("stage") as LeadStage}]);
+                    }
+                    setFcaModal(null); setEditingLead(null);
+                  }} className="space-y-2">
+                    {[["name","Name *","text",editingLead?.name||""],["phone","Phone","tel",editingLead?.phone||""],["area","Area / Address","text",editingLead?.area||""],["service","Service Type","text",editingLead?.service||""],["value","Estimated Value","text",editingLead?.value||""],["source","Source","text",editingLead?.source||""],["notes","Notes","text",editingLead?.notes||""]].map(([n,l,t,v]) => (
+                      <div key={n} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{l}</label>
+                        <input name={n as string} type={t as string} defaultValue={v as string} required={n==="name"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
+                      </div>
+                    ))}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Stage</label>
+                      <select name="stage" defaultValue={editingLead?.stage||"New Lead"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none">
+                        {["New Lead","Contacted","Estimate Sent","Follow-Up","Booked","Lost"].map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <button type="submit" className="w-full rounded-xl bg-orange-400 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition mt-2">{editingLead ? "Save Changes" : "Add Lead"}</button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {fcaModal === "job" && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-white">{editingJob ? "Edit Job" : "Add Job"}</p>
+                    <button onClick={() => { setFcaModal(null); setEditingJob(null); }} className="text-slate-400 hover:text-white">✕</button>
+                  </div>
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    const f = e.currentTarget;
+                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
+                    if (editingJob) {
+                      setJobs(prev => prev.map(j => j.id === editingJob.id ? {...j, client:get("client"),location:get("location"),jobType:get("jobType"),totalPrice:parseFloat(get("totalPrice"))||0,depositPaid:parseFloat(get("depositPaid"))||0,status:get("status") as JobStatus,notes:get("notes")} : j));
+                    } else {
+                      setJobs(prev => [...prev, {id:nextJobId(),client:get("client"),location:get("location"),jobType:get("jobType"),totalPrice:parseFloat(get("totalPrice"))||0,depositPaid:parseFloat(get("depositPaid"))||0,status:get("status") as JobStatus,notes:get("notes")}]);
+                    }
+                    setFcaModal(null); setEditingJob(null);
+                  }} className="space-y-2">
+                    {[["client","Client Name *","text",editingJob?.client||""],["location","Location","text",editingJob?.location||""],["jobType","Job Type","text",editingJob?.jobType||""],["totalPrice","Total Price","number",(editingJob?.totalPrice||"").toString()],["depositPaid","Deposit / Paid","number",(editingJob?.depositPaid||"").toString()],["notes","Notes","text",editingJob?.notes||""]].map(([n,l,t,v]) => (
+                      <div key={n} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{l}</label>
+                        <input name={n as string} type={t as string} defaultValue={v as string} required={n==="client"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
+                      </div>
+                    ))}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Status</label>
+                      <select name="status" defaultValue={editingJob?.status||"Scheduled"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none">
+                        {["Scheduled","In Progress","Completed"].map(s => <option key={s}>{s}</option>)}
+                      </select>
+                    </div>
+                    <button type="submit" className="w-full rounded-xl bg-orange-400 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition mt-2">{editingJob ? "Save Changes" : "Add Job"}</button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {fcaModal === "payment" && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-md space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-white">Record Payment</p>
+                    <button onClick={() => setFcaModal(null)} className="text-slate-400 hover:text-white">✕</button>
+                  </div>
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    const f = e.currentTarget;
+                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
+                    const amt = parseFloat(get("amount")) || 0;
+                    const client = get("client");
+                    setPayments(prev => [...prev, {id:nextPayId(),client,amount:amt,date:get("date"),notes:get("notes")}]);
+                    setJobs(prev => prev.map(j => j.client === client ? {...j, depositPaid: j.depositPaid + amt} : j));
+                    setFcaModal(null);
+                  }} className="space-y-2">
+                    {[["client","Client","text",""],["amount","Amount ($)","number",""],["date","Date","date",new Date().toISOString().slice(0,10)],["notes","Notes","text",""]].map(([n,l,t,v]) => (
+                      <div key={n} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{l}</label>
+                        <input name={n as string} type={t as string} defaultValue={v as string} required={n==="client"||n==="amount"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
+                      </div>
+                    ))}
+                    <button type="submit" className="w-full rounded-xl bg-green-500 py-2.5 text-sm font-bold text-white hover:bg-green-400 transition mt-2">Record Payment</button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {fcaModal === "expense" && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-md space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-white">Add Expense</p>
+                    <button onClick={() => setFcaModal(null)} className="text-slate-400 hover:text-white">✕</button>
+                  </div>
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    const f = e.currentTarget;
+                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
+                    setExpenses(prev => [...prev, {id:nextExpId(),description:get("description"),amount:parseFloat(get("amount"))||0,date:get("date")}]);
+                    setFcaModal(null);
+                  }} className="space-y-2">
+                    {[["description","Description","text",""],["amount","Amount ($)","number",""],["date","Date","date",new Date().toISOString().slice(0,10)]].map(([n,l,t,v]) => (
+                      <div key={n} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{l}</label>
+                        <input name={n as string} type={t as string} defaultValue={v as string} required className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
+                      </div>
+                    ))}
+                    <button type="submit" className="w-full rounded-xl bg-red-500 py-2.5 text-sm font-bold text-white hover:bg-red-400 transition mt-2">Add Expense</button>
+                  </form>
+                </div>
+              </div>
+            )}
+
+            {fcaModal === "client" && (
+              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
+                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-lg space-y-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-bold text-white">Add Client</p>
+                    <button onClick={() => setFcaModal(null)} className="text-slate-400 hover:text-white">✕</button>
+                  </div>
+                  <form onSubmit={e => {
+                    e.preventDefault();
+                    const f = e.currentTarget;
+                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
+                    setClients(prev => [...prev, {id:nextClientId(),name:get("name"),phone:get("phone"),jobDone:get("jobDone"),notes:get("notes"),repeat:(f.elements.namedItem("repeat") as HTMLInputElement)?.checked||false,referral:get("referral")}]);
+                    setFcaModal(null);
+                  }} className="space-y-2">
+                    {[["name","Name *","text"],["phone","Phone","tel"],["jobDone","Job Done","text"],["referral","Referral Source","text"],["notes","Notes","text"]].map(([n,l,t]) => (
+                      <div key={n} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{l}</label>
+                        <input name={n as string} type={t as string} required={n==="name"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
+                      </div>
+                    ))}
+                    <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
+                      <input type="checkbox" name="repeat" className="accent-orange-400" /> Repeat Client
+                    </label>
+                    <button type="submit" className="w-full rounded-xl bg-orange-400 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition mt-2">Add Client</button>
+                  </form>
+                </div>
+              </div>
+            )}
+
           </section>
         )}
 
