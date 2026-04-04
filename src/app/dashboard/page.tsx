@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-03: 4AM sync — tasks, crons, alerts, crypto prices, Polymarket refreshed
+// Dashboard updated 2026-04-04: 4AM sync — FCA job live, billing alert, AI Bidding Playbook built, crypto + cron status refreshed
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -13,9 +13,9 @@ const CRYPTO_ASSETS = [
 ];
 
 const POLY_MARKETS = [
-  { label: "US forces enter Iran by April 30", rec: "CAUTION @ ~66.5¢", risk: "HIGH", riskColor: "text-red-400", note: "Smart money inflow — US strikes + 50K troops deployed. Ceasefire collapsed.", alloc: "WATCH" },
-  { label: "Clarity Act Signed 2026", rec: "YES @ ~62¢", risk: "MEDIUM", riskColor: "text-orange-400", note: "ONDO double dip — direct RWA catalyst. Needs Tash approval.", alloc: "$40" },
-  { label: "US Recession by EOY 2026", rec: "YES @ ~35¢", risk: "LOW-MED", riskColor: "text-yellow-400", note: "Portfolio hedge — hawkish macro + Iran risk premium. Needs Tash approval.", alloc: "$30" },
+  { label: "US forces enter Iran by April 30", rec: "MONITOR @ ~79.5¢", risk: "HIGH", riskColor: "text-red-400", note: "US special forces confirmed inside Iran Apr 3 — ground incursion. Surged from 66¢ to 79.5¢. $9.97M vol 24h. RESTRICTED — monitor only.", alloc: "WATCH" },
+  { label: "Clarity Act Signed 2026", rec: "YES @ ~62¢", risk: "MEDIUM", riskColor: "text-orange-400", note: "ONDO double dip — direct RWA catalyst. Needs Tash approval + $40 USDC funding.", alloc: "$40" },
+  { label: "US Recession by EOY 2026", rec: "YES @ ~35¢", risk: "LOW-MED", riskColor: "text-yellow-400", note: "Portfolio hedge — hawkish macro + Iran escalation risk premium. Needs Tash approval + $30 USDC.", alloc: "$30" },
 ];
 
 const CRON_JOBS = [
@@ -23,58 +23,66 @@ const CRON_JOBS = [
     name: "🌙 Overnight Product Builder",
     schedule: "Daily 11:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-03 OK · AI Job Costing Playbook built",
+    last: "Last run: 2026-04-04 03:00 UTC OK · AI Bidding Playbook (concrete subs) built — 5 tweets posted",
     detail: "Researches trending construction topics → builds PDF product → posts 5 tweets → reports to Telegram",
   },
   {
     name: "📊 Dashboard + Memory Sync",
     schedule: "Daily 4:00 AM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-03 08:00 UTC — RUNNING",
+    last: "Last run: 2026-04-04 08:00 UTC OK",
     detail: "Reads all memory files → pulls live crypto + Polymarket data → updates MEMORY.md → pushes dashboard to GitHub",
   },
   {
     name: "📊 Market Scan — 6AM ET",
     schedule: "Daily 6:00 AM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-03 OK",
+    status: "ERROR",
+    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
     detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
   },
   {
     name: "🧠 Self-Learning Loop",
     schedule: "Daily 7:00 AM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-03 scheduled",
+    status: "ERROR",
+    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
     detail: "Reviews today's daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
   },
   {
     name: "📘 FCA Daily Facebook Post",
     schedule: "Daily 10:00 AM ET (14:00 UTC)",
     status: "ACTIVE",
-    last: "Last run: 2026-04-02 OK",
+    last: "Last run: 2026-04-04 14:00 UTC OK",
     detail: "Posts to Florida Concrete Alliance page · NE Florida · floridaconcretealliance.com · Token: PERMANENT (never expires)",
   },
   {
     name: "🐦 Daily Tweet Autopilot",
     schedule: "Daily 10:00 AM UTC",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-02 OK · 45+ tweets total",
-    detail: "Rotates tweet library (contractor + OpenClaw products). Override mode for new products. API-based (no browser, no ban risk). Zero failures.",
+    status: "ERROR",
+    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
+    detail: "Rotates tweet library (contractor + OpenClaw products). Override mode for new products. API-based (no browser, no ban risk).",
   },
   {
     name: "📊 Market Scan — 6PM ET",
     schedule: "Daily 6:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-02 OK",
+    last: "Last run: 2026-04-03 OK · delivered to Telegram",
     detail: "Same as 6AM scan — second daily pulse. Delivered to Telegram.",
+  },
+  {
+    name: "📦 Pending Products Scanner",
+    schedule: "Daily 11:00 PM ET",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-04 03:00 UTC OK · 6 PDFs tracked (5 pending approval)",
+    detail: "Scans /products for unlisted PDFs → updates pending-products.md → flags for Tash approval",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-03 08:00 UTC";
+const CRON_LAST_UPDATED = "2026-04-04 08:00 UTC";
 
 const TASKS = [
-  { task: "🔴 Investigate anomalous tweet (ID: 2039850138131206563) — off-brand 'Hermes' post not from Mac. Another session has Twitter access.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 Review + approve product approval backlog (4 PDFs built overnight) — AI Job Costing, Labor Shortage v2, Cash Flow Fix, Cost Squeeze Guide", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 BILLING: Top up Anthropic API credits — Tweet Autopilot, Market Scan 6AM, Self-Learning Loop all failing. 3 crons down.", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 FCA-001 Monday Apr 6: collect $500 remaining deposit. Pour day Apr 8: collect $3,385 morning of pour. Completion: $1,590.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 Upload AI Bidding Playbook to Gumroad — built overnight Apr 4. Suggested $7–$12. 8-page PDF, AI + concrete bidding.", priority: "HIGH", pillar: "Online" },
   { task: "🔴 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge)", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 First AI Chief of Staff client — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
   { task: "🟡 List Workspace Audit service on Gumroad ($25) — email in inbox, no file needed", priority: "MED", pillar: "Online" },
@@ -530,11 +538,11 @@ export default function Dashboard() {
               <div><p className="text-xs text-slate-500">Phase</p><p className="text-sm font-bold text-white">6 — Revenue Sprint</p></div>
               <div><p className="text-xs text-slate-500">Revenue</p><p className="text-3xl font-black text-green-400">$0</p><p className="text-xs text-slate-500">Target: $100</p></div>
               <div><p className="text-xs text-slate-500">Products Live</p><p className="text-3xl font-black text-white">9</p><p className="text-xs text-slate-500">Contractor + OpenClaw</p></div>
-              <div><p className="text-xs text-slate-500">Tweets Sent</p><p className="text-3xl font-black text-white">45+</p></div>
-              <div><p className="text-xs text-slate-500">PDFs Built</p><p className="text-3xl font-black text-white">4</p><p className="text-xs text-slate-500">Approval queue</p></div>
+              <div><p className="text-xs text-slate-500">Tweets Sent</p><p className="text-3xl font-black text-white">50+</p></div>
+              <div><p className="text-xs text-slate-500">PDFs Built</p><p className="text-3xl font-black text-white">5</p><p className="text-xs text-slate-500">Approval queue</p></div>
             </div>
             <div className="w-full bg-slate-800 rounded-full h-2"><div className="bg-orange-400 h-2 rounded-full" style={{width: "11%"}} /></div>
-            <p className="text-xs text-slate-500">Blockers: Claw Mart seller account + product approval backlog (4 PDFs). Next: approve products → list → distribute.</p>
+            <p className="text-xs text-slate-500">Blockers: Anthropic billing (3 crons down) + product approval backlog (5 PDFs). Next: top up credits → approve AI Bidding Playbook → list on Gumroad.</p>
           </div>
         </section>
 
@@ -593,7 +601,7 @@ export default function Dashboard() {
               <p className="text-xs text-slate-400">Twitter @Vanta69</p>
               <p className="mt-1 text-sm font-bold text-white">Content Machine</p>
               <div className="mt-3 space-y-1">
-                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets since Mar 27</span><span className="text-white font-semibold">40+ override + rotation</span></div>
+                <div className="flex justify-between text-xs"><span className="text-slate-500">Tweets since Mar 27</span><span className="text-white font-semibold">50+ override + rotation</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Threads posted</span><span className="text-white font-semibold">5 (autopilot, cron, ops, launch, bip)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Products live</span><span className="text-white font-semibold">8 (contractor + OpenClaw)</span></div>
                 <div className="flex justify-between text-xs"><span className="text-slate-500">Automation</span><span className="text-green-400 font-semibold">API-based (Tweepy) — no ban risk</span></div>
@@ -627,15 +635,14 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🎉 WIN: First FCA deal CLOSED — Joseph Noble, Jacksonville FL. 730 sq ft stamped concrete. $6,475 contract. $1,000 deposit received. Pour date: April 8.", urgency: "OK" },
-                { alert: "💰 FCA-001 PAYMENT DUE Mon Apr 6 — $500 remaining deposit. Pour day Apr 8: $3,385. Completion: $1,590. Total remaining: $5,475.", urgency: "MED" },
-                { alert: "🔴 HIGH: 3 products in approval backlog — Cash Flow Fix Playbook, Cost Squeeze Guide, Labor Shortage Guide v2. Built but not listed. Tash approval required.", urgency: "HIGH" },
-                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge).", urgency: "HIGH" },
+                { alert: "🚨 CRITICAL: Anthropic API credits exhausted — Tweet Autopilot, Market Scan 6AM ET, and Self-Learning Loop all erroring. Top up credits immediately or 3 automations stay dark.", urgency: "HIGH" },
+                { alert: "🎉 WIN: FCA-001 IN PRODUCTION — Joseph Noble, Jacksonville FL. 730 sq ft stamped concrete. $6,475 contract. Job starts Mon Apr 6. $1,000 deposit in hand.", urgency: "OK" },
+                { alert: "💰 FCA-001 NEXT PAYMENTS: Mon Apr 6 $500 remaining deposit · Wed Apr 8 $3,385 morning of pour · Completion $1,590. Total remaining: $5,475.", urgency: "MED" },
+                { alert: "🟢 WIN: AI Bidding Playbook for Concrete Subs built overnight Apr 4 — 8-page PDF, 5 tweets posted. Needs Gumroad listing ($7–$12).", urgency: "OK" },
+                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran April 30 YES surged to 79.5¢.", urgency: "HIGH" },
                 { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
                 { alert: "🟡 MED: Set up Kit.com (free) — 4-email nurture sequence written, just needs platform to activate", urgency: "MED" },
-                { alert: "🟢 WIN: Overnight cron running clean — AI Job Costing Playbook + case study tweet built on Apr 3", urgency: "OK" },
                 { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
-                { alert: "🟢 WIN: All 7 automated crons running — market scans, product builder, tweet autopilot, FCA posts, self-learning loop", urgency: "OK" },
               ].map((a, i) => (
                 <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : a.urgency === "OK" ? "bg-green-500/10 border border-green-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
                   <span className={a.urgency === "HIGH" ? "text-red-200" : a.urgency === "OK" ? "text-green-200" : "text-yellow-200"}>{a.alert}</span>
@@ -647,11 +654,11 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 Investigate anomalous Twitter access — check which session/agent posted the Hermes tweet. Review credentials, revoke access if needed." },
-                { move: "🥈 Approve product backlog (4 PDFs) — review and list on Gumroad. AI Job Costing = highest value, suggested $9–$14." },
-                { move: "🥉 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge. Iran at 66.5% is the hot market." },
+                { move: "🥇 Top up Anthropic API credits — 3 crons dark (Tweet Autopilot, Market Scan 6AM, Self-Learning Loop). Revenue automations depend on this." },
+                { move: "🥈 FCA-001 Mon Apr 6: show up, collect $500 deposit. Wed Apr 8: collect $3,385 morning of pour. Job is $6,475 contracted." },
+                { move: "🥉 Upload AI Bidding Playbook to Gumroad ($7–$12) — built overnight, 8 pages, concrete subs + AI bidding workflow." },
+                { move: "🔲 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge. Iran April 30 YES at 79.5¢ and climbing." },
                 { move: "🔲 Post AI Chief of Staff in contractor FB groups — first $97/mo recurring client (tauschus.com/ai-chief-of-staff)" },
-                { move: "🔲 List Workspace Audit ($25) on Gumroad — no file needed, fastest-converting service offer for cold audience" },
                 { move: "🔲 Set up Kit.com (free) — 4-email nurture sequence is written, just needs platform to activate" },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
