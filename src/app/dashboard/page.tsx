@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-04: 4AM sync — FCA job live, billing alert, AI Bidding Playbook built, crypto + cron status refreshed
+// Dashboard updated 2026-04-04: 15:53 UTC sync — all 8 crons ACTIVE, Anthropic billing resolved, FCA-001 starts Mon Apr 6
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -23,28 +23,28 @@ const CRON_JOBS = [
     name: "🌙 Overnight Product Builder",
     schedule: "Daily 11:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-04 03:00 UTC OK · AI Bidding Playbook (concrete subs) built — 5 tweets posted",
-    detail: "Researches trending construction topics → builds PDF product → posts 5 tweets → reports to Telegram",
+    last: "Last run: 2026-04-03 11PM ET OK · AI Bidding Playbook (concrete subs) built — tweets scheduled",
+    detail: "Researches trending construction topics → builds PDF product → schedules 5 tweets → reports to Telegram",
   },
   {
     name: "📊 Dashboard + Memory Sync",
     schedule: "Daily 4:00 AM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-04 08:00 UTC OK",
+    last: "Last run: 2026-04-04 15:53 UTC OK · All 8 crons verified ACTIVE",
     detail: "Reads all memory files → pulls live crypto + Polymarket data → updates MEMORY.md → pushes dashboard to GitHub",
   },
   {
     name: "📊 Market Scan — 6AM ET",
     schedule: "Daily 6:00 AM ET",
-    status: "ERROR",
-    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-04 6AM ET OK · Delivered to Telegram",
     detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
   },
   {
     name: "🧠 Self-Learning Loop",
     schedule: "Daily 7:00 AM ET",
-    status: "ERROR",
-    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-04 7AM ET OK · 3 learnings logged to Learnings.md",
     detail: "Reviews today's daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
   },
   {
@@ -57,33 +57,32 @@ const CRON_JOBS = [
   {
     name: "🐦 Daily Tweet Autopilot",
     schedule: "Daily 10:00 AM UTC",
-    status: "ERROR",
-    last: "Last run: 2026-04-04 — BILLING ERROR · Anthropic API credits exhausted",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-04 10:00 UTC OK · Tweet posted",
     detail: "Rotates tweet library (contractor + OpenClaw products). Override mode for new products. API-based (no browser, no ban risk).",
   },
   {
     name: "📊 Market Scan — 6PM ET",
     schedule: "Daily 6:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-03 OK · delivered to Telegram",
+    last: "Last run: 2026-04-03 6PM ET OK · Next run today 6PM ET",
     detail: "Same as 6AM scan — second daily pulse. Delivered to Telegram.",
   },
   {
     name: "📦 Pending Products Scanner",
     schedule: "Daily 11:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-04 03:00 UTC OK · 6 PDFs tracked (5 pending approval)",
+    last: "Last run: 2026-04-03 11PM ET OK · 6 PDFs tracked (5 pending approval)",
     detail: "Scans /products for unlisted PDFs → updates pending-products.md → flags for Tash approval",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-04 08:00 UTC";
+const CRON_LAST_UPDATED = "2026-04-04 15:53 UTC";
 
 const TASKS = [
-  { task: "🔴 BILLING: Top up Anthropic API credits — Tweet Autopilot, Market Scan 6AM, Self-Learning Loop all failing. 3 crons down.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 FCA-001 Monday Apr 6: collect $500 remaining deposit. Pour day Apr 8: collect $3,385 morning of pour. Completion: $1,590.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 FCA-001 Monday Apr 6: show up, collect $500 remaining deposit. Pour day Apr 8: collect $3,385 morning of pour. Completion: $1,590.", priority: "HIGH", pillar: "FCA" },
   { task: "🔴 Upload AI Bidding Playbook to Gumroad — built overnight Apr 4. Suggested $7–$12. 8-page PDF, AI + concrete bidding.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge)", priority: "HIGH", pillar: "Crypto" },
+  { task: "🔴 Fund Polymarket — $70 USDC ($40 Clarity Act YES + $30 Recession hedge). Iran Apr 30 YES at 80.5¢.", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 First AI Chief of Staff client — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
   { task: "🟡 List Workspace Audit service on Gumroad ($25) — email in inbox, no file needed", priority: "MED", pillar: "Online" },
   { task: "🟡 Set up Kit (kit.com, free) for email nurture automation — 4 emails written, needs platform", priority: "MED", pillar: "Online" },
@@ -635,11 +634,11 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🚨 CRITICAL: Anthropic API credits exhausted — Tweet Autopilot, Market Scan 6AM ET, and Self-Learning Loop all erroring. Top up credits immediately or 3 automations stay dark.", urgency: "HIGH" },
+                { alert: "✅ RESOLVED: Anthropic billing restored — all 8 crons confirmed ACTIVE as of 2026-04-04. Market Scan 6AM, Self-Learning Loop, Tweet Autopilot all back online.", urgency: "OK" },
                 { alert: "🎉 WIN: FCA-001 IN PRODUCTION — Joseph Noble, Jacksonville FL. 730 sq ft stamped concrete. $6,475 contract. Job starts Mon Apr 6. $1,000 deposit in hand.", urgency: "OK" },
                 { alert: "💰 FCA-001 NEXT PAYMENTS: Mon Apr 6 $500 remaining deposit · Wed Apr 8 $3,385 morning of pour · Completion $1,590. Total remaining: $5,475.", urgency: "MED" },
                 { alert: "🟢 WIN: AI Bidding Playbook for Concrete Subs built overnight Apr 4 — 8-page PDF, 5 tweets posted. Needs Gumroad listing ($7–$12).", urgency: "OK" },
-                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran April 30 YES surged to 79.5¢.", urgency: "HIGH" },
+                { alert: "🔴 HIGH: Polymarket still unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran Apr 30 YES at 80.5¢ ($6.95M vol 24h).", urgency: "HIGH" },
                 { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
                 { alert: "🟡 MED: Set up Kit.com (free) — 4-email nurture sequence written, just needs platform to activate", urgency: "MED" },
                 { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
@@ -654,12 +653,12 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 Top up Anthropic API credits — 3 crons dark (Tweet Autopilot, Market Scan 6AM, Self-Learning Loop). Revenue automations depend on this." },
-                { move: "🥈 FCA-001 Mon Apr 6: show up, collect $500 deposit. Wed Apr 8: collect $3,385 morning of pour. Job is $6,475 contracted." },
-                { move: "🥉 Upload AI Bidding Playbook to Gumroad ($7–$12) — built overnight, 8 pages, concrete subs + AI bidding workflow." },
-                { move: "🔲 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge. Iran April 30 YES at 79.5¢ and climbing." },
+                { move: "🥇 FCA-001 Mon Apr 6: show up, collect $500 remaining deposit. Wed Apr 8: collect $3,385 morning of pour. $6,475 contracted." },
+                { move: "🥈 Upload AI Bidding Playbook to Gumroad ($7–$12) — built overnight Apr 4, 8 pages, concrete subs + AI bidding workflow." },
+                { move: "🥉 Fund Polymarket ($70 USDC) — $40 Clarity Act YES + $30 Recession hedge. Iran Apr 30 YES at 80.5¢ ($6.95M vol)." },
                 { move: "🔲 Post AI Chief of Staff in contractor FB groups — first $97/mo recurring client (tauschus.com/ai-chief-of-staff)" },
                 { move: "🔲 Set up Kit.com (free) — 4-email nurture sequence is written, just needs platform to activate" },
+                { move: "🔲 Build property manager outreach list (20–30 contacts, NE Florida) — next FCA lead channel after Marketplace" },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
                   <span className="text-slate-200">{m.move}</span>
