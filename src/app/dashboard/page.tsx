@@ -362,6 +362,26 @@ export default function Dashboard() {
                   </div>
                 )}
 
+                {/* Learnings */}
+                {memFiles.filter(f => f.group === "learnings").length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Learnings</p>
+                    {memFiles.filter(f => f.group === "learnings").map(f => (
+                      <button
+                        key={f.key}
+                        onClick={() => setSelectedFile(f.key)}
+                        className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-semibold transition ${
+                          selectedFile === f.key
+                            ? "bg-orange-400/20 text-orange-300 border border-orange-400/30"
+                            : "bg-slate-800/60 text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
                 {/* Daily logs */}
                 {memFiles.filter(f => f.group === "daily").length > 0 && (
                   <div className="mt-3">
@@ -678,5 +698,6 @@ export default function Dashboard() {
     </main>
   );
 }
+
 
 
