@@ -176,10 +176,10 @@ export default function Dashboard() {
     { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
   ]);
 
-  const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense" | "client">(null);
+  const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
-  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money" | "clients" | "insights">("kpi");
+  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money">("kpi");
 
   const fcaKpi = {
     leadsWeek: leads.filter(l => l.stage !== "Lost").length,
@@ -491,10 +491,10 @@ export default function Dashboard() {
 
             {/* FCA Sub-nav */}
             <div className="flex flex-wrap gap-2">
-              {(["kpi","leads","jobs","money","clients","insights"] as const).map(s => (
+              {(["kpi","leads","jobs","money"] as const).map(s => (
                 <button key={s} onClick={() => setFcaSection(s)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide transition ${fcaSection === s ? "bg-orange-400 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
-                  {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : s === "money" ? "💰 Money" : s === "clients" ? "👥 Clients" : "💡 Insights"}
+                  {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : "💰 Money"}
                 </button>
               ))}
             </div>
@@ -521,6 +521,23 @@ export default function Dashboard() {
                       <p className={`text-2xl font-black mt-1 ${k.color}`}>{k.val}</p>
                     </div>
                   ))}
+                </div>
+
+                {/* Inline Insights */}
+                <div className="space-y-2 mt-2">
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">💡 Mac&apos;s Flags</p>
+                  {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").map(l => (
+                    <div key={l.id} className="rounded-xl border border-yellow-500/20 bg-yellow-500/5 px-4 py-2 text-xs text-yellow-300">⚠️ Follow up: {l.name} — {l.stage} — {l.value}</div>
+                  ))}
+                  {jobs.filter(j => j.totalPrice - j.depositPaid > 0).map(j => (
+                    <div key={j.id} className="rounded-xl border border-orange-500/20 bg-orange-500/5 px-4 py-2 text-xs text-orange-300">💵 Outstanding: {j.client} — ${(j.totalPrice - j.depositPaid).toLocaleString()} remaining</div>
+                  ))}
+                  {leads.filter(l => { const v = parseFloat(l.value.replace(/[^0-9.]/g,"")); return !isNaN(v) && v >= 3000 && l.stage !== "Booked" && l.stage !== "Lost"; }).map(l => (
+                    <div key={l.id} className="rounded-xl border border-green-500/20 bg-green-500/5 px-4 py-2 text-xs text-green-300">💰 High value: {l.name} — {l.value} — {l.stage}</div>
+                  ))}
+                  {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").length === 0 && jobs.filter(j => j.totalPrice - j.depositPaid > 0).length === 0 && (
+                    <div className="rounded-xl border border-slate-700 bg-slate-900/40 px-4 py-2 text-xs text-slate-500">✅ All clear — no flags.</div>
+                  )}
                 </div>
               </div>
             )}
@@ -589,6 +606,7 @@ export default function Dashboard() {
                         <div>
                           <p className="text-sm font-bold text-white">{job.client}</p>
                           <p className="text-xs text-slate-400">{job.location} · {job.jobType}</p>
+                          {(() => { const c = clients.find(x => x.name === job.client); return c?.phone ? <p className="text-xs text-slate-500">📞 {c.phone}</p> : null; })()}
                           {job.notes && <p className="text-xs text-slate-500 mt-1">{job.notes}</p>}
                         </div>
                         <span className={`text-xs font-bold px-2 py-1 rounded-full shrink-0 ${job.status === "Completed" ? "bg-green-500/20 text-green-300" : job.status === "In Progress" ? "bg-blue-500/20 text-blue-300" : "bg-yellow-500/20 text-yellow-300"}`}>{job.status}</span>
@@ -682,80 +700,6 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
-                </div>
-              </div>
-            )}
-
-            {/* CLIENTS */}
-            {fcaSection === "clients" && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Client List</p>
-                  <button onClick={() => setFcaModal("client")} className="rounded-xl bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 hover:bg-orange-300 transition">+ Add Client</button>
-                </div>
-                {clients.map(c => (
-                  <div key={c.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-4 flex items-start justify-between gap-2">
-                    <div>
-                      <div className="flex items-center gap-2">
-                        <p className="text-sm font-bold text-white">{c.name}</p>
-                        {c.repeat && <span className="text-xs bg-green-500/20 text-green-300 border border-green-500/30 rounded-full px-2 py-0.5">Repeat</span>}
-                      </div>
-                      <p className="text-xs text-slate-400 mt-0.5">{c.phone} · {c.referral}</p>
-                      <p className="text-xs text-slate-400">{c.jobDone}</p>
-                      {c.notes && <p className="text-xs text-slate-500 mt-1">{c.notes}</p>}
-                    </div>
-                    <button onClick={() => setClients(prev => prev.filter(x => x.id !== c.id))} className="text-xs text-red-400 hover:text-red-300 shrink-0">✕</button>
-                  </div>
-                ))}
-                {clients.length === 0 && <p className="text-slate-600 text-sm">No clients yet.</p>}
-              </div>
-            )}
-
-            {/* INSIGHTS */}
-            {fcaSection === "insights" && (
-              <div className="space-y-4">
-                <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Mac&apos;s Insights — FCA</p>
-                <div className="space-y-3">
-                  {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").length > 0 && (
-                    <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/5 p-4">
-                      <p className="text-xs font-bold text-yellow-400 mb-2">⚠️ Leads Needing Follow-Up</p>
-                      {leads.filter(l => l.stage === "Follow-Up" || l.stage === "Estimate Sent").map(l => (
-                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.stage} — {l.value} — {l.service}</p>
-                      ))}
-                    </div>
-                  )}
-                  {leads.filter(l => {
-                    const v = parseFloat(l.value.replace(/[^0-9.]/g,""));
-                    return !isNaN(v) && v >= 3000;
-                  }).length > 0 && (
-                    <div className="rounded-2xl border border-green-500/30 bg-green-500/5 p-4">
-                      <p className="text-xs font-bold text-green-400 mb-2">💰 High Value Opportunities</p>
-                      {leads.filter(l => { const v = parseFloat(l.value.replace(/[^0-9.]/g,"")); return !isNaN(v) && v >= 3000; }).map(l => (
-                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.value} — {l.stage}</p>
-                      ))}
-                    </div>
-                  )}
-                  {jobs.filter(j => j.totalPrice - j.depositPaid > 0).length > 0 && (
-                    <div className="rounded-2xl border border-orange-500/30 bg-orange-500/5 p-4">
-                      <p className="text-xs font-bold text-orange-400 mb-2">💵 Outstanding Payments</p>
-                      {jobs.filter(j => j.totalPrice - j.depositPaid > 0).map(j => (
-                        <p key={j.id} className="text-xs text-slate-300">· {j.client} — ${(j.totalPrice - j.depositPaid).toLocaleString()} remaining — {j.status}</p>
-                      ))}
-                    </div>
-                  )}
-                  {leads.filter(l => l.stage === "Lost").length > 0 && (
-                    <div className="rounded-2xl border border-red-500/30 bg-red-500/5 p-4">
-                      <p className="text-xs font-bold text-red-400 mb-2">❌ Lost Leads</p>
-                      {leads.filter(l => l.stage === "Lost").map(l => (
-                        <p key={l.id} className="text-xs text-slate-300">· {l.name} — {l.service} — {l.value}</p>
-                      ))}
-                    </div>
-                  )}
-                  {leads.filter(l => l.stage !== "Lost" && l.stage !== "Booked").length === 0 && jobs.filter(j => j.totalPrice - j.depositPaid === 0).length === jobs.length && (
-                    <div className="rounded-2xl border border-slate-700 bg-slate-900/40 p-4">
-                      <p className="text-xs text-slate-500">All clear — no immediate flags.</p>
-                    </div>
-                  )}
                 </div>
               </div>
             )}
@@ -883,35 +827,6 @@ export default function Dashboard() {
                       </div>
                     ))}
                     <button type="submit" className="w-full rounded-xl bg-red-500 py-2.5 text-sm font-bold text-white hover:bg-red-400 transition mt-2">Add Expense</button>
-                  </form>
-                </div>
-              </div>
-            )}
-
-            {fcaModal === "client" && (
-              <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-                <div className="bg-slate-900 rounded-2xl border border-slate-700 p-6 w-full max-w-lg space-y-3">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-bold text-white">Add Client</p>
-                    <button onClick={() => setFcaModal(null)} className="text-slate-400 hover:text-white">✕</button>
-                  </div>
-                  <form onSubmit={e => {
-                    e.preventDefault();
-                    const f = e.currentTarget;
-                    const get = (n: string) => (f.elements.namedItem(n) as HTMLInputElement)?.value || "";
-                    setClients(prev => [...prev, {id:nextClientId(),name:get("name"),phone:get("phone"),jobDone:get("jobDone"),notes:get("notes"),repeat:(f.elements.namedItem("repeat") as HTMLInputElement)?.checked||false,referral:get("referral")}]);
-                    setFcaModal(null);
-                  }} className="space-y-2">
-                    {[["name","Name *","text"],["phone","Phone","tel"],["jobDone","Job Done","text"],["referral","Referral Source","text"],["notes","Notes","text"]].map(([n,l,t]) => (
-                      <div key={n} className="flex flex-col gap-1">
-                        <label className="text-xs font-bold text-slate-400">{l}</label>
-                        <input name={n as string} type={t as string} required={n==="name"} className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none" />
-                      </div>
-                    ))}
-                    <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer">
-                      <input type="checkbox" name="repeat" className="accent-orange-400" /> Repeat Client
-                    </label>
-                    <button type="submit" className="w-full rounded-xl bg-orange-400 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition mt-2">Add Client</button>
                   </form>
                 </div>
               </div>
