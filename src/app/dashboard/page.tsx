@@ -891,25 +891,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* FCA Pipeline */}
-        <section>
-          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">FCA Lead Pipeline</p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            {FCA_PIPELINE.map((s) => (
-              <div key={s.stage} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
-                <p className="text-xs text-slate-400">{s.stage}</p>
-                <p className="mt-1 text-4xl font-black text-white">{s.count}</p>
-                <MiniBar value={s.count} max={10} color={s.color} />
-              </div>
-            ))}
-          </div>
-          <div className="mt-3 rounded-2xl border border-slate-800 bg-slate-900/40 px-5 py-4 flex flex-wrap gap-6">
-            <div><p className="text-xs text-slate-500">Lead Source</p><p className="text-sm font-semibold text-white">Facebook Marketplace</p></div>
-            <div><p className="text-xs text-slate-500">Target</p><p className="text-sm font-semibold text-white">3–4 jobs/week</p></div>
-            <div><p className="text-xs text-slate-500">Avg Job Value</p><p className="text-sm font-semibold text-white">$800–$2,500</p></div>
-            <div><p className="text-xs text-slate-500">Market</p><p className="text-sm font-semibold text-white">Jacksonville, FL</p></div>
-          </div>
-        </section>
+
 
         {/* Cron Jobs + Tasks */}
         <div className="grid gap-4 lg:grid-cols-2">
