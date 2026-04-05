@@ -11,7 +11,7 @@ const PRODUCTS = [
     description: "Stop losing bids to bad numbers. The exact AI tools, prompts, and workflow used to estimate faster, win more jobs, and protect your margins.",
     bullets: ["5 AI tools reviewed", "6-step estimating workflow", "7+ ready-to-use ChatGPT prompts"],
     cta: "Download Free →",
-    url: "https://vantaai3.gumroad.com/l/AIplaybook1",
+    url: "https://tauschus.gumroad.com/l/vbfat",
     tag: "Most Downloaded",
   },
   {
@@ -484,7 +484,7 @@ export default function Home() {
         <div className="mx-auto max-w-4xl px-6 py-16 text-center">
           <h2 className="mb-4 text-3xl font-black text-slate-950 lg:text-4xl">Start With the Free Playbook</h2>
           <p className="mx-auto mb-8 max-w-xl text-lg text-slate-800">The most downloaded resource for concrete contractors learning to bid smarter with AI. Zero cost, instant access.</p>
-          <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer"
+          <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer"
             className="inline-block rounded-full bg-slate-950 px-10 py-4 text-base font-black text-white shadow-2xl transition hover:bg-slate-800">
             Download Free Now ↗
           </a>
@@ -502,7 +502,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-slate-500">
-            <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
+            <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
             <a href="#skills" className="transition hover:text-orange-400">OpenClaw Skills</a>
             <a href="https://vantaai3.gumroad.com/l/pdcsgr" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Labor Guide ($9)</a>
             <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">X / Twitter</a>
