@@ -441,7 +441,7 @@ export default function Home() {
                     See How It Works →
                   </a>
                   <a
-                    href="mailto:tauschus@gmail.com?subject=AI Chief of Staff — Let's Talk"
+                    href="mailto:therealvantaai@gmail.com?subject=AI Chief of Staff — Let's Talk"
                     className="rounded-2xl border border-orange-400/40 px-8 py-4 text-base font-bold text-orange-300 transition hover:border-orange-400 hover:text-orange-200"
                   >
                     Book a Free 15-Min Call
