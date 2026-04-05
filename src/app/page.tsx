@@ -502,7 +502,7 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-wrap gap-6 text-sm text-slate-500">
-            <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
+            <a href="https://vantaai3.gumroad.com/l/AIplaybook1" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
             <a href="#skills" className="transition hover:text-orange-400">OpenClaw Skills</a>
             <a href="https://vantaai3.gumroad.com/l/pdcsgr" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Labor Guide ($9)</a>
             <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">X / Twitter</a>
