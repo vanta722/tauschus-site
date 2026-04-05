@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-05: 13:42 UTC sync — all 13 crons ACTIVE, Twitter API 401 (tokens need regen), FCA-001 starts TOMORROW Mon Apr 6
+// Dashboard updated 2026-04-05: 23:39 UTC — FCA-001 expense added: $520 truck rental. Twitter suspended (appeal submitted). Tweet autopilot paused.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -179,7 +179,7 @@ export default function Dashboard() {
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
   ]);
