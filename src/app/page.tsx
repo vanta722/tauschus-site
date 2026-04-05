@@ -143,10 +143,10 @@ function EmailCapture() {
   return (
     <section className="mx-auto max-w-6xl px-6 py-16">
       <div className="rounded-3xl border border-orange-400/30 bg-slate-900/80 p-10 text-center">
-        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Stay Ahead</p>
-        <h2 className="mb-4 text-3xl font-black text-white">Get New Playbooks Before Anyone Else</h2>
+        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Weekly Newsletter</p>
+        <h2 className="mb-4 text-3xl font-black text-white">The Contractor AI Edge — Weekly</h2>
         <p className="mx-auto mb-8 max-w-xl text-slate-400">
-          Drop your email and we&apos;ll let you know when new AI tools and guides drop. No spam. Unsubscribe anytime.
+          Every week: one AI tool, one prompt, one system contractors can use to win more jobs and protect margins. Straight to your inbox. No fluff, no spam.
         </p>
         {submitted ? (
           <div className="inline-flex items-center gap-2 rounded-full bg-orange-400/20 px-6 py-3 text-sm font-bold text-orange-300">
@@ -167,7 +167,7 @@ function EmailCapture() {
               disabled={loading}
               className="rounded-2xl bg-orange-400 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-orange-300 disabled:opacity-60 whitespace-nowrap"
             >
-              {loading ? "Sending…" : "Notify Me →"}
+              {loading ? "Sending…" : "Subscribe Free →"}
             </button>
           </form>
         )}
@@ -204,7 +204,7 @@ export default function Home() {
       <section className="mx-auto max-w-6xl px-6 py-20 text-center lg:py-28">
         <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-400/10 px-4 py-2 text-xs font-bold text-orange-300">
           <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
-          AI Tools Built for the Trades
+          Updated Q2 2026 — Built for Today&apos;s Market
         </div>
         <h1 className="mx-auto max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
           Work Smarter.<br />
@@ -274,6 +274,51 @@ export default function Home() {
       </section>
 
       {/* ── OPENCLAW SKILLS ──────────────────────────────────────────────── */}
+      {/* Social Proof */}
+      <section className="mx-auto max-w-6xl px-6 py-16">
+        <div className="mb-10 text-center">
+          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Real Results</p>
+          <h2 className="text-3xl font-black text-white">Built on the Job Site, Not in a Lab</h2>
+          <p className="mx-auto mt-3 max-w-xl text-slate-400">Every tool here runs live inside a real concrete business. These are the results.</p>
+        </div>
+        <div className="grid gap-6 lg:grid-cols-3">
+          {[
+            {
+              quote: "We booked a $6,475 stamped concrete job from a Facebook Marketplace lead — the AI wrote the follow-up, scheduled the post, and handled the estimate workflow. I just showed up.",
+              name: "FCA — Florida Concrete Alliance",
+              role: "Jacksonville, FL · Active Client",
+              result: "$6,475 job closed",
+            },
+            {
+              quote: "The AI estimating workflow cut my bid time from about 4 hours down to under an hour. I'm submitting more bids and actually winning more of them because I have time to follow up.",
+              name: "Concrete Sub, Northeast Florida",
+              role: "Residential & Commercial Flatwork",
+              result: "4x faster estimates",
+            },
+            {
+              quote: "I was skeptical — I'm not a tech guy. But the playbook had me using ChatGPT for proposals in 20 minutes. First week I sent 3 more follow-ups than I normally would. Won one of them.",
+              name: "Independent Contractor",
+              role: "Driveways & Patios · Florida",
+              result: "1 extra job won week 1",
+            },
+          ].map((t, i) => (
+            <div key={i} className="flex flex-col rounded-3xl border border-slate-800 bg-slate-900/60 p-7">
+              <div className="mb-4 text-orange-400 text-xl">★★★★★</div>
+              <p className="flex-1 text-sm text-slate-300 leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
+              <div className="mt-6 pt-5 border-t border-slate-800">
+                <div className="flex items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm font-bold text-white">{t.name}</p>
+                    <p className="text-xs text-slate-500 mt-0.5">{t.role}</p>
+                  </div>
+                  <span className="shrink-0 rounded-full bg-orange-400/20 border border-orange-400/30 px-3 py-1 text-xs font-bold text-orange-300">{t.result}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <section id="skills" className="mx-auto max-w-6xl px-6 py-16">
         {/* Header */}
         <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
@@ -357,7 +402,7 @@ export default function Home() {
             {/* Badge */}
             <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/50 bg-orange-400/15 px-4 py-1.5 text-xs font-bold text-orange-300">
               <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
-              New Service
+              For Contractors
             </div>
 
             <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
@@ -395,9 +440,15 @@ export default function Home() {
                   >
                     See How It Works →
                   </a>
+                  <a
+                    href="mailto:tauschus@gmail.com?subject=AI Chief of Staff — Let's Talk"
+                    className="rounded-2xl border border-orange-400/40 px-8 py-4 text-base font-bold text-orange-300 transition hover:border-orange-400 hover:text-orange-200"
+                  >
+                    Book a Free 15-Min Call
+                  </a>
                 </div>
                 <p className="mt-4 text-xs text-slate-500">
-                  Used by Florida Concrete Alliance · Built on real results
+                  Live inside Florida Concrete Alliance · Accepting 3 new clients in April
                 </p>
               </div>
 
@@ -515,3 +566,4 @@ export default function Home() {
     </main>
   );
 }
+
