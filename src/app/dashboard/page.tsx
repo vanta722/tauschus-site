@@ -178,8 +178,9 @@ export default function Dashboard() {
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
+    { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
   ]);
