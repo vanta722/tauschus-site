@@ -171,10 +171,10 @@ export default function Dashboard() {
   interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
 
   const [leads, setLeads] = useState<Lead[]>([
-    { id: 1, name: "Joseph Noble", phone: "", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "730 sq ft. $1,000 deposit received. Starts Mon Apr 6. Pour Wed Apr 8.", stage: "Booked" },
+    { id: 1, name: "Joseph Noble", phone: "", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "730 sq ft. $1,500 collected. Pour Wed Apr 8.", stage: "Active" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
-    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete", totalPrice: 6475, depositPaid: 1000, status: "Scheduled", notes: "730 sq ft. Mon Apr 6 start. Pour Apr 8. Remaining: $5,475." },
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete", totalPrice: 6475, depositPaid: 1500, status: "In Progress", notes: "730 sq ft. $1,500 collected. Pour Wed Apr 8 — collect $3,385 morning of pour. Remaining: $4,975." },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
