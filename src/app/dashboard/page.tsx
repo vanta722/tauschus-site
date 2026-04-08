@@ -176,7 +176,7 @@ export default function Dashboard() {
     { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 500, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 75, date: "2026-04-08" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 500, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 5, description: "Dark grey power release", amount: 171, date: "2026-04-08" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
   ]);
@@ -1047,7 +1047,7 @@ export default function Dashboard() {
                 { alert: "🔴 CRITICAL: Overnight Product Builder — model_not_found 'anthropic/opus' (2 consecutive errors). Fix cron config: update model to valid ID or remove override.", urgency: "HIGH" },
                 { alert: "🔴 CRITICAL: Twitter API 401 — Access Token expired/revoked. All tweet automation BLOCKED. developer.twitter.com → Keys & Tokens → Regenerate Access Token & Secret → update CREDENTIALS.md.", urgency: "HIGH" },
                 { alert: "🟢 CRYPTO SURGE: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). BTC breaking above $71K — full recovery confirmed. Risk-on.", urgency: "OK" },
-                { alert: "🟢 FCA-001 POUR DAY Apr 8 — Joseph Noble, Jacksonville FL. $4,885 collected. Final $1,590 due at completion. Net in hand: $3,645 (after $1,240 expenses). Est. profit: $5,285.", urgency: "OK" },
+                { alert: "🟢 FCA-001 POUR DAY Apr 8 — Joseph Noble, Jacksonville FL. $4,885 collected. Final $1,590 due at completion. Net in hand: $3,474 (after $1,411 expenses). Est. profit: $5,285.", urgency: "OK" },
                 { alert: "🚨 POLYMARKET: Ceasefire by April 7 at 99.65¢ ($40.9M vol 24h) — TODAY IS APR 8, market likely RESOLVING. Conflict ends Apr 15 at 62.3¢ (up from 15¢ Apr 6). Watch for new non-restricted plays.", urgency: "MED" },
                 { alert: "🔴 HIGH: Polymarket unfunded — hold $70 USDC until post-ceasefire markets open (non-restricted). No actionable plays while top markets RESTRICTED.", urgency: "HIGH" },
                 { alert: "🟢 WIN: AI Bidding Playbook + AI Estimating Playbook built Apr 4–5 — PDFs ready. Both need Gumroad listing ($7–$12). Awaiting Tash approval.", urgency: "OK" },
