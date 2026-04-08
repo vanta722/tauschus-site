@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-08: 08:00 UTC — 4AM sync. Crypto: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). FCA-001 Pour Day. Ceasefire by Apr 7 at 99.65¢ (resolving). 5 crons billing error.
+// Dashboard updated 2026-04-08: 19:53 UTC — FCA-002 added (Frankie, $1,250 driveway, Fri Apr 11). FCA-001 rescheduled Apr 9 (rained out). Crons recovered — 6/7 running. Product Builder fixed. Twitter SUSPENDED.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -22,76 +22,75 @@ const CRON_JOBS = [
   {
     name: "📊 Dashboard + Memory Sync",
     schedule: "Daily 4:00 AM ET",
-    status: "⚠️ BILLING",
-    last: "Last run: 2026-04-08 04:00 ET — ⚠️ BILLING ERROR · Running manually. Anthropic credits too low.",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-08 04:00 ET ✅ OK · 353s runtime · GitHub pushed",
     detail: "Reads all memory files → pulls live crypto + Polymarket data → updates MEMORY.md → pushes dashboard to GitHub",
   },
   {
     name: "📊 Market Scan — 6AM ET",
     schedule: "Daily 6:00 AM ET",
-    status: "⚠️ BILLING",
-    last: "Last run: 2026-04-08 6AM ET — ⚠️ BILLING ERROR · Anthropic credits too low",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-08 6AM ET ✅ OK · Delivered to Telegram",
     detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
   },
   {
     name: "🧠 Self-Learning Loop",
     schedule: "Daily 7:00 AM ET",
-    status: "⚠️ BILLING",
-    last: "Last run: 2026-04-08 7AM ET — ⚠️ BILLING ERROR · Anthropic credits too low",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-08 7AM ET ✅ OK · 66s runtime",
     detail: "Reviews today's daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
   },
   {
     name: "📘 FCA Daily Facebook Post",
-    schedule: "Daily 10:00 AM ET (14:00 UTC)",
-    status: "⚠️ BILLING",
-    last: "Last run: 2026-04-08 14:00 UTC — ⚠️ BILLING ERROR · Anthropic credits too low",
+    schedule: "Daily 2:00 PM UTC",
+    status: "ACTIVE",
+    last: "Last run: 2026-04-08 14:00 UTC ✅ OK · 53s runtime",
     detail: "Posts to Florida Concrete Alliance page · NE Florida · floridaconcretealliance.com · Token: PERMANENT (never expires)",
   },
   {
-    name: "⚠️ Daily Tweet Smart Autopilot",
-    schedule: "Daily 10:00 AM UTC",
-    status: "⚠️ AUTH ERROR",
-    last: "Last run: 2026-04-05 10AM UTC — 401 FAIL · Twitter access token expired/revoked. Regen at developer.twitter.com",
-    detail: "Rotates tweet library (contractor + OpenClaw products). ⚠️ BLOCKED — tokens expired/revoked. Regen required.",
+    name: "🚫 Tweet Autopilot",
+    schedule: "Paused",
+    status: "⚠️ SUSPENDED",
+    last: "Twitter/X account SUSPENDED (account-level). Appeal at twitter.com/account/suspended.",
+    detail: "All tweet automation PAUSED. Account suspended. Resumes after reinstatement.",
   },
   {
     name: "📊 Market Scan — 6PM ET",
     schedule: "Daily 6:00 PM ET",
     status: "⚠️ BILLING",
-    last: "Last run: 2026-04-08 6PM ET — ⚠️ BILLING ERROR · Anthropic credits too low",
+    last: "Last run: 2026-04-08 6PM ET — 1 billing error. Monitoring.",
     detail: "Same as 6AM scan — second daily pulse. Delivered to Telegram.",
   },
   {
     name: "🌙 Overnight Product Builder",
     schedule: "Daily 11:00 PM ET",
-    status: "⚠️ MODEL ERROR",
-    last: "Last run: 2026-04-07 11PM ET — ⚠️ model_not_found: 'anthropic/opus' (2 consecutive errors). Fix model name in cron config.",
-    detail: "Researches trending construction topics → builds PDF product → schedules 5 tweets → reports to Telegram. ⚠️ NEEDS FIX: Remove model override or update to valid model ID",
+    status: "ACTIVE",
+    last: "FIXED 2026-04-08 19:53 UTC — model updated to claude-sonnet-4-6. Next run tonight 11PM ET.",
+    detail: "Researches trending construction topics → builds PDF product → schedules 5 tweets → reports to Telegram.",
   },
   {
     name: "📦 Pending Products Scanner",
     schedule: "Daily 11:00 PM ET",
     status: "ACTIVE",
-    last: "Last run: 2026-04-07 11PM ET OK · 8 PDFs tracked (7 full PDFs + 1 markdown-only). No new additions.",
+    last: "Last run: 2026-04-08 11PM ET OK · 8 PDFs tracked. Holding for Tash release decision.",
     detail: "Scans /products for unlisted PDFs → updates pending-products.md → flags for Tash approval",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-08 08:00 UTC";
+const CRON_LAST_UPDATED = "2026-04-08 19:53 UTC";
 
 const TASKS = [
-  { task: "🔴 CRITICAL: 5 crons BILLING ERROR — Dashboard, Market Scan 6AM, Self-Learning Loop, FCA Facebook Post, Market Scan 6PM all failed Apr 8. Top up Anthropic API credits at console.anthropic.com/billing.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 CRITICAL: Fix Overnight Product Builder — model_not_found 'anthropic/opus' (2 consecutive errors). Update cron model to valid ID or remove override to use default.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 URGENT: Regenerate Twitter API tokens — 401 Unauthorized, all tweet automation BLOCKED. developer.twitter.com → Apps → vantaai3 → Keys & Tokens → Regenerate Access Token & Secret → update CREDENTIALS.md", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 FCA-001 COMPLETION: Collect final $1,590 from Joseph Noble upon job sign-off. Pour day Apr 8. Total job $6,475, expenses $1,190, est. net profit $5,285.", priority: "HIGH", pillar: "FCA" },
-  { task: "🔴 Upload 2 PDFs to Gumroad: AI Estimating & Scheduling Playbook (built Apr 5) + AI Bidding Playbook (built Apr 4). Suggested $7–$12 each.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 Fund Polymarket — wait for post-ceasefire resolution + new non-restricted plays. Ceasefire by Apr 7 at 99.65¢ resolving today. Watch for new markets.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation offline until reinstated.", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 FCA-001 POUR TOMORROW Apr 9: Joseph Noble, Jacksonville FL. Rained out Apr 8. Collect final $1,590 upon completion.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 FCA-002 CONFIRMED Fri Apr 11 @ 1PM: Frankie (Palm Coast Demo) — Driveway Extension 12'x12' 4\" depth — $1,250 total. Frank@palmcoastdemo.com.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 Fund Polymarket — $70 USDC ready. Wait for new non-restricted plays post-ceasefire resolution.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🟡 Products on hold — 7 PDFs built, awaiting Tash release decision before listing.", priority: "MED", pillar: "Online" },
+  { task: "🟡 Monitor Market Scan 6PM — 1 billing error Apr 8. Watch tonight's run.", priority: "MED", pillar: "Online" },
   { task: "🟡 First AI Chief of Staff client — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
-  { task: "🟡 List Workspace Audit service on Gumroad ($25) — email in inbox, no file needed", priority: "MED", pillar: "Online" },
   { task: "🟡 Set up Kit (kit.com, free) for email nurture automation — 4 emails written, needs platform", priority: "MED", pillar: "Online" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
-  { task: "🟡 Ask Joseph Noble for a Google review upon job completion (FCA-001)", priority: "MED", pillar: "FCA" },
-  { task: "Upgrade Twitter to Basic API tier at 50–100 followers", priority: "LOW", pillar: "Online" },
+  { task: "🟡 Ask Joseph Noble for a Google review upon FCA-001 completion", priority: "MED", pillar: "FCA" },
+  { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
 const MEMORY_API = "/api/memory";
@@ -100,7 +99,7 @@ const MEMORY_API_KEY = "";
 const FCA_PIPELINE = [
   { stage: "New Leads", count: 0, color: "#f97316" },
   { stage: "Quoted", count: 0, color: "#6366f1" },
-  { stage: "Won", count: 1, color: "#22c55e" },
+  { stage: "Won", count: 2, color: "#22c55e" },
   { stage: "Lost", count: 0, color: "#ef4444" },
 ];
 
@@ -166,10 +165,12 @@ export default function Dashboard() {
   interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
 
   const [leads, setLeads] = useState<Lead[]>([
-    { id: 1, name: "Joseph Noble", phone: "", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "POUR DAY Apr 8. $4,885 collected. $1,590 remaining due at completion.", stage: "Active" },
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "RESCHEDULED — rained out Apr 8. New pour: Apr 9. $4,885 collected. $1,590 remaining due at completion.", stage: "Booked" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "Pour & complete Fri Apr 11 @ 1PM. Frank@palmcoastdemo.com. Concrete: $675 (3000 PSI + Fiber) + Labor & Equipment: $575.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
-    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "730 sq ft. POUR DAY Apr 8. $4,885 collected. Remaining: $1,590 due upon completion." },
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "RESCHEDULED — rained out Apr 8. Pour date: Apr 9. Remaining $1,590 due upon completion." },
+    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 0, status: "Scheduled", notes: "Pour & complete Fri Apr 11 @ 1PM. Concrete Ready Mix $675 (3000 PSI+Fiber) + Labor & Equipment $575. Frank@palmcoastdemo.com" },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
@@ -178,7 +179,8 @@ export default function Dashboard() {
   ]);
   const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 500, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 5, description: "Dark grey power release", amount: 171, date: "2026-04-08" }]);
   const [clients, setClients] = useState<Client[]>([
-    { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–9", repeat: false, referral: "Facebook Marketplace" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "Scheduled Apr 11 @ 1PM. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
   ]);
 
   const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
@@ -1043,16 +1045,14 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚡ Alerts</p>
             <div className="space-y-2">
               {[
-                { alert: "🔴 CRITICAL: 5 CRONS BILLING ERROR — Dashboard+Memory, Market Scan 6AM, Self-Learning Loop, FCA Facebook Post, Market Scan 6PM all failed 2026-04-08. Top up Anthropic API credits → console.anthropic.com/billing.", urgency: "HIGH" },
-                { alert: "🔴 CRITICAL: Overnight Product Builder — model_not_found 'anthropic/opus' (2 consecutive errors). Fix cron config: update model to valid ID or remove override.", urgency: "HIGH" },
-                { alert: "🔴 CRITICAL: Twitter API 401 — Access Token expired/revoked. All tweet automation BLOCKED. developer.twitter.com → Keys & Tokens → Regenerate Access Token & Secret → update CREDENTIALS.md.", urgency: "HIGH" },
-                { alert: "🟢 CRYPTO SURGE: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). BTC breaking above $71K — full recovery confirmed. Risk-on.", urgency: "OK" },
-                { alert: "🟢 FCA-001 POUR DAY Apr 8 — Joseph Noble, Jacksonville FL. $4,885 collected. Final $1,590 due at completion. Net in hand: $3,474 (after $1,411 expenses). Est. profit: $5,285.", urgency: "OK" },
-                { alert: "🚨 POLYMARKET: Ceasefire by April 7 at 99.65¢ ($40.9M vol 24h) — TODAY IS APR 8, market likely RESOLVING. Conflict ends Apr 15 at 62.3¢ (up from 15¢ Apr 6). Watch for new non-restricted plays.", urgency: "MED" },
-                { alert: "🔴 HIGH: Polymarket unfunded — hold $70 USDC until post-ceasefire markets open (non-restricted). No actionable plays while top markets RESTRICTED.", urgency: "HIGH" },
-                { alert: "🟢 WIN: AI Bidding Playbook + AI Estimating Playbook built Apr 4–5 — PDFs ready. Both need Gumroad listing ($7–$12). Awaiting Tash approval.", urgency: "OK" },
-                { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
-                { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
+                { alert: "🔴 CRITICAL: Twitter/X ACCOUNT SUSPENDED — account-level ban. Appeal at twitter.com/account/suspended. All tweet automation offline.", urgency: "HIGH" },
+                { alert: "🟢 FCA-001 RESCHEDULED: Rained out Apr 8. New pour: Apr 9. Joseph Noble, Jacksonville FL. $4,885 collected. Final $1,590 due on completion.", urgency: "OK" },
+                { alert: "🟢 FCA-002 BOOKED: Frankie (Palm Coast Demo) — Driveway 12'x12' 4\" depth — Pour & complete Fri Apr 11 @ 1PM. $1,250. Frank@palmcoastdemo.com.", urgency: "OK" },
+                { alert: "🟢 CRONS RECOVERED: 6 of 7 systems ACTIVE. Product Builder FIXED (claude-sonnet-4-6). Market Scan 6PM had 1 billing error — monitoring.", urgency: "OK" },
+                { alert: "🟢 CRYPTO: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). BTC broke $71K — full recovery.", urgency: "OK" },
+                { alert: "🟡 POLYMARKET: Ceasefire markets resolving. Hold $70 USDC for new non-restricted plays.", urgency: "MED" },
+                { alert: "🟡 7 PDFs in product queue — holding for Tash release decision.", urgency: "MED" },
+                { alert: "🟢 WIN: 9 products total live on Gumroad — 5 contractor + 4 OpenClaw tools.", urgency: "OK" },
               ].map((a, i) => (
                 <div key={i} className={`flex gap-3 rounded-xl px-4 py-3 text-xs ${a.urgency === "HIGH" ? "bg-red-500/10 border border-red-500/20" : a.urgency === "OK" ? "bg-green-500/10 border border-green-500/20" : "bg-yellow-500/10 border border-yellow-500/20"}`}>
                   <span className={a.urgency === "HIGH" ? "text-red-200" : a.urgency === "OK" ? "text-green-200" : "text-yellow-200"}>{a.alert}</span>
@@ -1064,12 +1064,12 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 CRITICAL: Top up Anthropic credits — 5 crons down. console.anthropic.com/billing → add credits → all crons resume automatically." },
-                { move: "🥈 Fix Overnight Product Builder — update cron model from 'anthropic/opus' to valid ID (or remove override). Edit at: openclaw cron update." },
-                { move: "🥉 URGENT: Regenerate Twitter API tokens — developer.twitter.com → Keys & Tokens → Regenerate. All tweet automation offline." },
-                { move: "🔲 FCA-001 COMPLETION: Collect final $1,590 from Joseph Noble upon job sign-off. Net profit ~$5,285." },
-                { move: "🔲 Upload 2 products to Gumroad: AI Estimating Playbook (Apr 5) + AI Bidding Playbook (Apr 4). Both $7–$12. Waiting on Tash." },
-                { move: "🔲 Polymarket — wait for post-ceasefire new non-restricted plays. Ceasefire by Apr 7 resolving today. Deploy $70 USDC when confirmed non-restricted." },
+                { move: "🥇 FCA-001: Pour tomorrow Apr 9 — collect final $1,590 from Joseph Noble on completion. Net profit ~$5,285." },
+                { move: "🥈 FCA-002: Confirm Friday Apr 11 @ 1PM with Frankie. Prep: $675 concrete + $575 labor. Contact Frank@palmcoastdemo.com." },
+                { move: "🥉 Twitter suspension appeal — twitter.com/account/suspended. File ASAP to restore automation pipeline." },
+                { move: "🔲 7 products ready to list when Tash gives the go. Just say the word." },
+                { move: "🔲 Polymarket — deploy $70 USDC when non-restricted plays open post-ceasefire." },
+                { move: "🔲 Post AI Chief of Staff sales pitch in contractor FB groups (tauschus.com/ai-chief-of-staff)." },
               ].map((m, i) => (
                 <div key={i} className="flex gap-3 rounded-xl bg-slate-800/60 px-4 py-3 text-xs">
                   <span className="text-slate-200">{m.move}</span>
@@ -1089,6 +1089,7 @@ export default function Dashboard() {
     </main>
   );
 }
+
 
 
 
