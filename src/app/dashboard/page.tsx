@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-08: 02:48 UTC — FCA-001 POUR DAY. $3,385 collected morning of pour. Total collected: $4,885. Expenses: $1,090. Net in hand: $3,795. Remaining: $1,590.
+// Dashboard updated 2026-04-08: 02:48 UTC — FCA-001 POUR DAY. $3,385 collected morning of pour. Total collected: $4,885. Expenses: $1,190. Net in hand: $3,695. Remaining: $1,590.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -181,7 +181,7 @@ export default function Dashboard() {
     { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 400, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 25, date: "2026-04-08" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 500, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 25, date: "2026-04-08" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–8", repeat: false, referral: "Facebook Marketplace" },
   ]);
@@ -1049,12 +1049,12 @@ export default function Dashboard() {
             <div className="space-y-2">
               {[
                 { alert: "🔴 CRITICAL: Twitter API 401 — Access Token expired/revoked. All tweet automation BLOCKED. developer.twitter.com → Keys & Tokens → Regenerate Access Token & Secret → update CREDENTIALS.md.", urgency: "HIGH" },
-                { alert: "🟢 FCA-001 POUR DAY Apr 8 — Joseph Noble, Jacksonville FL. $3,385 collected morning of pour ✅. Total collected: $4,885. Expenses: $1,090. Net in hand: $3,795. Remaining: $1,590 due at completion.", urgency: "OK" },
+                { alert: "🟢 FCA-001 POUR DAY Apr 8 — Joseph Noble, Jacksonville FL. $3,385 collected morning of pour ✅. Total collected: $4,885. Expenses: $1,190. Net in hand: $3,695. Remaining: $1,590 due at completion.", urgency: "OK" },
                 { alert: "🟢 CRYPTO BOUNCE: BTC $69,849 (+4.27%) · ETH $2,157 (+5.53%) · ONDO $0.2687 (+7.55%) · SOL $82.54 (+3.50%). All assets recovering from cycle lows. Risk-on signal.", urgency: "OK" },
                 { alert: "✅ All 12 cron jobs ACTIVE as of 2026-04-06 09:37 UTC sync. 5-tweet AI Bidding Playbook campaign scheduled 11AM–1PM UTC today.", urgency: "OK" },
                 { alert: "🟢 WIN: AI Bidding Playbook for Concrete Contractors built overnight Apr 5 — 7-part guide, PDF ready. 5 tweets scheduled today 7–9AM ET. Needs Gumroad listing ($7–$12).", urgency: "OK" },
                 { alert: "🟢 WIN: AI Estimating & Scheduling Playbook built overnight Apr 4 — 10 pages. Needs Gumroad listing ($7–$12).", urgency: "OK" },
-                { alert: "💰 FCA-001: $4,885 collected of $6,475 total. Final payment $1,590 due upon completion. Net in hand: $3,795 (after $1,090 expenses).", urgency: "MED" },
+                { alert: "💰 FCA-001: $4,885 collected of $6,475 total. Final payment $1,590 due upon completion. Net in hand: $3,695 (after $1,190 expenses).", urgency: "MED" },
                 { alert: "🔴 HIGH: Polymarket unfunded — $70 USDC needed ($40 Clarity Act YES + $30 Recession hedge). Iran Apr 30 YES 99.65¢. Ceasefire Apr 15 now at 20.5¢ — watch.", urgency: "HIGH" },
                 { alert: "🟡 MED: First AI Chief of Staff client still outstanding — post in contractor FB groups (tauschus.com/ai-chief-of-staff)", urgency: "MED" },
                 { alert: "🟢 WIN: 4 OpenClaw products launched Mar 31 — Twitter Autopilot ($9) + Cron Kit ($9) + Ops Bundle ($19) + Free Checklist", urgency: "OK" },
