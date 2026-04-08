@@ -166,11 +166,11 @@ export default function Dashboard() {
 
   const [leads, setLeads] = useState<Lead[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "RESCHEDULED — rained out Apr 8. New pour: Apr 9. $4,885 collected. $1,590 remaining due at completion.", stage: "Booked" },
-    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "Pour & complete Fri Apr 11 @ 1PM. Frank@palmcoastdemo.com. Concrete: $675 (3000 PSI + Fiber) + Labor & Equipment: $575.", stage: "Booked" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete: $675 (3000 PSI+Fiber) + Labor: $575.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
     { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "RESCHEDULED — rained out Apr 8. Pour date: Apr 9. Remaining $1,590 due upon completion." },
-    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 0, status: "Scheduled", notes: "Pour & complete Fri Apr 11 @ 1PM. Concrete Ready Mix $675 (3000 PSI+Fiber) + Labor & Equipment $575. Frank@palmcoastdemo.com" },
+    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 0, status: "Scheduled", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete $675 (3000 PSI+Fiber) + Labor $575. Frank@palmcoastdemo.com" },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
