@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-08: 19:53 UTC — FCA-002 added (Frankie, $1,250 driveway, Fri Apr 11). FCA-001 rescheduled Apr 9 (rained out). Crons recovered — 6/7 running. Product Builder fixed. Twitter SUSPENDED.
+// Dashboard updated 2026-04-10: 01:44 UTC — FCA-001 POURED Apr 9. Expenses updated: $4,330 total. Net profit $2,145. Final $1,590 collecting Apr 10 after wash & seal.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -81,7 +81,7 @@ const CRON_LAST_UPDATED = "2026-04-08 19:53 UTC";
 
 const TASKS = [
   { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation offline until reinstated.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 FCA-001 POUR TOMORROW Apr 9: Joseph Noble, Jacksonville FL. Rained out Apr 8. Collect final $1,590 upon completion.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 FCA-001 FINAL PAYMENT: Collect $1,590 from Joseph Noble today (Apr 10) after wash & seal. Job POURED Apr 9. Net profit: $2,145.", priority: "HIGH", pillar: "FCA" },
   { task: "🔴 FCA-002 CONFIRMED Fri Apr 11 @ 1PM: Frankie (Palm Coast Demo) — Driveway Extension 12'x12' 4\" depth — $1,250 total. Frank@palmcoastdemo.com.", priority: "HIGH", pillar: "FCA" },
   { task: "🔴 Fund Polymarket — $70 USDC ready. Wait for new non-restricted plays post-ceasefire resolution.", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 Products on hold — 7 PDFs built, awaiting Tash release decision before listing.", priority: "MED", pillar: "Online" },
@@ -165,11 +165,11 @@ export default function Dashboard() {
   interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
 
   const [leads, setLeads] = useState<Lead[]>([
-    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "RESCHEDULED — rained out Apr 8. New pour: Apr 9. $4,885 collected. $1,590 remaining due at completion.", stage: "Booked" },
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "POURED Apr 9 ✅. Wash & seal Apr 10. $4,885 collected. $1,590 remaining — collecting Apr 10.", stage: "Booked" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete: $675 (3000 PSI+Fiber) + Labor: $575.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
-    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "RESCHEDULED — rained out Apr 8. Pour date: Apr 9. Remaining $1,590 due upon completion." },
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "POURED Apr 9 ✅. Wash & seal Apr 10. Collecting final $1,590 on completion. Total expenses: $4,330. Net profit: $2,145." },
     { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 0, status: "Scheduled", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete $675 (3000 PSI+Fiber) + Labor $575. Frank@palmcoastdemo.com" },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
@@ -177,7 +177,7 @@ export default function Dashboard() {
     { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Crew labor", amount: 500, date: "2026-04-08" }, { id: 4, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 5, description: "Dark grey power release", amount: 171, date: "2026-04-08" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–9", repeat: false, referral: "Facebook Marketplace" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "Scheduled Apr 11 @ 1PM. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
@@ -1046,7 +1046,7 @@ export default function Dashboard() {
             <div className="space-y-2">
               {[
                 { alert: "🔴 CRITICAL: Twitter/X ACCOUNT SUSPENDED — account-level ban. Appeal at twitter.com/account/suspended. All tweet automation offline.", urgency: "HIGH" },
-                { alert: "🟢 FCA-001 RESCHEDULED: Rained out Apr 8. New pour: Apr 9. Joseph Noble, Jacksonville FL. $4,885 collected. Final $1,590 due on completion.", urgency: "OK" },
+                { alert: "🟢 FCA-001 POURED Apr 9 ✅: Joseph Noble, Jacksonville FL. Wash & seal Apr 10. Collecting final $1,590 today. Total expenses: $4,330. Net profit: $2,145.", urgency: "OK" },
                 { alert: "🟢 FCA-002 BOOKED: Frankie (Palm Coast Demo) — Driveway 12'x12' 4\" depth — Pour & complete Fri Apr 11 @ 1PM. $1,250. Frank@palmcoastdemo.com.", urgency: "OK" },
                 { alert: "🟢 CRONS RECOVERED: 6 of 7 systems ACTIVE. Product Builder FIXED (claude-sonnet-4-6). Market Scan 6PM had 1 billing error — monitoring.", urgency: "OK" },
                 { alert: "🟢 CRYPTO: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). BTC broke $71K — full recovery.", urgency: "OK" },
@@ -1064,7 +1064,7 @@ export default function Dashboard() {
             <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">🎯 Next Moves</p>
             <div className="space-y-2">
               {[
-                { move: "🥇 FCA-001: Pour tomorrow Apr 9 — collect final $1,590 from Joseph Noble on completion. Net profit ~$5,285." },
+                { move: "🥇 FCA-001: Collect final $1,590 from Joseph Noble TODAY after wash & seal. Net profit: $2,145 (expenses ran $4,330 total)." },
                 { move: "🥈 FCA-002: Confirm Friday Apr 11 @ 1PM with Frankie. Prep: $675 concrete + $575 labor. Contact Frank@palmcoastdemo.com." },
                 { move: "🥉 Twitter suspension appeal — twitter.com/account/suspended. File ASAP to restore automation pipeline." },
                 { move: "🔲 7 products ready to list when Tash gives the go. Just say the word." },
