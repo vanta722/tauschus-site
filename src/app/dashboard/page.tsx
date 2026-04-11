@@ -103,6 +103,28 @@ const FCA_PIPELINE = [
   { stage: "Lost", count: 0, color: "#ef4444" },
 ];
 
+
+const FCA_PHOTOS: Record<string, { id: string; label: string; photos: { url: string; caption: string; date: string }[] }[]> = {
+  "FCA-001": [
+    {
+      id: "fca-001",
+      label: "FCA-001 — Joseph Noble | Stamped Concrete | Jacksonville FL",
+      photos: [
+        { url: "/fca-photos/fca-001/placeholder.jpg", caption: "Add photos to /public/fca-photos/fca-001/", date: "2026-04-09" },
+      ],
+    },
+  ],
+  "FCA-002": [
+    {
+      id: "fca-002",
+      label: "FCA-002 — Frankie | Driveway Extension | Palm Coast FL",
+      photos: [
+        { url: "/fca-photos/fca-002/placeholder.jpg", caption: "Add photos to /public/fca-photos/fca-002/", date: "2026-04-10" },
+      ],
+    },
+  ],
+};
+
 function PriorityBadge({ p }: { p: string }) {
   const c: Record<string, string> = {
     HIGH: "bg-red-500/20 text-red-300 border border-red-500/30",
@@ -186,7 +208,8 @@ export default function Dashboard() {
   const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
   const [editingLead, setEditingLead] = useState<Lead | null>(null);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
-  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money">("kpi");
+  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money" | "photos">("kpi");
+  const [lightbox, setLightbox] = useState<string | null>(null);
 
   const fcaKpi = {
     leadsWeek: leads.filter(l => l.stage !== "Lost").length,
@@ -501,7 +524,7 @@ export default function Dashboard() {
               {(["kpi","leads","jobs","money"] as const).map(s => (
                 <button key={s} onClick={() => setFcaSection(s)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide transition ${fcaSection === s ? "bg-orange-400 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
-                  {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : "💰 Money"}
+                  {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : s === "money" ? "💰 Money" : "📸 Photos"}
                 </button>
               ))}
             </div>
@@ -707,6 +730,71 @@ export default function Dashboard() {
                       </div>
                     ))}
                   </div>
+                </div>
+              </div>
+            )}
+
+
+            {/* PHOTOS */}
+            {fcaSection === "photos" && (
+              <div className="space-y-6">
+                <div className="flex items-center justify-between">
+                  <p className="text-xs font-bold uppercase tracking-widest text-orange-400">Job Photo Gallery</p>
+                  <p className="text-xs text-slate-500">Add photos to <code className="bg-slate-800 px-1 rounded">/public/fca-photos/fca-00X/</code> in the GitHub repo</p>
+                </div>
+                {Object.entries(FCA_PHOTOS).map(([jobId, groups]) => (
+                  <div key={jobId} className="space-y-3">
+                    {groups.map(group => (
+                      <div key={group.id} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                        <p className="text-sm font-bold text-white mb-4">{jobId} — {group.label.split("—").slice(1).join("—").trim()}</p>
+                        {group.photos.length === 0 ? (
+                          <div className="rounded-xl border border-dashed border-slate-700 p-8 text-center">
+                            <p className="text-slate-500 text-sm">📸 No photos yet</p>
+                            <p className="text-slate-600 text-xs mt-1">Upload to /public/fca-photos/{group.id}/</p>
+                          </div>
+                        ) : (
+                          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                            {group.photos.map((photo, i) => (
+                              <div key={i}
+                                className="rounded-xl overflow-hidden border border-slate-700 bg-slate-800 cursor-pointer hover:border-orange-400 transition group"
+                                onClick={() => setLightbox(photo.url)}
+                              >
+                                <div className="aspect-square bg-slate-800 flex items-center justify-center overflow-hidden">
+                                  <img
+                                    src={photo.url}
+                                    alt={photo.caption}
+                                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
+                                    onError={(e) => {
+                                      const t = e.target as HTMLImageElement;
+                                      t.style.display = "none";
+                                      if (t.parentElement) t.parentElement.innerHTML = "<p class=\"text-slate-600 text-xs p-4 text-center\">📷 No image</p>";
+                                    }}
+                                  />
+                                </div>
+                                <div className="px-2 py-1.5">
+                                  <p className="text-xs text-slate-400 truncate">{photo.caption}</p>
+                                  <p className="text-xs text-slate-600">{photo.date}</p>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* LIGHTBOX */}
+            {lightbox && (
+              <div className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4" onClick={() => setLightbox(null)}>
+                <div className="relative max-w-4xl max-h-full">
+                  <img src={lightbox} alt="FCA job photo" className="max-w-full max-h-screen rounded-2xl object-contain" />
+                  <button
+                    className="absolute top-3 right-3 bg-black/60 text-white rounded-full w-9 h-9 flex items-center justify-center text-lg hover:bg-black/80"
+                    onClick={() => setLightbox(null)}
+                  >✕</button>
                 </div>
               </div>
             )}
