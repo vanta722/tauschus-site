@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-11: 08:00 UTC — 4AM sync. FCA-002 TODAY @ 1PM. Anthropic billing errors. 5 tweet crons blocked (Twitter suspended). Polymarket shift: Iran resolved, Fed rate cut markets new top.
+// Dashboard updated 2026-04-11: 11:54 UTC — FCA-002 CLOSED (Palm Coast, Apr 10). FCA-001 collecting final $1,590 today Apr 11. Two jobs complete this week.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -84,12 +84,12 @@ const TASKS = [
   { task: "🔴 CRITICAL: Top up Anthropic billing — Dashboard + Market Scan 6AM failing (2 consecutive billing errors). Visit console.anthropic.com.", priority: "HIGH", pillar: "Online" },
   { task: "🔴 FCA-002 TODAY Apr 11 @ 1PM: Frankie (Palm Coast Demo) — Driveway 12\'x12\' 4\" depth — $1,250. Concrete $675 + Labor $575. Frank@palmcoastdemo.com.", priority: "HIGH", pillar: "FCA" },
   { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. 5 tweet crons scheduled today WILL FAIL.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 FCA-001 FINAL: Collect $1,590 from Joseph Noble if not yet done (due Apr 10 after wash & seal). Net profit at completion: $2,145.", priority: "HIGH", pillar: "FCA" },
+  { task: "🔴 FCA-001 FINAL PAYMENT TODAY: Collect $1,590 from Joseph Noble (Apr 11). Ask for Google review on site. Net profit: $2,145.", priority: "HIGH", pillar: "FCA" },
   { task: "🟡 Fund Polymarket — $70 USDC ready. Watch for non-restricted Fed rate / econ plays post-Iran resolution.", priority: "MED", pillar: "Crypto" },
   { task: "🟡 Products on hold — PDFs built overnight, awaiting Tash release decision before listing on Gumroad.", priority: "MED", pillar: "Online" },
   { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
-  { task: "🟡 Ask Joseph Noble for a Google review after FCA-001 completion", priority: "MED", pillar: "FCA" },
+
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
@@ -165,12 +165,12 @@ export default function Dashboard() {
   interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
 
   const [leads, setLeads] = useState<Lead[]>([
-    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "POURED Apr 9 ✅. Wash & seal Apr 10. $4,885 collected. $1,590 remaining — collecting Apr 10.", stage: "Booked" },
-    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete: $675 (3000 PSI+Fiber) + Labor: $575.", stage: "Booked" },
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "Collecting final $1,590 TODAY Apr 11. Poured Apr 9, sealed Apr 10. $4,885 collected.", stage: "Booked" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "CLOSED ✅ Apr 10. 15 Royal Leaf Lane, Palm Coast FL 32164. Poured & complete. Frank@palmcoastdemo.com.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
-    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "POURED Apr 9 ✅. Wash & seal Apr 10. Collecting final $1,590 on completion. Total expenses: $4,330. Net profit: $2,145." },
-    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 0, status: "Scheduled", notes: "15 Royal Leaf Lane, Palm Coast FL 32164. Pour & complete Fri Apr 11 @ 1PM. Concrete $675 (3000 PSI+Fiber) + Labor $575. Frank@palmcoastdemo.com" },
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "Collecting final $1,590 TODAY Apr 11. Poured Apr 9, sealed Apr 10. Total expenses: $4,330. Net profit: $2,145." },
+    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Poured & complete in one day. 15 Royal Leaf Lane, Palm Coast FL 32164. Frank@palmcoastdemo.com" },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
@@ -180,7 +180,7 @@ export default function Dashboard() {
   const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–9", repeat: false, referral: "Facebook Marketplace" },
-    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "Scheduled Apr 11 @ 1PM. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "CLOSED ✅ Apr 10. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
   ]);
 
   const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
@@ -1046,8 +1046,8 @@ export default function Dashboard() {
             <div className="space-y-2">
               {[
                 { alert: "🔴 CRITICAL: Twitter/X ACCOUNT SUSPENDED — account-level ban. Appeal at twitter.com/account/suspended. All tweet automation offline.", urgency: "HIGH" },
-                { alert: "🟢 FCA-001 POURED Apr 9 ✅: Joseph Noble, Jacksonville FL. Wash & seal Apr 10. Collecting final $1,590 today. Total expenses: $4,330. Net profit: $2,145.", urgency: "OK" },
-                { alert: "🟢 FCA-002 BOOKED: Frankie (Palm Coast Demo) — Driveway 12'x12' 4\" depth — Pour & complete Fri Apr 11 @ 1PM. $1,250. Frank@palmcoastdemo.com.", urgency: "OK" },
+                { alert: "🟢 FCA-001 NEAR DONE: Collecting final $1,590 from Joseph Noble TODAY Apr 11. Net profit: $2,145. Ask for Google review on site.", urgency: "OK" },
+                { alert: "🟢 FCA-002 CLOSED ✅: Frankie (Palm Coast Demo) — Driveway 12'x12' poured & complete Apr 10. $1,250.", urgency: "OK" },
                 { alert: "🟢 CRONS RECOVERED: 6 of 7 systems ACTIVE. Product Builder FIXED (claude-sonnet-4-6). Market Scan 6PM had 1 billing error — monitoring.", urgency: "OK" },
                 { alert: "🟢 CRYPTO: BTC $71,681 (+4.46%) · ETH $2,254.74 (+7.17%) · ONDO $0.2706 (+6.42%) · SOL $84.55 (+5.86%). BTC broke $71K — full recovery.", urgency: "OK" },
                 { alert: "🟡 POLYMARKET: Ceasefire markets resolving. Hold $70 USDC for new non-restricted plays.", urgency: "MED" },
@@ -1066,7 +1066,7 @@ export default function Dashboard() {
               {[
                 { move: "🥇 CRITICAL: Top up Anthropic billing at console.anthropic.com — Dashboard + Market Scan 6AM offline (2 consecutive billing errors)." },
                 { move: "🥈 FCA-002 TODAY: Frankie @ 1PM Apr 11 — pour 12\'x12\' driveway. Confirm concrete ($675 3000 PSI+Fiber). Frank@palmcoastdemo.com." },
-                { move: "🥉 FCA-001: Collect final $1,590 from Joseph Noble if not already done (was due Apr 10 after wash & seal). Net profit: $2,145." },
+                { move: "🥉 FCA-001: Collect $1,590 from Joseph Noble TODAY — then ask for a Google review. Net profit: $2,145." },
                 { move: "🔲 Twitter suspension appeal — twitter.com/account/suspended. 5 tweet crons firing today — all will fail until reinstated." },
                 { move: "🔲 Polymarket — Fed rate cut markets now top volume. Watch for non-restricted plays. $70 USDC ready." },
                 { move: "🔲 Product backlog — approve PDF queue so Gumroad listings can go live. Just say the word." },
