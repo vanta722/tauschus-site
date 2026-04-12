@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-11: 11:54 UTC — FCA-002 CLOSED (Palm Coast, Apr 10). FCA-001 collecting final $1,590 today Apr 11. Two jobs complete this week.
+// Dashboard updated 2026-04-12: 21:26 UTC — FCA-001 final HD expenses added ($156.76). Photos tab fix. All $6,475 collected.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -191,7 +191,7 @@ export default function Dashboard() {
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "CLOSED ✅ Apr 10. 15 Royal Leaf Lane, Palm Coast FL 32164. Poured & complete. Frank@palmcoastdemo.com.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
-    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 4885, status: "In Progress", notes: "Collecting final $1,590 TODAY Apr 11. Poured Apr 9, sealed Apr 10. Total expenses: $4,330. Net profit: $2,145." },
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 6475, status: "In Progress", notes: "All $6,475 collected. Final expenses being tallied (HD receipts Apr 11: $156.76). Net profit TBD." },
     { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Poured & complete in one day. 15 Royal Leaf Lane, Palm Coast FL 32164. Frank@palmcoastdemo.com" },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
@@ -199,7 +199,7 @@ export default function Dashboard() {
     { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "Active job Apr 6–9", repeat: false, referral: "Facebook Marketplace" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "CLOSED ✅ Apr 10. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
@@ -521,7 +521,7 @@ export default function Dashboard() {
 
             {/* FCA Sub-nav */}
             <div className="flex flex-wrap gap-2">
-              {(["kpi","leads","jobs","money"] as const).map(s => (
+              {(["kpi","leads","jobs","money","photos"] as const).map(s => (
                 <button key={s} onClick={() => setFcaSection(s)}
                   className={`px-4 py-2 rounded-xl text-xs font-bold uppercase tracking-wide transition ${fcaSection === s ? "bg-orange-400 text-slate-950" : "bg-slate-800 text-slate-400 hover:text-white"}`}>
                   {s === "kpi" ? "📊 KPIs" : s === "leads" ? "🎯 Leads" : s === "jobs" ? "🔨 Jobs" : s === "money" ? "💰 Money" : "📸 Photos"}
