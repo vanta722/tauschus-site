@@ -119,7 +119,7 @@ const FCA_PHOTOS: Record<string, { id: string; label: string; photos: { url: str
       id: "fca-002",
       label: "FCA-002 — Frankie | Driveway Extension | Palm Coast FL",
       photos: [
-        { url: "/fca-photos/fca-002/placeholder.jpg", caption: "Add photos to /public/fca-photos/fca-002/", date: "2026-04-10" },
+        { url: "/fca-photos/fca-002/frankie-concrete-pad.jpg", caption: "Concrete pad — freshly poured, Palm Coast FL", date: "2026-04-10" },
       ],
     },
   ],
