@@ -110,7 +110,7 @@ const FCA_PHOTOS: Record<string, { id: string; label: string; photos: { url: str
       id: "fca-001",
       label: "FCA-001 — Joseph Noble | Stamped Concrete | Jacksonville FL",
       photos: [
-        { url: "/fca-photos/fca-001/placeholder.jpg", caption: "Add photos to /public/fca-photos/fca-001/", date: "2026-04-09" },
+        { url: "/fca-photos/fca-001/noble-stamped-concrete.jpg", caption: "Stamped concrete — charcoal gray, European fan pattern", date: "2026-04-09" },
       ],
     },
   ],
