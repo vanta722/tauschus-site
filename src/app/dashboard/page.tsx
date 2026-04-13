@@ -198,6 +198,7 @@ export default function Dashboard() {
     { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
     { id: 4, client: "Joseph Noble", amount: 1590, date: "2026-04-11", notes: "Final payment upon completion ✅" },
+    { id: 5, client: "Frankie (Palm Coast Demo)", amount: 1250, date: "2026-04-10", notes: "Full payment — job complete ✅" },
   ]);
   const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }]);
   const [clients, setClients] = useState<Client[]>([
