@@ -63,11 +63,11 @@ const CRON_JOBS = [
     detail: "All tweet automation PAUSED until account reinstated.",
   },
   {
-    name: "🔴 Dashboard Sync (disabled)",
-    schedule: "On-demand only",
-    status: "DISABLED",
-    last: "Disabled 2026-04-13 — cost optimization. Dashboard updated manually on changes.",
-    detail: "Was daily 4AM ET. Disabled to cut expensive file reads + GitHub push. Mac updates manually.",
+    name: "📊 Dashboard Sync",
+    schedule: "Mon / Wed / Fri 4:00 AM ET · Haiku model",
+    status: "ACTIVE",
+    last: "Re-enabled 2026-04-13 — lean version. Reads 3 files only, Haiku model, 3x/week.",
+    detail: "Updates data constants only (tasks, pipeline, alerts) → pushes to GitHub. No full file rewrite.",
   },
 ];
 
