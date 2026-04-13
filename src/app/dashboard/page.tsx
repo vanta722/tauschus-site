@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-12: 21:26 UTC — FCA-001 final HD expenses added ($156.76). Photos tab fix. All $6,475 collected.
+// Dashboard updated 2026-04-13: 08:00 UTC — 4AM sync: Hungary resolved (Magyar won), ONDO at critical $0.245 support, FCA-001+002 closed, billing restored.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -13,83 +13,82 @@ const CRYPTO_ASSETS = [
 ];
 
 const POLY_MARKETS = [
-  { label: "Fed 50+ bps Cut — April 2026 FOMC", rec: "EXTREMELY UNLIKELY", risk: "RESTRICTED", riskColor: "text-red-400", note: "YES at ~0.5¢ — $3.28M vol 24h. Market pricing near-zero probability of 50bps cut. FOMC April 28-29. On hold confirmed.", alloc: "WATCH" },
-  { label: "US x Iran Meeting by April 10", rec: "RESOLVING", risk: "RESTRICTED", riskColor: "text-red-400", note: "$1.75M vol 24h. Islamabad nuclear talks Apr 11. Pakistan-brokered ceasefire holding since Apr 7. Watch resolution.", alloc: "WATCH" },
-  { label: "Military Action vs Iran Ends Apr 29", rec: "WATCH — ceasefire holding", risk: "RESTRICTED", riskColor: "text-red-400", note: "$1.35M vol 24h. Ceasefire brokered Apr 7. If truce holds → YES pays. RESTRICTED for US users.", alloc: "WATCH" },
-  { label: "Russia x Ukraine Ceasefire by Apr 30", rec: "LOW — 3.85¢ YES", risk: "RESTRICTED", riskColor: "text-red-400", note: "$1.27M vol 24h. Market pricing 96% NO — no deal expected before April 30. RESTRICTED.", alloc: "SKIP" },
+  { label: "Hungary PM — Péter Magyar (RESOLVED ✅)", rec: "RESOLVED YES", risk: "RESTRICTED", riskColor: "text-green-400", note: "99.25% YES — $7.03M vol 24h. Magyar's Tisza party won supermajority Apr 12. Orbán out after 16 years. EU political realignment — pro-EU Hungary.", alloc: "RESOLVED" },
+  { label: "Bitcoin Reaches $150,000 in April 2026", rec: "EXTREMELY UNLIKELY", risk: "RESTRICTED", riskColor: "text-red-400", note: "0.25% YES — $1.89M vol 24h. BTC at $70,782 — needs +111% in 18 days. Not happening. No trade value.", alloc: "SKIP" },
+  { label: "FIFA World Cup 2026 — France wins", rec: "LEADING CONTENDER", risk: "RESTRICTED", riskColor: "text-red-400", note: "16.05% YES — $1.46M vol 24h. Top contender alongside Spain (17.35%). Resolves Jul 20, 2026. Monitor for post-group stage value.", alloc: "WATCH" },
+  { label: "FOMC April 28-29 — Rate Decision", rec: "HOLD — no cut expected", risk: "WATCH", riskColor: "text-yellow-400", note: "Next major macro catalyst. CPI at 3.3% YoY, Fed on hold at 3.50-3.75%. Any cut probability near-zero. Watch for tone shift.", alloc: "WATCH" },
 ];
 
 const CRON_JOBS = [
   {
     name: "📊 Dashboard + Memory Sync",
     schedule: "Daily 4:00 AM ET",
-    status: "⚠️ BILLING",
-    last: "Last run: 2026-04-11 08:00 UTC ❌ 2 consecutive billing errors — top up Anthropic credits",
+    status: "✅ RESTORED",
+    last: "Last run: 2026-04-13 08:00 UTC ✅ Billing restored — running clean",
     detail: "Reads all memory files → pulls live crypto + Polymarket data → updates MEMORY.md → pushes dashboard to GitHub",
   },
   {
     name: "📊 Market Scan — 6AM ET",
     schedule: "Daily 6:00 AM ET",
     status: "⚠️ BILLING",
-    last: "Last run: 2026-04-11 6AM ET ❌ 1 billing error — Anthropic credit needed",
+    last: "Last run: 2026-04-11 6AM ET ❌ 1 billing error — will retry today 6AM ET",
     detail: "Live crypto prices (BTC/ETH/ONDO/SOL/LYX) + Polymarket scan → logs to workspace → Telegram report",
   },
   {
     name: "🧠 Self-Learning Loop",
     schedule: "Daily 7:00 AM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-11 7AM ET ✅ OK · 53s runtime",
-    detail: "Reviews today's daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
+    status: "⚠️ BILLING",
+    last: "Last run: 2026-04-11 7AM ET ❌ 1 billing error — will retry today 7AM ET",
+    detail: "Reviews today\'s daily log → evaluates performance → extracts learnings → appends to Learnings.md → checks for new skill candidates",
   },
   {
-    name: "🐦 5x Tweet Campaign (AI Estimating)",
-    schedule: "One-shot: 11:00–13:00 UTC Apr 11",
+    name: "🐦 5x Tweet Campaign (AI Safety Playbook)",
+    schedule: "One-shot: 11:00–13:00 UTC Apr 13",
     status: "⚠️ SUSPENDED",
-    last: "Scheduled overnight but Twitter/X SUSPENDED — all 5 tweets will fail. Account-level ban active.",
-    detail: "AI Estimating Playbook campaign. Will fail until Twitter reinstated. Override pending.",
+    last: "Scheduled overnight Apr 13 — Twitter/X account SUSPENDED. All 5 tweets will fail. Appeal: twitter.com/account/suspended",
+    detail: "AI Safety Playbook for Concrete Contractors campaign. Will fail until Twitter account reinstated.",
   },
   {
     name: "📘 FCA Daily Facebook Post",
     schedule: "Daily 2:00 PM UTC",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-10 14:00 UTC ✅ OK · 55s runtime",
+    status: "⚠️ BILLING",
+    last: "Last run: 2026-04-11 14:00 UTC ❌ 1 billing error — will retry today 2PM UTC",
     detail: "Posts to Florida Concrete Alliance page · NE Florida · floridaconcretealliance.com · Token: PERMANENT (never expires)",
   },
   {
     name: "📊 Market Scan — 6PM ET",
     schedule: "Daily 6:00 PM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-10 6PM ET ✅ OK · 135s · Delivered to Telegram",
+    status: "✅ ACTIVE",
+    last: "Last run: 2026-04-12 6PM ET ✅ OK · 141s · Delivered to Telegram",
     detail: "Same as 6AM scan — second daily pulse. Delivered to Telegram.",
   },
   {
     name: "🌙 Overnight Product Builder",
     schedule: "Daily 11:00 PM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-10 11PM ET ✅ OK · 228s · AI Estimating Playbook built · 5 tweet crons scheduled",
+    status: "✅ ACTIVE",
+    last: "Last run: 2026-04-13 03:00 UTC ✅ OK · 263s · AI Safety Playbook built · 5 tweet crons scheduled",
     detail: "Researches trending construction topics → builds PDF product → schedules 5 tweets → reports to Telegram.",
   },
   {
     name: "📦 Pending Products Scanner",
     schedule: "Daily 11:00 PM ET",
-    status: "ACTIVE",
-    last: "Last run: 2026-04-10 11PM ET ✅ OK · 61s · Product queue updated",
+    status: "✅ ACTIVE",
+    last: "Last run: 2026-04-13 03:04 UTC ✅ OK · 93s · 1 new product added to queue (9 total pending)",
     detail: "Scans /products for unlisted PDFs → updates pending-products.md → flags for Tash approval",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-11 08:00 UTC";
+const CRON_LAST_UPDATED = "2026-04-13 08:00 UTC";
 
 const TASKS = [
-  { task: "🔴 CRITICAL: Top up Anthropic billing — Dashboard + Market Scan 6AM failing (2 consecutive billing errors). Visit console.anthropic.com.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 FCA-002 TODAY Apr 11 @ 1PM: Frankie (Palm Coast Demo) — Driveway 12\'x12\' 4\" depth — $1,250. Concrete $675 + Labor $575. Frank@palmcoastdemo.com.", priority: "HIGH", pillar: "FCA" },
-  { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. 5 tweet crons scheduled today WILL FAIL.", priority: "HIGH", pillar: "Online" },
-  { task: "🟡 FCA-001 CLOSED ✅: Net profit $1,888.24. Ask Joseph Noble for a Google review.", priority: "MED", pillar: "FCA" },
-  { task: "🟡 Fund Polymarket — $70 USDC ready. Watch for non-restricted Fed rate / econ plays post-Iran resolution.", priority: "MED", pillar: "Crypto" },
-  { task: "🟡 Products on hold — PDFs built overnight, awaiting Tash release decision before listing on Gumroad.", priority: "MED", pillar: "Online" },
+  { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. 5 AI Safety Playbook tweet crons fire today 7–9AM ET, ALL WILL FAIL.", priority: "HIGH", pillar: "Online" },
+  { task: "🔴 CRITICAL: ONDO at $0.2455 — AT critical $0.245 support floor. If breaks below $0.240, flag immediately.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🔴 Approve + list AI Safety Playbook for Concrete Contractors on Gumroad — built overnight Apr 13. File: products/ai-safety-playbook-concrete-2026.pdf. Suggested price $7–$12.", priority: "HIGH", pillar: "Online" },
+  { task: "🟡 FCA-001 CLOSED ✅ Net profit $1,888.24. FCA-002 CLOSED ✅ $1,250. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
+  { task: "🟡 Fund Polymarket — $70 USDC ready. Next non-restricted catalyst: FOMC April 28-29. Watch for new accessible markets.", priority: "MED", pillar: "Crypto" },
+  { task: "🟡 9 products pending in queue — review pending-products.md and approve/reject each for Gumroad listing.", priority: "MED", pillar: "Online" },
   { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
-
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
