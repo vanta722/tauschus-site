@@ -567,6 +567,49 @@ export default function Dashboard() {
                   ))}
                 </div>
 
+                {/* PNL BREAKDOWN */}
+                <div className="mt-4">
+                  <p className="text-xs font-bold uppercase tracking-widest text-green-400 mb-3">💸 P&amp;L — Closed Jobs</p>
+                  <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                    <table className="w-full text-xs">
+                      <thead>
+                        <tr className="border-b border-slate-800">
+                          <th className="text-left px-4 py-3 text-slate-500 font-semibold">Job</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Revenue</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Expenses</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Net Profit</th>
+                          <th className="text-right px-4 py-3 text-slate-500 font-semibold">Margin</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {[
+                          { job: "FCA-001 — Joseph Noble (Stamped, Jacksonville)", revenue: 6475, expenses: 4586.76, date: "Apr 12" },
+                          { job: "FCA-002 — Frankie (Driveway, Palm Coast)", revenue: 1250, expenses: 620, date: "Apr 10" },
+                        ].map((row, i) => {
+                          const net = row.revenue - row.expenses;
+                          const margin = ((net / row.revenue) * 100).toFixed(1);
+                          return (
+                            <tr key={i} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition">
+                              <td className="px-4 py-3 text-slate-300 font-medium">{row.job} <span className="text-slate-600 ml-1">· {row.date}</span></td>
+                              <td className="px-4 py-3 text-right text-white font-bold">${row.revenue.toLocaleString()}</td>
+                              <td className="px-4 py-3 text-right text-red-400">${row.expenses.toLocaleString()}</td>
+                              <td className="px-4 py-3 text-right text-green-400 font-black">${net.toLocaleString(undefined, {minimumFractionDigits:2, maximumFractionDigits:2})}</td>
+                              <td className="px-4 py-3 text-right text-cyan-400">{margin}%</td>
+                            </tr>
+                          );
+                        })}
+                        <tr className="bg-slate-800/40">
+                          <td className="px-4 py-3 text-orange-400 font-black uppercase tracking-wide text-xs">Total (2 Jobs)</td>
+                          <td className="px-4 py-3 text-right text-white font-black">$7,725</td>
+                          <td className="px-4 py-3 text-right text-red-400 font-black">$5,206.76</td>
+                          <td className="px-4 py-3 text-right text-green-400 font-black text-sm">$2,518.24</td>
+                          <td className="px-4 py-3 text-right text-cyan-400 font-black">32.6%</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
                 {/* Inline Insights */}
                 <div className="space-y-2 mt-2">
                   <p className="text-xs font-bold uppercase tracking-widest text-orange-400">💡 Mac&apos;s Flags</p>
