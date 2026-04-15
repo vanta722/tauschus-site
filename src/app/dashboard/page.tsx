@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-13: 08:00 UTC — 4AM sync: Hungary resolved (Magyar won), ONDO at critical $0.245 support, FCA-001+002 closed, billing restored.
+// Dashboard updated 2026-04-15: 08:00 UTC — 4AM sync: BTC $73,703 (-0.01%), ETH $2,315 (-0.03%). FCA 0 active / 2 closed ($2,518 net). Twitter suspended, 10 products pending.
 import { useEffect, useState, useCallback } from "react";
 
 const PASS = "Vanta2026";
@@ -71,17 +71,17 @@ const CRON_JOBS = [
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-13 11:36 UTC";
+const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const TASKS = [
-  { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. 5 AI Safety Playbook tweet crons fire today 7–9AM ET, ALL WILL FAIL.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 CRITICAL: ONDO at $0.2455 — AT critical $0.245 support floor. If breaks below $0.240, flag immediately.", priority: "HIGH", pillar: "Crypto" },
-  { task: "🔴 Approve + list AI Safety Playbook for Concrete Contractors on Gumroad — built overnight Apr 13. File: products/ai-safety-playbook-concrete-2026.pdf. Suggested price $7–$12.", priority: "HIGH", pillar: "Online" },
-  { task: "🟡 FCA-001 CLOSED ✅ Net profit $1,888.24. FCA-002 CLOSED ✅ $1,250. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
-  { task: "🟡 Fund Polymarket — $70 USDC ready. Next non-restricted catalyst: FOMC April 28-29. Watch for new accessible markets.", priority: "MED", pillar: "Crypto" },
-  { task: "🟡 9 products pending in queue — review pending-products.md and approve/reject each for Gumroad listing.", priority: "MED", pillar: "Online" },
-  { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
-  { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
+  { task: "🚫 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation paused.", priority: "HIGH", pillar: "Online" },
+  { task: "📦 Approve + list pending products — 10 in queue (9 PDFs + 1 markdown). Review pending-products.md and price/publish each.", priority: "HIGH", pillar: "Online" },
+  { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff). Page live.", priority: "MED", pillar: "Online" },
+  { task: "🟡 Monitor Gumroad — track downloads + sales weekly. Posted in FB groups Mar 28. Watch for traffic.", priority: "MED", pillar: "Online" },
+  { task: "🟡 FCA: Both jobs CLOSED ✅ Noble ,888 net / Frankie 30 net. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
+  { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida — Google Maps + FB).", priority: "MED", pillar: "FCA" },
+  { task: "⚠️ Verify Resend domain for floridaconcretealliance.com — contractor welcome emails failing silently.", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
