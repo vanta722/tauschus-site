@@ -2,6 +2,7 @@
 // Memory API: CRONS.md added to core file list (2026-03-28)
 // Dashboard updated 2026-04-15: 08:00 UTC — 4AM sync: BTC $73,703 (-0.01%), ETH $2,315 (-0.03%). FCA 0 active / 2 closed ($2,518 net). Twitter suspended, 10 products pending.
 import { useEffect, useState, useCallback } from "react";
+import LionXAdmin from "./lionx-admin";
 
 const PASS = "Vanta2026";
 
@@ -1223,6 +1224,9 @@ export default function Dashboard() {
             </div>
           </div>
         </section>
+
+        {/* ── LIONX MISSION CONTROL ──────────────────────────── */}
+        <LionXAdmin/>
 
         <div className="border-t border-slate-800 pt-4 text-center">
           <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
