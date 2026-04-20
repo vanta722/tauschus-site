@@ -19,9 +19,9 @@ const TOOLS = [
 ]
 
 const BUILDER_APPS = [
-  { id: 1, tool: "Tron Sentiment Scanner", builder: "0xdev_labs", contact: "@trondevlabs", cost: 75,  category: "Analytics", status: "pending", submitted: "2 days ago" },
-  { id: 2, tool: "NFT Floor Predictor",    builder: "nft_ai",    contact: "nftai@dev.io", cost: 50,  category: "NFT",       status: "pending", submitted: "5 days ago" },
-  { id: 3, tool: "Rug Pull Detector Pro",  builder: "safu_tools", contact: "@safutools",  cost: 80,  category: "Security",  status: "approved", submitted: "8 days ago" },
+  { id: 1, tool: "Tron Sentiment Scanner", builder: "0xdev_labs", contact: "@trondevlabs", wallet: "", cost: 75,  category: "Analytics", status: "pending", submitted: "2 days ago" },
+  { id: 2, tool: "NFT Floor Predictor",    builder: "nft_ai",    contact: "nftai@dev.io", wallet: "", cost: 50,  category: "NFT",       status: "pending", submitted: "5 days ago" },
+  { id: 3, tool: "Rug Pull Detector Pro",  builder: "safu_tools", contact: "@safutools",  wallet: "", cost: 80,  category: "Security",  status: "approved", submitted: "8 days ago" },
 ]
 
 interface TokenStats {
@@ -112,9 +112,32 @@ export default function LionXAdmin() {
     }
   }
 
-  function approveBuilder(id: number) {
-    setBuilders(b => b.map(x => x.id === id ? { ...x, status: "approved" } : x))
+  async function approveBuilder(id: number) {
+    const builder = builders.find(b => b.id === id)
+    if (!builder) return
+    // Require a valid Tron wallet address before attempting on-chain call
+    if (!builder.wallet || !builder.wallet.startsWith('T') || builder.wallet.length < 30) {
+      setTxResult(`❌ Cannot approve: no valid Tron wallet address on file for ${builder.builder}. Ask them to submit their TRX wallet address first.`)
+      return
+    }
+    setSaving(`builder-${id}`)
+    setTxResult(null)
+    try {
+      const tw = (window as any).tronWeb
+      if (!tw) throw new Error("TronLink not connected")
+      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
+      const toolId   = tw.sha3(builder.tool.toUpperCase().replace(/ /g, '_'))
+      // registerBuilder(bytes32 toolId, address wallet, uint256 sharePercent)
+      const tx = await contract.registerBuilder(toolId, builder.wallet, 10).send({ feeLimit: 150_000_000 })
+      setBuilders(b => b.map(x => x.id === id ? { ...x, status: "approved" } : x))
+      setTxResult(`✅ Builder approved on-chain — tx: ${tx.slice(0,24)}...`)
+    } catch (e: any) {
+      setBuilders(b => b.map(x => x.id === id ? { ...x, status: "approved" } : x))
+      setTxResult(`⚠️ UI approved. On-chain call failed: ${e?.message || 'check wallet'} — call registerBuilder() manually.`)
+    }
+    setSaving(null)
   }
+
   function rejectBuilder(id: number) {
     setBuilders(b => b.map(x => x.id === id ? { ...x, status: "rejected" } : x))
   }
@@ -334,6 +357,20 @@ export default function LionXAdmin() {
                       <span>🔥 {b.cost} LDA v2</span>
                       <span>📅 {b.submitted}</span>
                     </div>
+                    {b.status === "pending" && (
+                      <div className="mt-2">
+                        <input
+                          placeholder="Builder TRX wallet address (required to approve on-chain)"
+                          value={b.wallet}
+                          onChange={e => setBuilders(bx => bx.map(x => x.id === b.id ? { ...x, wallet: e.target.value } : x))}
+                          className="w-full rounded-lg px-3 py-1.5 text-xs font-mono"
+                          style={{ background: "#0a0a16", border: `1px solid ${b.wallet?.startsWith('T') && b.wallet.length >= 30 ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.08)'}`, color: "#dde8f0", fontFamily: "monospace", outline: "none" }}
+                        />
+                        {b.wallet && (!b.wallet.startsWith('T') || b.wallet.length < 30) && (
+                          <p className="text-xs mt-1" style={{ color: "#ef4444" }}>Must be a valid Tron address (starts with T, 34 chars)</p>
+                        )}
+                      </div>
+                    )}
                   </div>
                   <div className="flex items-center gap-2">
                     {b.status === "pending" ? (
