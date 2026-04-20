@@ -1225,13 +1225,13 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {activeTab === "lionx" && <LionXAdmin/>}
-
         <div className="border-t border-slate-800 pt-4 text-center">
           <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
         </div>
 
         </> }
+
+        {activeTab === "lionx" && <LionXAdmin/>}
 
       </div>
     </main>
