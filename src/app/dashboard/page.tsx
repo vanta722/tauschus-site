@@ -156,7 +156,7 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx">("ops");
   const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
@@ -382,7 +382,7 @@ export default function Dashboard() {
 
         {/* Tab switcher */}
         <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
-          {(["ops", "fca", "memory"] as const).map((tab) => (
+          {(["ops", "fca", "memory", "lionx"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -392,7 +392,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : "🧠 Mac's Memory"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : "🦁 Lion X"}
             </button>
           ))}
         </div>
@@ -1225,8 +1225,7 @@ export default function Dashboard() {
           </div>
         </section>
 
-        {/* ── LIONX MISSION CONTROL ──────────────────────────── */}
-        <LionXAdmin/>
+        {activeTab === "lionx" && <LionXAdmin/>}
 
         <div className="border-t border-slate-800 pt-4 text-center">
           <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
