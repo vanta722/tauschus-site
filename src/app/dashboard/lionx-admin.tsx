@@ -35,13 +35,19 @@ interface TokenStats {
 }
 
 export default function LionXAdmin() {
-  const [tab,         setTab]         = useState<"overview"|"tools"|"builders"|"migration">("overview")
-  const [stats,       setStats]       = useState<TokenStats | null>(null)
-  const [toolPrices,  setToolPrices]  = useState(TOOLS.map(t => ({ ...t, newCost: t.cost })))
-  const [builders,    setBuilders]    = useState(BUILDER_APPS)
-  const [saving,      setSaving]      = useState<string | null>(null)
-  const [saved,       setSaved]       = useState<string | null>(null)
-  const [txResult,    setTxResult]    = useState<string | null>(null)
+  const [tab,           setTab]           = useState<"overview"|"tools"|"builders"|"migration"|"governance">("overview")
+  const [stats,         setStats]         = useState<TokenStats | null>(null)
+  const [toolPrices,    setToolPrices]     = useState(TOOLS.map(t => ({ ...t, newCost: t.cost })))
+  const [builders,      setBuilders]       = useState(BUILDER_APPS)
+  const [saving,        setSaving]         = useState<string | null>(null)
+  const [saved,         setSaved]          = useState<string | null>(null)
+  const [txResult,      setTxResult]       = useState<string | null>(null)
+  // Governance state
+  const [proposals,     setProposals]      = useState<{id:number; description:string; blockNumber:number; active:boolean; forVotes:number; againstVotes:number}[]>([])
+  const [propLoading,   setPropLoading]    = useState(false)
+  const [newProposal,   setNewProposal]    = useState("")
+  const [creatingProp,  setCreatingProp]   = useState(false)
+  const [govTxResult,   setGovTxResult]    = useState<string | null>(null)
 
   // Fetch live stats from Tronscan
   useEffect(() => {
@@ -113,11 +119,76 @@ export default function LionXAdmin() {
     setBuilders(b => b.map(x => x.id === id ? { ...x, status: "rejected" } : x))
   }
 
+  async function fetchProposals() {
+    setPropLoading(true)
+    setGovTxResult(null)
+    try {
+      const tw = (window as any).tronWeb
+      if (!tw) { setPropLoading(false); return }
+      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
+      const count = Number(await contract.snapshotCount().call())
+      const loaded = []
+      for (let i = count; i >= 1; i--) {
+        try {
+          const s = await contract.snapshots(i).call()
+          const r = await contract.getVoteResults(i).call()
+          loaded.push({
+            id:           i,
+            description:  s.description,
+            blockNumber:  Number(s.blockNumber),
+            active:       s.active,
+            forVotes:     Number(r.forVotes) / 1e6,
+            againstVotes: Number(r.againstVotes) / 1e6,
+          })
+        } catch {}
+      }
+      setProposals(loaded)
+    } catch (e: any) {
+      setGovTxResult(`❌ Failed to load: ${e?.message}`)
+    }
+    setPropLoading(false)
+  }
+
+  async function createProposal() {
+    if (!newProposal.trim()) return
+    setCreatingProp(true)
+    setGovTxResult(null)
+    try {
+      const tw = (window as any).tronWeb
+      if (!tw) throw new Error("TronLink not connected — connect owner wallet")
+      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
+      const tx = await contract.createSnapshot(newProposal.trim()).send({ feeLimit: 100_000_000 })
+      setGovTxResult(`✅ Proposal created — tx: ${tx.slice(0,24)}...`)
+      setNewProposal("")
+      setTimeout(fetchProposals, 4000)
+    } catch (e: any) {
+      setGovTxResult(`❌ Failed: ${e?.message || "Transaction error"}`)
+    }
+    setCreatingProp(false)
+  }
+
+  async function closeProposal(id: number) {
+    setSaving(`close-${id}`)
+    setGovTxResult(null)
+    try {
+      const tw = (window as any).tronWeb
+      if (!tw) throw new Error("TronLink not connected")
+      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
+      const tx = await contract.closeSnapshot(id).send({ feeLimit: 100_000_000 })
+      setGovTxResult(`✅ Proposal #${id} closed — tx: ${tx.slice(0,24)}...`)
+      setTimeout(fetchProposals, 4000)
+    } catch (e: any) {
+      setGovTxResult(`❌ Failed: ${e?.message}`)
+    }
+    setSaving(null)
+  }
+
   const TABS = [
-    { id: "overview",  label: "Overview",   icon: "📊" },
-    { id: "tools",     label: "Tools",      icon: "🔧" },
-    { id: "builders",  label: "Builders",   icon: "👷" },
-    { id: "migration", label: "Migration",  icon: "🔄" },
+    { id: "overview",    label: "Overview",    icon: "📊" },
+    { id: "tools",       label: "Tools",       icon: "🔧" },
+    { id: "builders",   label: "Builders",    icon: "👷" },
+    { id: "migration",  label: "Migration",   icon: "🔄" },
+    { id: "governance", label: "Governance",  icon: "🗳️" },
   ] as const
 
   return (
@@ -343,6 +414,114 @@ export default function LionXAdmin() {
             </div>
           </div>
         )}
+
+        {/* ── GOVERNANCE TAB ───────────────────────── */}
+        {tab === "governance" && (
+          <div className="space-y-4">
+
+            {/* Create Proposal */}
+            <div className="rounded-xl p-5" style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.15)" }}>
+              <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#14b8a6" }}>Create New Proposal</div>
+              <p className="text-xs mb-4" style={{ color: "#7a8a9a" }}>
+                Creates an on-chain snapshot. Holder balances at this block are locked for voting — tokens bought after this point have no voting power on this proposal.
+              </p>
+              <textarea
+                value={newProposal}
+                onChange={e => setNewProposal(e.target.value)}
+                placeholder="Proposal description e.g. 'Add DEX aggregator tool at 75 LDA v2 per query'"
+                rows={3}
+                className="w-full rounded-xl px-4 py-3 text-sm resize-none mb-3"
+                style={{ background: "#0a0a16", border: "1px solid rgba(20,184,166,0.2)", color: "#dde8f0", fontFamily: "inherit", outline: "none" }}
+              />
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={createProposal}
+                  disabled={creatingProp || !newProposal.trim()}
+                  className="px-5 py-2.5 rounded-xl text-sm font-bold disabled:opacity-40"
+                  style={{ background: "linear-gradient(135deg,#14b8a6,#0d9488)", color: "#000", border: "none", fontFamily: "inherit", cursor: "pointer" }}>
+                  {creatingProp ? "⏳ Creating..." : "📢 Create Proposal"}
+                </button>
+                <span className="text-xs" style={{ color: "#4a5a6a" }}>Requires owner wallet connected via TronLink</span>
+              </div>
+            </div>
+
+            {/* Load + Proposal list */}
+            <div className="rounded-xl p-5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="flex items-center justify-between mb-4">
+                <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "#14b8a6" }}>Live Proposals</div>
+                <button
+                  onClick={fetchProposals}
+                  disabled={propLoading}
+                  className="text-xs px-3 py-1.5 rounded-lg font-bold disabled:opacity-40"
+                  style={{ border: "1px solid rgba(20,184,166,0.25)", color: "#14b8a6", background: "transparent", fontFamily: "inherit", cursor: "pointer" }}>
+                  {propLoading ? "⏳ Loading..." : "↻ Load from Chain"}
+                </button>
+              </div>
+
+              {proposals.length === 0 && !propLoading && (
+                <p className="text-sm text-center py-6" style={{ color: "#4a5a6a" }}>
+                  Click “Load from Chain” to fetch proposals, or create your first one above.
+                </p>
+              )}
+
+              <div className="space-y-3">
+                {proposals.map(p => {
+                  const total = p.forVotes + p.againstVotes
+                  const forPct = total > 0 ? Math.round((p.forVotes / total) * 100) : 50
+                  return (
+                    <div key={p.id} className="rounded-xl p-4" style={{ background: "#0a0a16", border: `1px solid ${p.active ? "rgba(20,184,166,0.2)" : "rgba(255,255,255,0.06)"}` }}>
+                      <div className="flex items-start justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs font-bold" style={{ color: "#4a5a6a" }}>#{p.id}</span>
+                          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
+                            style={{ background: p.active ? "rgba(20,184,166,0.15)" : "rgba(107,114,128,0.15)",
+                                     color: p.active ? "#14b8a6" : "#6b7280" }}>
+                            {p.active ? "● ACTIVE" : "✓ CLOSED"}
+                          </span>
+                        </div>
+                        {p.active && (
+                          <button
+                            onClick={() => closeProposal(p.id)}
+                            disabled={saving === `close-${p.id}`}
+                            className="text-xs px-3 py-1 rounded-lg font-bold shrink-0 disabled:opacity-40"
+                            style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontFamily: "inherit", cursor: "pointer" }}>
+                            {saving === `close-${p.id}` ? "⏳" : "🔒 Close"}
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-sm font-semibold mb-3" style={{ color: "#dde8f0" }}>{p.description}</p>
+                      {/* Vote bar */}
+                      <div className="rounded-full overflow-hidden mb-2" style={{ height: 6, background: "rgba(255,255,255,0.06)" }}>
+                        <div style={{ width: `${forPct}%`, height: "100%", background: "#22c55e", transition: "width 0.4s" }} />
+                      </div>
+                      <div className="flex justify-between text-xs" style={{ color: "#6b7280" }}>
+                        <span style={{ color: "#22c55e", fontWeight: 700 }}>✓ FOR {forPct}% ({p.forVotes.toLocaleString()} LDA)</span>
+                        <span style={{ color: "#ef4444", fontWeight: 700 }}>✗ AGAINST {100-forPct}% ({p.againstVotes.toLocaleString()} LDA)</span>
+                      </div>
+                      <div className="mt-2 text-xs" style={{ color: "#4a5a6a" }}>Snapshot block #{p.blockNumber.toLocaleString()}</div>
+                    </div>
+                  )
+                })}
+              </div>
+            </div>
+
+            {/* Tx feedback */}
+            {govTxResult && (
+              <div className="rounded-xl px-4 py-3 text-sm font-semibold"
+                style={{ background: govTxResult.startsWith("✅") ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
+                         border: `1px solid ${govTxResult.startsWith("✅") ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
+                         color:  govTxResult.startsWith("✅") ? "#22c55e" : "#ef4444" }}>
+                {govTxResult}
+              </div>
+            )}
+
+            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
+              💡 <strong style={{ color: "#f5a623" }}>Governance flow:</strong> Create proposal here → holders vote at{" "}
+              <a href="https://frontend-phi-blond-32.vercel.app/governance" target="_blank" rel="noreferrer" style={{ color: "#14b8a6" }}>Lion X Governance page</a>{" "}→ close proposal here when voting period ends.
+            </div>
+          </div>
+        )}
+
       </div>
     </section>
   )
