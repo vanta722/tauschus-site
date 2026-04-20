@@ -2,10 +2,12 @@
 import { useState, useEffect } from "react";
 
 // ── Contract addresses (Shasta testnet — update to mainnet after deploy) ──
+// Addresses read from env vars — set NEXT_PUBLIC_* in Vercel before mainnet deploy
+// Shasta testnet addresses used as fallback during development
 const CONTRACTS = {
-  LDA_V2:    "TURQgDcWWeg633Azz8SMrDrHHYdgM3Nfxi",
-  MIGRATION: "TBJewkqJqCRqurLMiTnqYkRhVxYWeHvrVP",
-  PLATFORM:  "TYKu4AJv6cqNwoyZtnjzpsyE9Tf5WkLQhh",
+  LDA_V2:    process.env.NEXT_PUBLIC_LDA_V2    || "TURQgDcWWeg633Azz8SMrDrHHYdgM3Nfxi",
+  MIGRATION: process.env.NEXT_PUBLIC_MIGRATION || "TBJewkqJqCRqurLMiTnqYkRhVxYWeHvrVP",
+  PLATFORM:  process.env.NEXT_PUBLIC_PLATFORM  || "TYKu4AJv6cqNwoyZtnjzpsyE9Tf5WkLQhh",
   TREASURY:  "TG1ZuSqJdgmD11i2FyCXxtjBbTEiEzRVQy",
   NETWORK:   "shasta", // change to "mainnet" after deployment
 }
@@ -76,7 +78,7 @@ export default function LionXAdmin() {
       const tw = (window as any).tronWeb
       if (!tw) throw new Error("TronLink not connected")
       const platform = await tw.contract().at(CONTRACTS.PLATFORM)
-      const toolIdBytes = tw.toHex(toolId).padEnd(66, "0")
+      const toolIdBytes = tw.sha3(toolId) // keccak256 — matches LDAPlatform.sol registration
       const tx = await platform.updateTool(toolIdBytes, newCost * 1e6, true).send({ feeLimit: 100_000_000 })
       setTxResult(`✅ Price updated — tx: ${tx.slice(0,20)}...`)
       setSaved(toolId)
