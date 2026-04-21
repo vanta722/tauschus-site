@@ -1326,6 +1326,19 @@ export default function Dashboard() {
               <p className="mt-2 text-right text-xs text-slate-600">Last updated: {BETTING_STATS.lastUpdated}</p>
             </div>
 
+            {/* ── TONIGHT — BET THESE ── */}
+            <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
+              <div className="mb-3">
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">🔥 TONIGHT — BET THESE</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · 1 unit each · Check lines before placing</p>
+              </div>
+              <ul className="space-y-2.5">
+                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Cleveland Guardians ML</span> — 1 unit <span className="text-slate-400">(6:10 PM ET)</span></li>
+                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Arizona D-backs Over 4.5 runs</span> — 1 unit <span className="text-slate-400">(TBD)</span></li>
+                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">New York Mets ML</span> — 1 unit <span className="text-slate-400">(7:10 PM ET)</span></li>
+              </ul>
+            </div>
+
             {/* ── DAILY PLAYS ── */}
             <div>
               <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
