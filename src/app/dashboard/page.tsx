@@ -74,6 +74,17 @@ const CRON_JOBS = [
 
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
+const BETTING_STATS = {
+  record: "0-0-0",
+  unitsWagered: 0,
+  unitsNet: 0,
+  roi: "0%",
+  activeSince: "Apr 21, 2026",
+  book: "Hard Rock Bet",
+  sport: "MLB",
+  lastUpdated: "2026-04-21",
+};
+
 const TASKS = [
   { task: "🚫 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation paused.", priority: "HIGH", pillar: "Online" },
   { task: "📦 Approve + list pending products — 10 in queue (9 PDFs + 1 markdown). Review pending-products.md and price/publish each.", priority: "HIGH", pillar: "Online" },
@@ -1283,6 +1294,38 @@ export default function Dashboard() {
 
         {activeTab === "betting" && (
           <section className="space-y-6">
+            {/* ── SEASON STATS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">📊 Season Stats — {BETTING_STATS.sport}</p>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Record</p>
+                  <p className="text-2xl font-black text-white">{BETTING_STATS.record}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">W-L-P</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Units Net</p>
+                  <p className={`text-2xl font-black ${BETTING_STATS.unitsNet > 0 ? "text-green-400" : BETTING_STATS.unitsNet < 0 ? "text-red-400" : "text-white"}`}>
+                    {BETTING_STATS.unitsNet > 0 ? `+${BETTING_STATS.unitsNet.toFixed(1)}` : BETTING_STATS.unitsNet.toFixed(1)}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">{BETTING_STATS.unitsWagered}u wagered</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">ROI</p>
+                  <p className={`text-2xl font-black ${parseFloat(BETTING_STATS.roi) > 0 ? "text-green-400" : parseFloat(BETTING_STATS.roi) < 0 ? "text-red-400" : "text-white"}`}>
+                    {BETTING_STATS.roi}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">Since {BETTING_STATS.activeSince}</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Book</p>
+                  <p className="text-lg font-black text-white leading-tight">{BETTING_STATS.book}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{BETTING_STATS.sport} season</p>
+                </div>
+              </div>
+              <p className="mt-2 text-right text-xs text-slate-600">Last updated: {BETTING_STATS.lastUpdated}</p>
+            </div>
+
             {/* ── DAILY PLAYS ── */}
             <div>
               <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
