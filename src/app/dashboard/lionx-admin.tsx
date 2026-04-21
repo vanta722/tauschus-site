@@ -41,9 +41,12 @@ const DEFAULT_STATS: LiveStats = {
 }
 
 export default function LionXAdmin() {
-  const [tab,   setTab]   = useState<"overview"|"tools"|"burns"|"security"|"pending">("overview")
-  const [stats, setStats] = useState<LiveStats>(DEFAULT_STATS)
-  const [loading, setLoading] = useState(true)
+  const [tab,        setTab]       = useState<"overview"|"tools"|"burns"|"security"|"pending">("overview")
+  const [stats,      setStats]     = useState<LiveStats>(DEFAULT_STATS)
+  const [loading,    setLoading]   = useState(true)
+  const [toolPrices, setToolPrices] = useState(TOOLS.map(t => ({ ...t, newCost: t.cost })))
+  const [saving,     setSaving]    = useState<string | null>(null)
+  const [saveResult, setSaveResult] = useState<{ id: string; msg: string; ok: boolean } | null>(null)
 
   useEffect(() => {
     async function fetchStats() {
@@ -100,6 +103,25 @@ export default function LionXAdmin() {
     const t = setInterval(fetchStats, 30000)
     return () => clearInterval(t)
   }, [])
+
+  async function updateToolPrice(toolId: string, newCost: number) {
+    setSaving(toolId)
+    setSaveResult(null)
+    try {
+      const res  = await fetch('/api/lionx-price', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ toolId, newCost, secret: 'Vanta2026' }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error)
+      setSaveResult({ id: toolId, msg: `✅ ${data.message} (commit ${data.commit})`, ok: true })
+      setToolPrices(p => p.map(t => t.id === toolId ? { ...t, cost: newCost, newCost } : t))
+    } catch (e: any) {
+      setSaveResult({ id: toolId, msg: `❌ ${e?.message}`, ok: false })
+    }
+    setSaving(null)
+  }
 
   const TABS = [
     { id: "overview",  label: "Overview",  icon: "📊" },
@@ -242,9 +264,16 @@ export default function LionXAdmin() {
         {tab === "tools" && (
           <div className="space-y-3">
             <p className="text-xs mb-1" style={{ color: "#7a8a9a" }}>
-              Tool pricing is set in <code style={{ color: "#14b8a6" }}>pages/api/query.ts</code> — update TOOL_COSTS and redeploy to change. No smart contract needed.
+              Edit prices below and hit <strong style={{ color: "#14b8a6" }}>Update Price</strong>. Changes commit to GitHub and Vercel auto-deploys in ~60 seconds.
             </p>
-            {TOOLS.map(tool => (
+
+            {saveResult && (
+              <div className="rounded-xl px-4 py-2.5 text-xs font-bold" style={{ background: saveResult.ok ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)", border: `1px solid ${saveResult.ok ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`, color: saveResult.ok ? "#22c55e" : "#ef4444" }}>
+                {saveResult.msg}
+              </div>
+            )}
+
+            {toolPrices.map(tool => (
               <div key={tool.id} className="rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap"
                 style={{ background: "#0c0c18", border: `1px solid ${tool.status === "live" ? "rgba(34,197,94,0.15)" : "rgba(245,166,35,0.15)"}` }}>
                 <div className="flex items-center gap-3">
@@ -252,22 +281,47 @@ export default function LionXAdmin() {
                   <div>
                     <div className="font-bold text-sm">{tool.name}</div>
                     <div className="text-xs mt-0.5 font-mono" style={{ color: "#4a5a6a" }}>{tool.id}</div>
+                    <div className="text-xs mt-0.5" style={{ color: "#4a5a6a" }}>Current: <span style={{ color: "#f5a623" }}>{tool.cost} LDA</span></div>
                   </div>
                 </div>
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <div className="font-black text-lg" style={{ color: "#f5a623" }}>{tool.cost}</div>
-                    <div className="text-xs" style={{ color: "#4a5a6a" }}>LDA</div>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full text-xs font-bold"
-                    style={{ background: tool.status === "live" ? "rgba(34,197,94,0.1)" : "rgba(245,166,35,0.1)", color: tool.status === "live" ? "#22c55e" : "#f5a623", border: `1px solid ${tool.status === "live" ? "rgba(34,197,94,0.2)" : "rgba(245,166,35,0.2)"}` }}>
-                    {tool.status === "live" ? "● LIVE" : "⏳ BUILDING"}
-                  </span>
+                <div className="flex items-center gap-3 flex-wrap">
+                  {tool.status === "live" ? (
+                    <>
+                      <input
+                        type="number"
+                        value={tool.newCost}
+                        min={1}
+                        max={10000}
+                        onChange={e => setToolPrices(p => p.map(t => t.id === tool.id ? { ...t, newCost: Number(e.target.value) } : t))}
+                        className="w-24 px-3 py-2 rounded-lg text-sm text-center font-bold outline-none"
+                        style={{ background: "#161628", border: "1px solid rgba(20,184,166,0.2)", color: "#14b8a6", fontFamily: "inherit" }}
+                      />
+                      <span className="text-xs" style={{ color: "#4a5a6a" }}>LDA</span>
+                      <button
+                        onClick={() => updateToolPrice(tool.id, tool.newCost)}
+                        disabled={saving === tool.id || tool.newCost === tool.cost || tool.newCost < 1}
+                        className="px-4 py-2 rounded-lg text-xs font-bold disabled:opacity-40 transition-all"
+                        style={{ background: "rgba(20,184,166,0.12)", color: "#14b8a6", border: "1px solid rgba(20,184,166,0.25)", fontFamily: "inherit", cursor: "pointer" }}>
+                        {saving === tool.id ? "⏳ Saving..." : "↑ Update Price"}
+                      </button>
+                    </>
+                  ) : (
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                      style={{ background: "rgba(245,166,35,0.1)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.2)" }}>
+                      ⏳ BUILDING
+                    </span>
+                  )}
+                  {tool.status === "live" && (
+                    <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                      style={{ background: "rgba(34,197,94,0.1)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.2)" }}>
+                      ● LIVE
+                    </span>
+                  )}
                 </div>
               </div>
             ))}
-            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
-              💡 <strong style={{ color: "#f5a623" }}>To change a price:</strong> Edit <code>TOOL_COSTS</code> in <code>pages/api/query.ts</code> → push to GitHub → Vercel auto-deploys. No wallet required.
+            <div className="rounded-xl p-3 text-xs" style={{ background: "rgba(20,184,166,0.04)", border: "1px solid rgba(20,184,166,0.1)", color: "#7a8a9a" }}>
+              ⚡ Prices commit directly to GitHub → Vercel auto-deploys. No wallet or contract needed.
             </div>
           </div>
         )}
