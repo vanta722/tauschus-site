@@ -76,7 +76,7 @@ const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
   record: "0-0-0",
-  unitsWagered: 0,
+  unitsWagered: 1,
   unitsNet: 0,
   roi: "0%",
   activeSince: "Apr 21, 2026",
@@ -173,9 +173,10 @@ export default function Dashboard() {
   interface BetEntry {
     id: number; date: string; game: string; bet: string; odds: string;
     units: number; result: "Pending" | "Won" | "Lost" | "Push"; pnl: number;
+    wager?: string; toWin?: string;
   }
   const TODAY_BETS: BetEntry[] = [
-    { id: 1, date: "2026-04-21", game: "Guardians vs Astros", bet: "Guardians ML", odds: "-115", units: 1, result: "Pending", pnl: 0 },
+    { id: 1, date: "2026-04-21", game: "Astros @ Guardians", bet: "Guardians ML", odds: "-155", units: 1, result: "Pending", pnl: 0, wager: "$10", toWin: "$16.45" },
     { id: 2, date: "2026-04-21", game: "D-backs vs White Sox", bet: "D-backs Team Total Over 4.5", odds: "-125", units: 1, result: "Pending", pnl: 0 },
     { id: 3, date: "2026-04-21", game: "Mets vs Twins", bet: "Mets ML", odds: "-108", units: 1, result: "Pending", pnl: 0 },
   ];
@@ -1356,7 +1357,10 @@ export default function Dashboard() {
                 <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · 1 unit each · Check lines before placing</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Cleveland Guardians ML</span> — 1 unit <span className="text-slate-400">(6:10 PM ET)</span></li>
+                <li className="text-sm text-slate-300 flex items-start gap-2">
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-xs font-bold text-green-400 shrink-0">✅ BET PLACED</span>
+                  <span><span className="font-bold text-white">Cleveland Guardians ML -155</span> — $10 to win $16.45 <span className="text-slate-400">(6:10 PM ET)</span></span>
+                </li>
                 <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Arizona D-backs Over 4.5 runs</span> — 1 unit <span className="text-slate-400">(TBD)</span></li>
                 <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">New York Mets ML</span> — 1 unit <span className="text-slate-400">(7:10 PM ET)</span></li>
               </ul>
