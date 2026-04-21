@@ -54,13 +54,13 @@ export default function LionXAdmin() {
         const [tokenRes, blackHoleRes, treasuryRes, paymentsRes] = await Promise.all([
           fetch(`https://apilist.tronscanapi.com/api/token_trc20?contract=${ADDRESSES.LDA_V1}`),
           fetch(`https://apilist.tronscanapi.com/api/account?address=${ADDRESSES.BLACK_HOLE}`),
-          fetch(`https://apilist.tronscanapi.com/api/accountv2?address=${ADDRESSES.TREASURY}`),
+          fetch(`https://lion-xai.com/api/treasury-balance`),
           fetch(`https://apilist.tronscanapi.com/api/contract/events?contract=${ADDRESSES.LDA_V1}&toAddress=${ADDRESSES.TREASURY}&limit=10`),
         ])
 
         const tokenData    = await tokenRes.json()
         const blackHole    = await blackHoleRes.json()
-        const treasury     = await treasuryRes.json()
+        const treasuryData = await treasuryRes.json()
         const paymentsData = await paymentsRes.json()
 
         const token = tokenData?.trc20_tokens?.[0]
@@ -73,10 +73,7 @@ export default function LionXAdmin() {
         )
         const totalBurned = burnEntry ? Number(burnEntry.balance) / 1e6 : 1_050_000
 
-        const ldaEntry = (treasury?.trc20token_balances || []).find(
-          (t: any) => t.tokenId === ADDRESSES.LDA_V1
-        )
-        const treasuryBalance = ldaEntry ? Number(ldaEntry.balance) / 1e6 : 0
+        const treasuryBalance = Number(treasuryData?.balance || 0)
 
         const events = paymentsData?.data || []
         const now = Date.now()
