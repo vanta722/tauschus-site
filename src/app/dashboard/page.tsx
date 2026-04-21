@@ -156,7 +156,57 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx" | "betting">("ops");
+
+  // Sports Betting state
+  interface BetEntry {
+    id: number; date: string; game: string; bet: string; odds: string;
+    units: number; result: "Pending" | "Won" | "Lost" | "Push"; pnl: number;
+  }
+  const TODAY_BETS: BetEntry[] = [
+    { id: 1, date: "2026-04-21", game: "Guardians vs Astros", bet: "Guardians ML", odds: "-115", units: 1, result: "Pending", pnl: 0 },
+    { id: 2, date: "2026-04-21", game: "D-backs vs White Sox", bet: "D-backs Team Total Over 4.5", odds: "-125", units: 1, result: "Pending", pnl: 0 },
+    { id: 3, date: "2026-04-21", game: "Mets vs Twins", bet: "Mets ML", odds: "-108", units: 1, result: "Pending", pnl: 0 },
+  ];
+  const LS_KEY = "tauschus_bets_v1";
+  const loadBets = (): BetEntry[] => {
+    if (typeof window === "undefined") return TODAY_BETS;
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return TODAY_BETS;
+      return JSON.parse(raw) as BetEntry[];
+    } catch { return TODAY_BETS; }
+  };
+  const [bets, setBets] = useState<BetEntry[]>(loadBets);
+  const [showAddBet, setShowAddBet] = useState(false);
+  const [newBet, setNewBet] = useState<Omit<BetEntry, "id">>({
+    date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0,
+  });
+  const saveBets = (updated: BetEntry[]) => {
+    setBets(updated);
+    if (typeof window !== "undefined") localStorage.setItem(LS_KEY, JSON.stringify(updated));
+  };
+  const addBetEntry = () => {
+    const id = Math.max(0, ...bets.map(b => b.id)) + 1;
+    const pnl = newBet.result === "Won"
+      ? +(newBet.units * (parseFloat(newBet.odds) > 0 ? parseFloat(newBet.odds) / 100 : 100 / Math.abs(parseFloat(newBet.odds)))).toFixed(2)
+      : newBet.result === "Lost" ? -newBet.units
+      : 0;
+    saveBets([...bets, { ...newBet, id, pnl }]);
+    setNewBet({ date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0 });
+    setShowAddBet(false);
+  };
+  const updateBetResult = (id: number, result: BetEntry["result"]) => {
+    const updated = bets.map(b => {
+      if (b.id !== id) return b;
+      const pnl = result === "Won"
+        ? +(b.units * (parseFloat(b.odds) > 0 ? parseFloat(b.odds) / 100 : 100 / Math.abs(parseFloat(b.odds)))).toFixed(2)
+        : result === "Lost" ? -b.units
+        : 0;
+      return { ...b, result, pnl };
+    });
+    saveBets(updated);
+  };
   const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
@@ -382,7 +432,7 @@ export default function Dashboard() {
 
         {/* Tab switcher */}
         <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
-          {(["ops", "fca", "memory", "lionx"] as const).map((tab) => (
+          {(["ops", "fca", "memory", "lionx", "betting"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -392,7 +442,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : "🦁 Lion X"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "lionx" ? "🦁 Lion X" : "⚾ Sports Betting"}
             </button>
           ))}
         </div>
@@ -1230,6 +1280,215 @@ export default function Dashboard() {
         </div>
 
         </> }
+
+        {activeTab === "betting" && (
+          <section className="space-y-6">
+            {/* ── DAILY PLAYS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  {
+                    matchup: "Guardians vs Astros",
+                    time: "6:10 PM ET",
+                    bet: "Guardians ML",
+                    odds: "-115",
+                    reason: "Parker Messick 1.05 ERA vs opener — fade the Astros bullpen game",
+                    confidence: "High" as const,
+                    status: "Pending" as const,
+                  },
+                  {
+                    matchup: "D-backs vs White Sox",
+                    time: "",
+                    bet: "D-backs Team Total Over 4.5",
+                    odds: "-125",
+                    reason: "D-backs averaging 5.6 runs/game; Sean Burke sitting at 4.43 ERA",
+                    confidence: "High" as const,
+                    status: "Pending" as const,
+                  },
+                  {
+                    matchup: "Mets vs Twins",
+                    time: "7:10 PM ET",
+                    bet: "Mets ML",
+                    odds: "-108",
+                    reason: "Noah McLean hot (8 Ks in 3 of 4 starts) vs Woods Richardson (12 runs in last 2 starts)",
+                    confidence: "Med" as const,
+                    status: "Pending" as const,
+                  },
+                ].map((pick, i) => {
+                  const confColor = pick.confidence === "High" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                    : pick.confidence === "Med" ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                    : "bg-slate-700 text-slate-400";
+                  const statusColor = pick.status === "Won" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                    : pick.status === "Lost" ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                    : "bg-slate-700/80 text-slate-400 border border-slate-600";
+                  return (
+                    <div key={i} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-black text-white">{pick.matchup}</p>
+                          {pick.time && <p className="text-xs text-slate-500 mt-0.5">{pick.time}</p>}
+                        </div>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-bold shrink-0 border ${statusColor}`}>{pick.status}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-orange-400">{pick.bet} <span className="text-slate-500 font-normal">({pick.odds})</span></p>
+                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">{pick.reason}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${confColor}`}>{pick.confidence}</span>
+                        <span className="text-xs text-slate-600">confidence</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ── BET TRACKER ── */}
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-400">📋 Bet Tracker</p>
+                <button
+                  onClick={() => setShowAddBet(v => !v)}
+                  className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 hover:border-orange-400 hover:text-orange-400 transition"
+                >
+                  {showAddBet ? "✕ Cancel" : "+ Add Bet"}
+                </button>
+              </div>
+
+              {/* Inline add-bet form */}
+              {showAddBet && (
+                <div className="rounded-2xl border border-orange-400/30 bg-slate-900/80 p-5 mb-4 space-y-3">
+                  <p className="text-xs font-bold text-orange-400 uppercase tracking-widest">New Bet Entry</p>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {([
+                      ["date", "Date", "date"],
+                      ["game", "Game / Matchup", "text"],
+                      ["bet", "Bet Type", "text"],
+                      ["odds", "Odds (e.g. -115)", "text"],
+                    ] as [keyof typeof newBet, string, string][]).map(([field, label, type]) => (
+                      <div key={field} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{label}</label>
+                        <input
+                          type={type}
+                          value={newBet[field] as string}
+                          onChange={e => setNewBet(prev => ({ ...prev, [field]: e.target.value }))}
+                          className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Units</label>
+                      <input
+                        type="number"
+                        min={0.5}
+                        step={0.5}
+                        value={newBet.units}
+                        onChange={e => setNewBet(prev => ({ ...prev, units: parseFloat(e.target.value) || 1 }))}
+                        className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Result</label>
+                      <select
+                        value={newBet.result}
+                        onChange={e => setNewBet(prev => ({ ...prev, result: e.target.value as BetEntry["result"] }))}
+                        className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                      >
+                        {["Pending", "Won", "Lost", "Push"].map(r => <option key={r}>{r}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <button
+                    onClick={addBetEntry}
+                    disabled={!newBet.game || !newBet.bet || !newBet.odds}
+                    className="rounded-xl bg-orange-400 px-5 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Save Bet
+                  </button>
+                </div>
+              )}
+
+              {/* Table */}
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-800">
+                        {["Date", "Game", "Bet", "Odds", "Units", "Result", "P&L"].map(h => (
+                          <th key={h} className={`px-4 py-3 font-semibold text-slate-500 ${h === "P&L" || h === "Units" || h === "Odds" || h === "Result" ? "text-right" : "text-left"}`}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bets.map((b) => {
+                        const resultColor = b.result === "Won" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                          : b.result === "Lost" ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                          : b.result === "Push" ? "bg-slate-700 text-slate-400"
+                          : "bg-slate-800 text-slate-500 border border-slate-600";
+                        const pnlColor = b.pnl > 0 ? "text-green-400 font-bold" : b.pnl < 0 ? "text-red-400 font-bold" : "text-slate-500";
+                        return (
+                          <tr key={b.id} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition">
+                            <td className="px-4 py-3 text-slate-400">{b.date}</td>
+                            <td className="px-4 py-3 text-slate-300 font-medium">{b.game}</td>
+                            <td className="px-4 py-3 text-white">{b.bet}</td>
+                            <td className="px-4 py-3 text-right text-slate-300">{b.odds}</td>
+                            <td className="px-4 py-3 text-right text-slate-300">{b.units}u</td>
+                            <td className="px-4 py-3 text-right">
+                              <select
+                                value={b.result}
+                                onChange={e => updateBetResult(b.id, e.target.value as BetEntry["result"])}
+                                className={`rounded-full px-2 py-0.5 text-xs font-bold border cursor-pointer bg-transparent ${resultColor}`}
+                              >
+                                {["Pending", "Won", "Lost", "Push"].map(r => <option key={r} value={r} className="bg-slate-900 text-white">{r}</option>)}
+                              </select>
+                            </td>
+                            <td className={`px-4 py-3 text-right ${pnlColor}`}>
+                              {b.result === "Pending" ? "—" : b.pnl >= 0 ? `+${b.pnl.toFixed(2)}u` : `${b.pnl.toFixed(2)}u`}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-slate-700 bg-slate-800/40">
+                        <td colSpan={5} className="px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest">Running P&amp;L</td>
+                        <td />
+                        <td className={`px-4 py-3 text-right text-sm font-black ${bets.reduce((s, b) => s + b.pnl, 0) >= 0 ? "text-green-400" : "text-red-400"}`}>
+                          {(() => { const total = bets.reduce((s, b) => s + b.pnl, 0); return total >= 0 ? `+${total.toFixed(2)}u` : `${total.toFixed(2)}u`; })()}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* ── STRATEGY REMINDERS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">📌 Strategy Reminders</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {[
+                    { icon: "⚾", text: "MLB only (for now)" },
+                    { icon: "🎯", text: "1–2 units per game max" },
+                    { icon: "📱", text: "Hard Rock Sportsbook only" },
+                    { icon: "📉", text: "Fade heavy public chalk" },
+                    { icon: "🔍", text: "Focus on starting pitcher matchups — F5 and full game" },
+                    { icon: "📊", text: "Track CLV (closing line value) — did you beat the closing number?" },
+                  ].map((r, i) => (
+                    <div key={i} className="flex items-start gap-3 rounded-xl bg-slate-800/50 px-4 py-3">
+                      <span className="text-base leading-none mt-0.5">{r.icon}</span>
+                      <span className="text-xs text-slate-300 leading-relaxed">{r.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+          </section>
+        )}
 
         {activeTab === "lionx" && <LionXAdmin/>}
 
