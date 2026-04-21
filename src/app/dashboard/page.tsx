@@ -190,6 +190,9 @@ export default function Dashboard() {
   };
   const [bets, setBets] = useState<BetEntry[]>(loadBets);
   const [showAddBet, setShowAddBet] = useState(false);
+  const [liveOdds, setLiveOdds] = useState<any[]>([]);
+  const [oddsLoading, setOddsLoading] = useState(false);
+  const [oddsLastFetched, setOddsLastFetched] = useState<Date | null>(null);
   const [newBet, setNewBet] = useState<Omit<BetEntry, "id">>({
     date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0,
   });
@@ -370,11 +373,31 @@ export default function Dashboard() {
     setMemLoading(false);
   }, []);
 
+  const fetchOdds = async () => {
+    setOddsLoading(true);
+    try {
+      const r = await fetch("/api/odds");
+      const d = await r.json();
+      if (Array.isArray(d)) {
+        setLiveOdds(d);
+        setOddsLastFetched(new Date());
+      }
+    } catch {}
+    setOddsLoading(false);
+  };
+
   useEffect(() => {
     if (authed && activeTab === "memory" && memFiles.length === 0) {
       fetchMemFiles();
     }
   }, [authed, activeTab, memFiles.length, fetchMemFiles]);
+
+  useEffect(() => {
+    if (authed && activeTab === "betting" && liveOdds.length === 0) {
+      fetchOdds();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authed, activeTab]);
 
   useEffect(() => {
     if (selectedFile) fetchFileContent(selectedFile);
@@ -1338,6 +1361,203 @@ export default function Dashboard() {
                 <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">New York Mets ML</span> — 1 unit <span className="text-slate-400">(7:10 PM ET)</span></li>
               </ul>
             </div>
+
+            {/* ── LIVE LINES ── */}
+            {(() => {
+              const TARGET_GAMES = [
+                { home: "Cleveland Guardians", away: "Houston Astros", pickSide: "Cleveland Guardians" },
+                { home: "New York Mets",       away: "Minnesota Twins",   pickSide: "New York Mets"      },
+                { home: "Arizona Diamondbacks",away: "Chicago White Sox", pickSide: "Arizona Diamondbacks"},
+              ];
+
+              const formatOdds = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
+              const teamIncludes = (teamName: string, target: string) =>
+                teamName.toLowerCase().includes(target.toLowerCase()) ||
+                target.toLowerCase().includes(teamName.toLowerCase());
+
+              const findGame = (t: typeof TARGET_GAMES[0]) =>
+                liveOdds.find(g =>
+                  (teamIncludes(g.home_team, t.home) && teamIncludes(g.away_team, t.away)) ||
+                  (teamIncludes(g.home_team, t.away) && teamIncludes(g.away_team, t.home))
+                );
+
+              const getBookmaker = (game: any) =>
+                game?.bookmakers?.find((b: any) => b.key === "fandraft") ||
+                game?.bookmakers?.find((b: any) => b.key === "fanduel") ||
+                game?.bookmakers?.[0];
+
+              const getH2H = (bm: any) =>
+                bm?.markets?.find((m: any) => m.key === "h2h");
+
+              const getTotals = (bm: any) =>
+                bm?.markets?.find((m: any) => m.key === "totals");
+
+              const getBestML = (game: any, teamName: string) => {
+                if (!game?.bookmakers) return null;
+                let best: number | null = null;
+                for (const bm of game.bookmakers) {
+                  const h2h = bm.markets?.find((m: any) => m.key === "h2h");
+                  const outcome = h2h?.outcomes?.find((o: any) =>
+                    teamIncludes(o.name, teamName)
+                  );
+                  if (outcome) {
+                    if (best === null || outcome.price > best) best = outcome.price;
+                  }
+                }
+                return best;
+              };
+
+              const toET = (utc: string) => {
+                try {
+                  return new Date(utc).toLocaleTimeString("en-US", {
+                    timeZone: "America/New_York",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  }) + " ET";
+                } catch { return ""; }
+              };
+
+              const minsFetched = oddsLastFetched
+                ? Math.floor((Date.now() - oddsLastFetched.getTime()) / 60000)
+                : null;
+
+              return (
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-cyan-400">📡 LIVE LINES</p>
+                      {minsFetched !== null && (
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Last fetched: {minsFetched === 0 ? "just now" : `${minsFetched} min ago`}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={fetchOdds}
+                      disabled={oddsLoading}
+                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-400 hover:text-cyan-400 transition disabled:opacity-50"
+                    >
+                      {oddsLoading ? "Loading…" : "🔄 Refresh"}
+                    </button>
+                  </div>
+
+                  {oddsLoading && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-500 animate-pulse">
+                      Fetching live odds…
+                    </div>
+                  )}
+
+                  {!oddsLoading && liveOdds.length === 0 && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-500">
+                      No odds data — click Refresh to load.
+                    </div>
+                  )}
+
+                  {!oddsLoading && liveOdds.length > 0 && (
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {TARGET_GAMES.map((tg, i) => {
+                        const game = findGame(tg);
+                        const bm = game ? getBookmaker(game) : null;
+                        const h2h = bm ? getH2H(bm) : null;
+                        const totals = bm ? getTotals(bm) : null;
+                        const homeOutcome = h2h?.outcomes?.find((o: any) => teamIncludes(o.name, game?.home_team));
+                        const awayOutcome = h2h?.outcomes?.find((o: any) => teamIncludes(o.name, game?.away_team));
+                        const overOutcome = totals?.outcomes?.find((o: any) => o.name === "Over");
+                        const underOutcome = totals?.outcomes?.find((o: any) => o.name === "Under");
+                        const bestML = game ? getBestML(game, tg.pickSide) : null;
+
+                        return (
+                          <div key={i} className="rounded-2xl border border-slate-700/60 bg-slate-900/70 p-5 space-y-3">
+                            {!game ? (
+                              <div className="text-sm text-slate-500 text-center py-4">
+                                {tg.away} @ {tg.home}
+                                <br /><span className="text-xs">Game not found in feed</span>
+                              </div>
+                            ) : (
+                              <>
+                                {/* Matchup + time */}
+                                <div>
+                                  <p className="text-sm font-black text-white">
+                                    {game.away_team} <span className="text-slate-500 font-normal">@</span> {game.home_team}
+                                  </p>
+                                  {game.commence_time && (
+                                    <p className="text-xs text-slate-500 mt-0.5">{toET(game.commence_time)}</p>
+                                  )}
+                                  {bm && (
+                                    <p className="text-xs text-slate-600 mt-0.5">Source: {bm.title}</p>
+                                  )}
+                                </div>
+
+                                {/* ML odds */}
+                                <div>
+                                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Moneyline</p>
+                                  {h2h ? (
+                                    <div className="flex gap-2">
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400 truncate">{game.away_team.split(" ").slice(-1)[0]}</p>
+                                        <p className={`text-base font-black mt-0.5 ${awayOutcome?.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {awayOutcome ? formatOdds(awayOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400 truncate">{game.home_team.split(" ").slice(-1)[0]}</p>
+                                        <p className={`text-base font-black mt-0.5 ${homeOutcome?.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {homeOutcome ? formatOdds(homeOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <p className="text-xs text-slate-600">ML not available</p>
+                                  )}
+                                </div>
+
+                                {/* Total */}
+                                <div>
+                                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Total</p>
+                                  {totals && overOutcome ? (
+                                    <div className="flex gap-2">
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400">O {overOutcome.point}</p>
+                                        <p className={`text-sm font-bold mt-0.5 ${overOutcome.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {formatOdds(overOutcome.price)}
+                                        </p>
+                                      </div>
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400">U {underOutcome?.point ?? overOutcome.point}</p>
+                                        <p className={`text-sm font-bold mt-0.5 ${(underOutcome?.price ?? 0) > 0 ? "text-green-400" : "text-white"}`}>
+                                          {underOutcome ? formatOdds(underOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <p className="text-xs text-slate-600">Total not available</p>
+                                  )}
+                                </div>
+
+                                {/* Best line highlight */}
+                                {bestML !== null && (
+                                  <div className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 flex items-center justify-between">
+                                    <div>
+                                      <p className="text-xs font-bold text-cyan-400">⭐ Best Line — Pick Side</p>
+                                      <p className="text-xs text-slate-400 mt-0.5 truncate">{tg.pickSide.split(" ").slice(-1)[0]}</p>
+                                    </div>
+                                    <p className={`text-lg font-black ${bestML > 0 ? "text-green-400" : "text-white"}`}>
+                                      {formatOdds(bestML)}
+                                    </p>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
 
             {/* ── DAILY PLAYS ── */}
             <div>
