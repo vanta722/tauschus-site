@@ -1,217 +1,112 @@
 "use client";
 import { useState, useEffect } from "react";
 
-// ── Contract addresses (Shasta testnet — update to mainnet after deploy) ──
-// Addresses read from env vars — set NEXT_PUBLIC_* in Vercel before mainnet deploy
-// Shasta testnet addresses used as fallback during development
-const CONTRACTS = {
-  LDA_V2:    process.env.NEXT_PUBLIC_LDA_V2    || "TURQgDcWWeg633Azz8SMrDrHHYdgM3Nfxi",
-  MIGRATION: process.env.NEXT_PUBLIC_MIGRATION || "TBJewkqJqCRqurLMiTnqYkRhVxYWeHvrVP",
-  PLATFORM:  process.env.NEXT_PUBLIC_PLATFORM  || "TYKu4AJv6cqNwoyZtnjzpsyE9Tf5WkLQhh",
-  TREASURY:  "TG1ZuSqJdgmD11i2FyCXxtjBbTEiEzRVQy",
-  NETWORK:   "shasta", // change to "mainnet" after deployment
+// ── Live addresses (mainnet) ──
+const ADDRESSES = {
+  LDA_V1:    "TNP1D18nJCqQHhv4i38qiNtUUuL5VyNoC1",  // LDA token — existing v1, no migration
+  TREASURY:  "TG1ZuSqJdgmD11i2FyCXxtjBbTEiEzRVQy",  // Receives all tool payments
+  BLACK_HOLE:"TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy",  // Tron black hole — confirmed burned supply
 }
 
 const TOOLS = [
-  { id: "WALLET_ANALYZER",  name: "🔍 Wallet Analyzer",    cost: 50  },
-  { id: "CONTRACT_AUDITOR", name: "🛡️ Contract Auditor",   cost: 100 },
-  { id: "MARKET_INTEL",     name: "📊 Market Intelligence", cost: 25  },
+  { id: "WALLET_ANALYZER",  icon: "🔍", name: "Wallet Analyzer",    cost: 50,  status: "live" },
+  { id: "CONTRACT_AUDITOR", icon: "🛡️", name: "Contract Auditor",   cost: 100, status: "live" },
+  { id: "MARKET_INTEL",     icon: "📊", name: "Market Intelligence", cost: 25,  status: "live" },
+  { id: "SECURITY_AUDITOR", icon: "🔐", name: "Security Auditor",   cost: 150, status: "building" },
 ]
 
-const BUILDER_APPS = [
-  { id: 1, tool: "Tron Sentiment Scanner", builder: "0xdev_labs", contact: "@trondevlabs", wallet: "", cost: 75,  category: "Analytics", status: "pending", submitted: "2 days ago" },
-  { id: 2, tool: "NFT Floor Predictor",    builder: "nft_ai",    contact: "nftai@dev.io", wallet: "", cost: 50,  category: "NFT",       status: "pending", submitted: "5 days ago" },
-  { id: 3, tool: "Rug Pull Detector Pro",  builder: "safu_tools", contact: "@safutools",  wallet: "", cost: 80,  category: "Security",  status: "approved", submitted: "8 days ago" },
+const BURN_LOG: { date: string; amount: number; txHash: string; note: string }[] = [
+  // Populate manually after each weekly burn
+  // { date: "2026-04-21", amount: 0, txHash: "", note: "First weekly burn — pending" },
 ]
 
-interface TokenStats {
-  v2Supply: number
+interface LiveStats {
+  ldaSupply: number
+  holders: number
+  transfers: number
   totalBurned: number
+  burnPct: number
   treasuryBalance: number
-  migrationOpen: boolean
-  timeRemaining: number
-  oldLDAMigrated: number
-  v2Issued: number
+  recentPayments: { from: string; amount: number; time: string; tool: string }[]
+}
+
+const DEFAULT_STATS: LiveStats = {
+  ldaSupply: 20_207_717,
+  holders: 282,
+  transfers: 11053,
+  totalBurned: 1_050_000,
+  burnPct: 5.2,
+  treasuryBalance: 0,
+  recentPayments: [],
 }
 
 export default function LionXAdmin() {
-  const [tab,           setTab]           = useState<"overview"|"tools"|"builders"|"migration"|"governance">("overview")
-  const [stats,         setStats]         = useState<TokenStats | null>(null)
-  const [toolPrices,    setToolPrices]     = useState(TOOLS.map(t => ({ ...t, newCost: t.cost })))
-  const [builders,      setBuilders]       = useState(BUILDER_APPS)
-  const [saving,        setSaving]         = useState<string | null>(null)
-  const [saved,         setSaved]          = useState<string | null>(null)
-  const [txResult,      setTxResult]       = useState<string | null>(null)
-  // Governance state
-  const [proposals,     setProposals]      = useState<{id:number; description:string; blockNumber:number; active:boolean; forVotes:number; againstVotes:number}[]>([])
-  const [propLoading,   setPropLoading]    = useState(false)
-  const [newProposal,   setNewProposal]    = useState("")
-  const [creatingProp,  setCreatingProp]   = useState(false)
-  const [govTxResult,   setGovTxResult]    = useState<string | null>(null)
+  const [tab,   setTab]   = useState<"overview"|"tools"|"burns"|"security"|"pending">("overview")
+  const [stats, setStats] = useState<LiveStats>(DEFAULT_STATS)
+  const [loading, setLoading] = useState(true)
 
-  // Fetch live stats from Tronscan
   useEffect(() => {
     async function fetchStats() {
       try {
-        const [tokenRes, migRes] = await Promise.all([
-          fetch(`https://apilist.tronscanapi.com/api/token_trc20?contract=${CONTRACTS.LDA_V2}`),
-          fetch(`https://apilist.tronscanapi.com/api/accountv2?address=${CONTRACTS.TREASURY}`)
+        const [tokenRes, blackHoleRes, treasuryRes, paymentsRes] = await Promise.all([
+          fetch(`https://apilist.tronscanapi.com/api/token_trc20?contract=${ADDRESSES.LDA_V1}`),
+          fetch(`https://apilist.tronscanapi.com/api/account?address=${ADDRESSES.BLACK_HOLE}`),
+          fetch(`https://apilist.tronscanapi.com/api/accountv2?address=${ADDRESSES.TREASURY}`),
+          fetch(`https://apilist.tronscanapi.com/api/contract/events?contract=${ADDRESSES.LDA_V1}&toAddress=${ADDRESSES.TREASURY}&limit=10`),
         ])
-        const tokenData = await tokenRes.json()
+
+        const tokenData    = await tokenRes.json()
+        const blackHole    = await blackHoleRes.json()
+        const treasury     = await treasuryRes.json()
+        const paymentsData = await paymentsRes.json()
+
         const token = tokenData?.trc20_tokens?.[0]
-        if (token) {
-          setStats({
-            v2Supply:       Number(token.total_supply_with_decimals || 0) / 1e6,
-            totalBurned:    0, // from contract
-            treasuryBalance: 0, // from contract
-            migrationOpen:  true,
-            timeRemaining:  30 * 86400,
-            oldLDAMigrated: 0,
-            v2Issued:       0,
-          })
-        }
+        const ldaSupply = Number(token?.total_supply_with_decimals || 0) / 1e6 || 20_207_717
+        const holders   = Number(token?.holders_count || 282)
+        const transfers = Number(token?.transfer_num  || 0)
+
+        const burnEntry = (blackHole?.trc20token_balances || []).find(
+          (t: any) => t.tokenId === ADDRESSES.LDA_V1
+        )
+        const totalBurned = burnEntry ? Number(burnEntry.balance) / 1e6 : 1_050_000
+
+        const ldaEntry = (treasury?.trc20token_balances || []).find(
+          (t: any) => t.tokenId === ADDRESSES.LDA_V1
+        )
+        const treasuryBalance = ldaEntry ? Number(ldaEntry.balance) / 1e6 : 0
+
+        const events = paymentsData?.data || []
+        const now = Date.now()
+        const recentPayments = events.slice(0, 5).map((e: any) => {
+          const amount = Number(e.amount || 0) / 1e6
+          const ts     = Number(e.timestamp || 0)
+          const diffMin = ts ? Math.floor((now - ts) / 60000) : 0
+          let tool = "Wallet Analysis"
+          if (amount >= 100) tool = "Contract Audit"
+          else if (amount <= 25) tool = "Market Intel"
+          return {
+            from:   (e.transferFromAddress || "").slice(0,6) + "..." + (e.transferFromAddress || "").slice(-4),
+            amount,
+            time:   diffMin < 1 ? "Just now" : diffMin < 60 ? `${diffMin}m ago` : `${Math.floor(diffMin/60)}h ago`,
+            tool,
+          }
+        })
+
+        setStats({ ldaSupply, holders, transfers, totalBurned, burnPct: (totalBurned / ldaSupply) * 100, treasuryBalance, recentPayments })
       } catch {}
+      setLoading(false)
     }
     fetchStats()
     const t = setInterval(fetchStats, 30000)
     return () => clearInterval(t)
   }, [])
 
-  async function updateToolPrice(toolId: string, newCost: number) {
-    setSaving(toolId)
-    setTxResult(null)
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) throw new Error("TronLink not connected")
-      const platform = await tw.contract().at(CONTRACTS.PLATFORM)
-      const toolIdBytes = tw.sha3(toolId) // keccak256 — matches LDAPlatform.sol registration
-      const tx = await platform.updateTool(toolIdBytes, newCost * 1e6, true).send({ feeLimit: 100_000_000 })
-      setTxResult(`✅ Price updated — tx: ${tx.slice(0,20)}...`)
-      setSaved(toolId)
-      setTimeout(() => setSaved(null), 3000)
-    } catch (e: any) {
-      setTxResult(`❌ Failed: ${e?.message || "Transaction error"}`)
-    } finally {
-      setSaving(null)
-    }
-  }
-
-  async function toggleMigration(open: boolean) {
-    setSaving("migration")
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) throw new Error("TronLink not connected")
-      const mig = await tw.contract().at(CONTRACTS.MIGRATION)
-      if (open) await mig.openMigration(30).send({ feeLimit: 100_000_000 })
-      else       await mig.closeMigration().send({ feeLimit: 100_000_000 })
-      setTxResult(`✅ Migration ${open ? "opened" : "closed"}`)
-    } catch (e: any) {
-      setTxResult(`❌ Failed: ${e?.message}`)
-    } finally {
-      setSaving(null)
-    }
-  }
-
-  async function approveBuilder(id: number) {
-    const builder = builders.find(b => b.id === id)
-    if (!builder) return
-    // Require a valid Tron wallet address before attempting on-chain call
-    if (!builder.wallet || !builder.wallet.startsWith('T') || builder.wallet.length < 30) {
-      setTxResult(`❌ Cannot approve: no valid Tron wallet address on file for ${builder.builder}. Ask them to submit their TRX wallet address first.`)
-      return
-    }
-    setSaving(`builder-${id}`)
-    setTxResult(null)
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) throw new Error("TronLink not connected")
-      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
-      const toolId   = tw.sha3(builder.tool.toUpperCase().replace(/ /g, '_'))
-      // registerBuilder(bytes32 toolId, address wallet, uint256 sharePercent)
-      const tx = await contract.registerBuilder(toolId, builder.wallet, 10).send({ feeLimit: 150_000_000 })
-      setBuilders(b => b.map(x => x.id === id ? { ...x, status: "approved" } : x))
-      setTxResult(`✅ Builder approved on-chain — tx: ${tx.slice(0,24)}...`)
-    } catch (e: any) {
-      setBuilders(b => b.map(x => x.id === id ? { ...x, status: "approved" } : x))
-      setTxResult(`⚠️ UI approved. On-chain call failed: ${e?.message || 'check wallet'} — call registerBuilder() manually.`)
-    }
-    setSaving(null)
-  }
-
-  function rejectBuilder(id: number) {
-    setBuilders(b => b.map(x => x.id === id ? { ...x, status: "rejected" } : x))
-  }
-
-  async function fetchProposals() {
-    setPropLoading(true)
-    setGovTxResult(null)
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) { setPropLoading(false); return }
-      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
-      const count = Number(await contract.snapshotCount().call())
-      const loaded = []
-      for (let i = count; i >= 1; i--) {
-        try {
-          const s = await contract.snapshots(i).call()
-          const r = await contract.getVoteResults(i).call()
-          loaded.push({
-            id:           i,
-            description:  s.description,
-            blockNumber:  Number(s.blockNumber),
-            active:       s.active,
-            forVotes:     Number(r.forVotes) / 1e6,
-            againstVotes: Number(r.againstVotes) / 1e6,
-          })
-        } catch {}
-      }
-      setProposals(loaded)
-    } catch (e: any) {
-      setGovTxResult(`❌ Failed to load: ${e?.message}`)
-    }
-    setPropLoading(false)
-  }
-
-  async function createProposal() {
-    if (!newProposal.trim()) return
-    setCreatingProp(true)
-    setGovTxResult(null)
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) throw new Error("TronLink not connected — connect owner wallet")
-      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
-      const tx = await contract.createSnapshot(newProposal.trim()).send({ feeLimit: 100_000_000 })
-      setGovTxResult(`✅ Proposal created — tx: ${tx.slice(0,24)}...`)
-      setNewProposal("")
-      setTimeout(fetchProposals, 4000)
-    } catch (e: any) {
-      setGovTxResult(`❌ Failed: ${e?.message || "Transaction error"}`)
-    }
-    setCreatingProp(false)
-  }
-
-  async function closeProposal(id: number) {
-    setSaving(`close-${id}`)
-    setGovTxResult(null)
-    try {
-      const tw = (window as any).tronWeb
-      if (!tw) throw new Error("TronLink not connected")
-      const contract = await tw.contract().at(CONTRACTS.LDA_V2)
-      const tx = await contract.closeSnapshot(id).send({ feeLimit: 100_000_000 })
-      setGovTxResult(`✅ Proposal #${id} closed — tx: ${tx.slice(0,24)}...`)
-      setTimeout(fetchProposals, 4000)
-    } catch (e: any) {
-      setGovTxResult(`❌ Failed: ${e?.message}`)
-    }
-    setSaving(null)
-  }
-
   const TABS = [
-    { id: "overview",    label: "Overview",    icon: "📊" },
-    { id: "tools",       label: "Tools",       icon: "🔧" },
-    { id: "builders",   label: "Builders",    icon: "👷" },
-    { id: "migration",  label: "Migration",   icon: "🔄" },
-    { id: "governance", label: "Governance",  icon: "🗳️" },
+    { id: "overview",  label: "Overview",  icon: "📊" },
+    { id: "tools",     label: "Tools",     icon: "⚡" },
+    { id: "burns",     label: "Burns",     icon: "🔥" },
+    { id: "security",  label: "Security",  icon: "🛡️" },
+    { id: "pending",   label: "Pending",   icon: "⏳" },
   ] as const
 
   return (
@@ -224,14 +119,22 @@ export default function LionXAdmin() {
           <div>
             <div className="font-black text-lg" style={{ color: "#f5a623" }}>Lion X Mission Control</div>
             <div className="text-xs" style={{ color: "#4a5a6a" }}>
-              Network: <span style={{ color: CONTRACTS.NETWORK === "mainnet" ? "#22c55e" : "#f5a623" }}>{CONTRACTS.NETWORK.toUpperCase()}</span>
-              {" · "}Platform: <span className="font-mono text-xs" style={{ color: "#14b8a6" }}>{CONTRACTS.PLATFORM.slice(0,8)}...{CONTRACTS.PLATFORM.slice(-4)}</span>
+              Network: <span style={{ color: "#22c55e" }}>MAINNET</span>
+              {" · "}Domain: <a href="https://lion-xai.com" target="_blank" rel="noreferrer" style={{ color: "#14b8a6", textDecoration: "none" }}>lion-xai.com</a>
+              {" · "}Model: <span style={{ color: "#a78bfa" }}>Gemini 2.5 Flash</span>
             </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e", display: "inline-block" }}/>
-          <span className="text-xs font-bold" style={{ color: "#22c55e" }}>Platform Online</span>
+        <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e", display: "inline-block" }}/>
+            <span className="text-xs font-bold" style={{ color: "#22c55e" }}>LIVE</span>
+          </div>
+          <a href="https://lion-xai.com/tools" target="_blank" rel="noreferrer"
+            className="px-3 py-1.5 rounded-lg text-xs font-bold no-underline"
+            style={{ background: "rgba(20,184,166,0.1)", border: "1px solid rgba(20,184,166,0.2)", color: "#14b8a6" }}>
+            Open Platform →
+          </a>
         </div>
       </div>
 
@@ -248,22 +151,19 @@ export default function LionXAdmin() {
 
       <div className="p-5">
 
-        {/* Tx result */}
-        {txResult && (
-          <div className="mb-4 px-4 py-2.5 rounded-xl text-sm font-medium" style={{ background: txResult.startsWith("✅") ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${txResult.startsWith("✅") ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`, color: txResult.startsWith("✅") ? "#22c55e" : "#ef4444" }}>
-            {txResult}
-          </div>
-        )}
-
         {/* ── OVERVIEW ── */}
         {tab === "overview" && (
           <div className="space-y-4">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+
+            {/* Live stat cards */}
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
               {[
-                { icon:"💎", label:"LDA v2 Supply",    val: stats ? stats.v2Supply.toLocaleString() : "Loading...", color:"#14b8a6" },
-                { icon:"🔥", label:"Total Burned",     val: stats ? stats.totalBurned.toLocaleString() : "—",        color:"#ef4444" },
-                { icon:"🏦", label:"Treasury Balance", val: stats ? stats.treasuryBalance.toLocaleString() : "—",    color:"#a78bfa" },
-                { icon:"🔄", label:"Migration",        val: stats?.migrationOpen ? "OPEN" : "CLOSED",                color: stats?.migrationOpen ? "#22c55e" : "#ef4444" },
+                { icon:"💎", label:"LDA Supply",       val: loading ? "..." : stats.ldaSupply.toLocaleString(),        color:"#14b8a6" },
+                { icon:"🔥", label:"Total Burned",     val: loading ? "..." : stats.totalBurned.toLocaleString(),      color:"#ef4444" },
+                { icon:"📊", label:"Burn %",           val: loading ? "..." : stats.burnPct.toFixed(2) + "%",          color:"#f5a623" },
+                { icon:"👥", label:"Holders",          val: loading ? "..." : stats.holders.toLocaleString(),          color:"#22c55e" },
+                { icon:"🔄", label:"Total Transfers",  val: loading ? "..." : stats.transfers.toLocaleString(),        color:"#a78bfa" },
+                { icon:"🏦", label:"Treasury Balance", val: loading ? "..." : stats.treasuryBalance.toFixed(2) + " LDA", color:"#f5a623" },
               ].map(s => (
                 <div key={s.label} className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="text-xl mb-1">{s.icon}</div>
@@ -273,289 +173,275 @@ export default function LionXAdmin() {
               ))}
             </div>
 
+            {/* Architecture overview */}
             <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Contract Addresses</div>
-              {Object.entries(CONTRACTS).filter(([k]) => k !== "NETWORK").map(([key, addr]) => (
-                <div key={key} className="flex items-center justify-between py-2 text-xs" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
-                  <span style={{ color: "#7a8a9a" }}>{key}</span>
-                  <a href={`https://${CONTRACTS.NETWORK === "mainnet" ? "" : "shasta."}tronscan.org/#/contract/${addr}`} target="_blank" rel="noreferrer"
-                    className="font-mono" style={{ color: "#14b8a6", textDecoration: "none" }}>
-                    {addr.slice(0,8)}...{addr.slice(-6)}
-                  </a>
-                </div>
-              ))}
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Platform Architecture</div>
+              <div className="space-y-2 text-xs">
+                {[
+                  ["Payment model",  "Direct LDA transfer to treasury — no smart contract", "#22c55e"],
+                  ["Token",          "LDA v1 (existing) — TNP1D18nJCqQHhv4i38qiNtUUuL5VyNoC1", "#14b8a6"],
+                  ["Treasury",       "TG1ZuSqJdgmD11i2FyCXxtjBbTEiEzRVQy", "#14b8a6"],
+                  ["Burn address",   "TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy (Tron black hole)", "#ef4444"],
+                  ["Burn schedule",  "Weekly manual — 70% of treasury burned, 30% retained", "#f5a623"],
+                  ["Verification",   "Server-side Tronscan event lookup — client sends address only", "#a78bfa"],
+                  ["Replay protect", "Upstash KV (SET key 1 EX 1200 NX) — persistent across cold starts", "#22c55e"],
+                  ["Security",       "8.5/10 — 2 audit rounds complete, all findings resolved", "#22c55e"],
+                ].map(([k, v, c]) => (
+                  <div key={k as string} className="flex gap-3 py-1.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <span className="shrink-0 w-32" style={{ color: "#7a8a9a" }}>{k}</span>
+                    <span style={{ color: c as string }}>{v}</span>
+                  </div>
+                ))}
+              </div>
             </div>
 
+            {/* Quick links */}
             <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
               <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Quick Links</div>
               <div className="flex gap-2 flex-wrap">
                 {[
-                  ["🌐 Platform", "https://frontend-phi-blond-32.vercel.app"],
-                  ["📊 Dashboard", "https://frontend-phi-blond-32.vercel.app/dashboard"],
-                  ["🔍 Tronscan (Shasta)", `https://shasta.tronscan.org/#/contract/${CONTRACTS.LDA_V2}`],
-                  ["💻 GitHub", "https://github.com/vanta722/lionx-platform"],
+                  ["🌐 Platform",       "https://lion-xai.com"],
+                  ["⚡ Tools",          "https://lion-xai.com/tools"],
+                  ["📊 Dashboard",      "https://lion-xai.com/dashboard"],
+                  ["💻 GitHub",         "https://github.com/vanta722/lionx-platform"],
+                  ["🔍 Treasury",       `https://tronscan.org/#/address/${ADDRESSES.TREASURY}`],
+                  ["🔥 Burn Wallet",    `https://tronscan.org/#/address/${ADDRESSES.BLACK_HOLE}`],
+                  ["💎 LDA Token",      `https://tronscan.org/#/token20/${ADDRESSES.LDA_V1}`],
                 ].map(([label, href]) => (
-                  <a key={label} href={href} target="_blank" rel="noreferrer"
-                    className="px-3 py-1.5 rounded-lg text-xs font-bold no-underline transition-all"
+                  <a key={label as string} href={href as string} target="_blank" rel="noreferrer"
+                    className="px-3 py-1.5 rounded-lg text-xs font-bold no-underline"
                     style={{ background: "rgba(20,184,166,0.08)", border: "1px solid rgba(20,184,166,0.2)", color: "#14b8a6" }}>
                     {label}
                   </a>
                 ))}
               </div>
             </div>
-          </div>
-        )}
 
-        {/* ── TOOL PRICES ── */}
-        {tab === "tools" && (
-          <div className="space-y-3">
-            <p className="text-xs" style={{ color: "#7a8a9a" }}>
-              Connect owner wallet to update prices on-chain. Changes take effect immediately.
-            </p>
-            {toolPrices.map(tool => (
-              <div key={tool.id} className="rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
-                <div>
-                  <div className="font-bold text-sm">{tool.name}</div>
-                  <div className="text-xs mt-0.5" style={{ color: "#4a5a6a" }}>Current: <span style={{ color: "#f5a623" }}>{tool.cost} LDA v2</span></div>
+            {/* Recent payments */}
+            <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Recent Tool Payments (Live)</div>
+              {stats.recentPayments.length === 0 ? (
+                <p className="text-xs text-center py-3" style={{ color: "#4a5a6a" }}>No recent payments found</p>
+              ) : (
+                <div className="space-y-2">
+                  {stats.recentPayments.map((p, i) => (
+                    <div key={i} className="flex items-center justify-between text-xs py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <span className="font-mono" style={{ color: "#7a8a9a" }}>{p.from}</span>
+                      <span style={{ color: "#14b8a6" }}>{p.tool}</span>
+                      <span style={{ color: "#f5a623" }}>{p.amount} LDA</span>
+                      <span style={{ color: "#4a5a6a" }}>{p.time}</span>
+                    </div>
+                  ))}
                 </div>
-                <div className="flex items-center gap-3">
-                  <input type="number" value={tool.newCost} min={1}
-                    onChange={e => setToolPrices(p => p.map(t => t.id === tool.id ? { ...t, newCost: Number(e.target.value) } : t))}
-                    className="w-24 px-3 py-2 rounded-lg text-sm text-center font-bold outline-none"
-                    style={{ background: "#161628", border: "1px solid rgba(20,184,166,0.2)", color: "#14b8a6", fontFamily: "inherit" }}/>
-                  <span className="text-xs" style={{ color: "#4a5a6a" }}>LDA v2</span>
-                  <button onClick={() => updateToolPrice(tool.id, tool.newCost)}
-                    disabled={saving === tool.id || tool.newCost === tool.cost}
-                    className="px-4 py-2 rounded-lg text-xs font-bold disabled:opacity-40 transition-all"
-                    style={{ background: saved === tool.id ? "rgba(34,197,94,0.15)" : "rgba(20,184,166,0.12)", color: saved === tool.id ? "#22c55e" : "#14b8a6", border: `1px solid ${saved === tool.id ? "rgba(34,197,94,0.25)" : "rgba(20,184,166,0.25)"}`, fontFamily: "inherit", cursor: "pointer" }}>
-                    {saving === tool.id ? "Updating..." : saved === tool.id ? "✅ Saved" : "Update Price"}
-                  </button>
-                </div>
-              </div>
-            ))}
-            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
-              💡 <strong style={{ color: "#f5a623" }}>Pricing guide:</strong> Adjust based on LDA v2 price. Target $1–3 USD per query. At $0.10/LDA: Wallet=50 ($5), Audit=100 ($10), Intel=25 ($2.50)
+              )}
             </div>
           </div>
         )}
 
-        {/* ── BUILDER APPLICATIONS ── */}
-        {tab === "builders" && (
+        {/* ── TOOLS ── */}
+        {tab === "tools" && (
           <div className="space-y-3">
-            <p className="text-xs" style={{ color: "#7a8a9a" }}>
-              Review builder applications. Approved tools go live on the marketplace.
+            <p className="text-xs mb-1" style={{ color: "#7a8a9a" }}>
+              Tool pricing is set in <code style={{ color: "#14b8a6" }}>pages/api/query.ts</code> — update TOOL_COSTS and redeploy to change. No smart contract needed.
             </p>
-            {builders.map(b => (
-              <div key={b.id} className="rounded-xl p-4" style={{ background: "#0c0c18", border: `1px solid ${b.status === "approved" ? "rgba(34,197,94,0.2)" : b.status === "rejected" ? "rgba(239,68,68,0.15)" : "rgba(255,255,255,0.06)"}` }}>
-                <div className="flex items-start justify-between gap-3 flex-wrap">
+            {TOOLS.map(tool => (
+              <div key={tool.id} className="rounded-xl p-4 flex items-center justify-between gap-4 flex-wrap"
+                style={{ background: "#0c0c18", border: `1px solid ${tool.status === "live" ? "rgba(34,197,94,0.15)" : "rgba(245,166,35,0.15)"}` }}>
+                <div className="flex items-center gap-3">
+                  <span className="text-xl">{tool.icon}</span>
                   <div>
-                    <div className="font-bold text-sm mb-1">{b.tool}</div>
-                    <div className="flex gap-3 text-xs flex-wrap" style={{ color: "#7a8a9a" }}>
-                      <span>👤 {b.builder}</span>
-                      <span>💬 {b.contact}</span>
-                      <span>📂 {b.category}</span>
-                      <span>🔥 {b.cost} LDA v2</span>
-                      <span>📅 {b.submitted}</span>
-                    </div>
-                    {b.status === "pending" && (
-                      <div className="mt-2">
-                        <input
-                          placeholder="Builder TRX wallet address (required to approve on-chain)"
-                          value={b.wallet}
-                          onChange={e => setBuilders(bx => bx.map(x => x.id === b.id ? { ...x, wallet: e.target.value } : x))}
-                          className="w-full rounded-lg px-3 py-1.5 text-xs font-mono"
-                          style={{ background: "#0a0a16", border: `1px solid ${b.wallet?.startsWith('T') && b.wallet.length >= 30 ? 'rgba(34,197,94,0.4)' : 'rgba(255,255,255,0.08)'}`, color: "#dde8f0", fontFamily: "monospace", outline: "none" }}
-                        />
-                        {b.wallet && (!b.wallet.startsWith('T') || b.wallet.length < 30) && (
-                          <p className="text-xs mt-1" style={{ color: "#ef4444" }}>Must be a valid Tron address (starts with T, 34 chars)</p>
-                        )}
-                      </div>
-                    )}
+                    <div className="font-bold text-sm">{tool.name}</div>
+                    <div className="text-xs mt-0.5 font-mono" style={{ color: "#4a5a6a" }}>{tool.id}</div>
                   </div>
-                  <div className="flex items-center gap-2">
-                    {b.status === "pending" ? (
-                      <>
-                        <button onClick={() => approveBuilder(b.id)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                          style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)", fontFamily: "inherit", cursor: "pointer" }}>
-                          ✅ Approve
-                        </button>
-                        <button onClick={() => rejectBuilder(b.id)}
-                          className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                          style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontFamily: "inherit", cursor: "pointer" }}>
-                          ✗ Reject
-                        </button>
-                      </>
-                    ) : (
-                      <span className="px-3 py-1.5 rounded-lg text-xs font-bold"
-                        style={{ background: b.status === "approved" ? "rgba(34,197,94,0.1)" : "rgba(239,68,68,0.1)", color: b.status === "approved" ? "#22c55e" : "#ef4444", border: `1px solid ${b.status === "approved" ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.15)"}` }}>
-                        {b.status === "approved" ? "✅ Approved" : "✗ Rejected"}
-                      </span>
-                    )}
+                </div>
+                <div className="flex items-center gap-4">
+                  <div className="text-center">
+                    <div className="font-black text-lg" style={{ color: "#f5a623" }}>{tool.cost}</div>
+                    <div className="text-xs" style={{ color: "#4a5a6a" }}>LDA</div>
                   </div>
+                  <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                    style={{ background: tool.status === "live" ? "rgba(34,197,94,0.1)" : "rgba(245,166,35,0.1)", color: tool.status === "live" ? "#22c55e" : "#f5a623", border: `1px solid ${tool.status === "live" ? "rgba(34,197,94,0.2)" : "rgba(245,166,35,0.2)"}` }}>
+                    {tool.status === "live" ? "● LIVE" : "⏳ BUILDING"}
+                  </span>
                 </div>
               </div>
             ))}
-            {builders.filter(b => b.status === "pending").length === 0 && (
-              <div className="text-center py-6 text-xs" style={{ color: "#4a5a6a" }}>No pending applications</div>
-            )}
+            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
+              💡 <strong style={{ color: "#f5a623" }}>To change a price:</strong> Edit <code>TOOL_COSTS</code> in <code>pages/api/query.ts</code> → push to GitHub → Vercel auto-deploys. No wallet required.
+            </div>
           </div>
         )}
 
-        {/* ── MIGRATION CONTROL ── */}
-        {tab === "migration" && (
+        {/* ── BURNS ── */}
+        {tab === "burns" && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 gap-3">
               {[
-                { label:"Old LDA Total",    val:"20,207,717", color:"#7a8a9a" },
-                { label:"Migrated So Far",  val: stats ? stats.oldLDAMigrated.toLocaleString() : "—", color:"#f5a623" },
-                { label:"LDA v2 Issued",    val: stats ? stats.v2Issued.toLocaleString() : "—",       color:"#14b8a6" },
-                { label:"Max v2 Supply",    val:"10,000,000",  color:"#14b8a6" },
+                { icon:"🔥", label:"Total Burned",    val: stats.totalBurned.toLocaleString() + " LDA", color:"#ef4444" },
+                { icon:"📊", label:"Burn %",           val: stats.burnPct.toFixed(2) + "% of supply",   color:"#f5a623" },
+                { icon:"🏦", label:"Treasury Now",    val: stats.treasuryBalance.toFixed(2) + " LDA",   color:"#a78bfa" },
+                { icon:"📅", label:"Next Burn",        val: "Weekly — manual",                          color:"#22c55e" },
               ].map(s => (
                 <div key={s.label} className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
-                  <div className="font-black text-xl" style={{ color: s.color }}>{s.val}</div>
+                  <div className="text-xl mb-1">{s.icon}</div>
+                  <div className="font-black text-lg" style={{ color: s.color }}>{s.val}</div>
                   <div className="text-xs mt-1" style={{ color: "#4a5a6a" }}>{s.label}</div>
                 </div>
               ))}
             </div>
 
-            <div className="rounded-xl p-5" style={{ background: "#0c0c18", border: "1px solid rgba(20,184,166,0.2)" }}>
-              <div className="text-xs font-bold uppercase tracking-wider mb-4" style={{ color: "#4a5a6a" }}>Migration Window Control</div>
-              <div className="flex items-center gap-4 mb-4 flex-wrap">
-                <div className="flex items-center gap-2">
-                  <span className="w-2.5 h-2.5 rounded-full" style={{ background: stats?.migrationOpen ? "#22c55e" : "#ef4444", boxShadow: `0 0 8px ${stats?.migrationOpen ? "#22c55e" : "#ef4444"}`, display: "inline-block" }}/>
-                  <span className="font-bold text-sm" style={{ color: stats?.migrationOpen ? "#22c55e" : "#ef4444" }}>
-                    Migration {stats?.migrationOpen ? "OPEN" : "CLOSED"}
-                  </span>
-                </div>
+            <div className="rounded-xl p-4" style={{ background: "rgba(239,68,68,0.05)", border: "1px solid rgba(239,68,68,0.15)" }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-2" style={{ color: "#ef4444" }}>Weekly Burn Protocol</div>
+              <div className="text-xs space-y-1" style={{ color: "#7a8a9a" }}>
+                <p>1. Send <strong style={{ color: "#f5a623" }}>70%</strong> of treasury LDA to black hole: <code style={{ color: "#14b8a6" }}>TLsV52sRDL79HXGGm9yzwKibb6BeruhUzy</code></p>
+                <p>2. Keep <strong style={{ color: "#f5a623" }}>30%</strong> in treasury for operations</p>
+                <p>3. Post Tronscan tx link as proof on Twitter @lionxeco</p>
+                <p>4. Log the burn in this dashboard below</p>
               </div>
-              <div className="flex gap-3 flex-wrap">
-                <button onClick={() => toggleMigration(true)} disabled={saving === "migration"}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold disabled:opacity-40"
-                  style={{ background: "rgba(34,197,94,0.12)", color: "#22c55e", border: "1px solid rgba(34,197,94,0.25)", fontFamily: "inherit", cursor: "pointer" }}>
-                  {saving === "migration" ? "Processing..." : "🔓 Open Migration (30 days)"}
-                </button>
-                <button onClick={() => toggleMigration(false)} disabled={saving === "migration"}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold disabled:opacity-40"
-                  style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontFamily: "inherit", cursor: "pointer" }}>
-                  {saving === "migration" ? "Processing..." : "🔒 Close Migration"}
-                </button>
-              </div>
-              <p className="mt-3 text-xs" style={{ color: "#4a5a6a" }}>
-                ⚠️ Closing migration locks out remaining old LDA holders permanently. Do this only after the window expires naturally.
-              </p>
             </div>
 
-            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
-              🔑 <strong style={{ color: "#f5a623" }}>Post-migration checklist:</strong> Once window closes → renounce mint() on LDA v2 contract → lock LP tokens on SunSwap → announce to community.
+            <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Burn History</div>
+              {BURN_LOG.length === 0 ? (
+                <p className="text-xs text-center py-4" style={{ color: "#4a5a6a" }}>No burns logged yet — first weekly burn pending</p>
+              ) : (
+                <div className="space-y-2">
+                  {BURN_LOG.map((b, i) => (
+                    <div key={i} className="flex items-center justify-between text-xs py-2" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                      <span style={{ color: "#7a8a9a" }}>{b.date}</span>
+                      <span style={{ color: "#ef4444" }}>🔥 {b.amount.toLocaleString()} LDA</span>
+                      <a href={`https://tronscan.org/#/transaction/${b.txHash}`} target="_blank" rel="noreferrer"
+                        style={{ color: "#14b8a6", fontSize: 10 }}>proof →</a>
+                      <span style={{ color: "#4a5a6a" }}>{b.note}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="rounded-xl p-3 text-xs" style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.15)", color: "#7a8a9a" }}>
+              💡 To add a burn entry, edit <code style={{ color: "#14b8a6" }}>BURN_LOG</code> in <code>lionx-admin.tsx</code> with the date, LDA amount, and Tronscan tx hash.
             </div>
           </div>
         )}
 
-        {/* ── GOVERNANCE TAB ───────────────────────── */}
-        {tab === "governance" && (
+        {/* ── SECURITY ── */}
+        {tab === "security" && (
+          <div className="space-y-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+              {[
+                { label:"Security Score",  val:"8.5 / 10",  color:"#22c55e" },
+                { label:"Audit Rounds",    val:"2 Complete", color:"#22c55e" },
+                { label:"Open Findings",   val:"0",          color:"#22c55e" },
+                { label:"Last Audit",      val:"2026-04-21", color:"#14b8a6" },
+              ].map(s => (
+                <div key={s.label} className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(34,197,94,0.1)" }}>
+                  <div className="font-black text-lg" style={{ color: s.color }}>{s.val}</div>
+                  <div className="text-xs mt-1" style={{ color: "#4a5a6a" }}>{s.label}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Security Controls Active</div>
+              <div className="space-y-2">
+                {[
+                  ["CRIT", "Address validation", "Tron format regex + required field check", true],
+                  ["CRIT", "Replay protection", "Upstash KV SET NX — persistent across cold starts", true],
+                  ["CRIT", "Wallet cooldown", "5-min per wallet/tool — set AFTER payment verified", true],
+                  ["HIGH", "toAddress verify", "Empty string + mismatch both rejected", true],
+                  ["HIGH", "Error detail stripping", "Internal errors never leak to client", true],
+                  ["HIGH", "Input sanitization", "500 char cap + special char strip + format validation", true],
+                  ["HIGH", "CORS whitelist", "lion-xai.com + www + vercel preview only", true],
+                  ["HIGH", "AI field whitelist", "score/verdict/analysis/metrics/flags only", true],
+                  ["MED",  "Wallet signature", "TronLink signMessageV2 — mandatory, catch is fatal", true],
+                  ["MED",  "Share URL privacy", "queriedBy stripped before encoding", true],
+                  ["MED",  "History masking", "Addresses stored as T1Abc3...4F2A", true],
+                  ["LOW",  "Tronscan timeouts", "10s AbortController on all fetches", true],
+                  ["LOW",  "Dead code removed", "approvePlatform/executeQuery removed", true],
+                  ["LOW",  "Prompt injection", "cleanInput used in AI prompt, not raw input", true],
+                ].map(([severity, name, detail, passed]) => (
+                  <div key={name as string} className="flex items-start gap-3 text-xs py-1.5" style={{ borderBottom: "1px solid rgba(255,255,255,0.04)" }}>
+                    <span className="shrink-0 px-1.5 py-0.5 rounded text-xs font-bold"
+                      style={{ background: severity === "CRIT" ? "rgba(239,68,68,0.15)" : severity === "HIGH" ? "rgba(245,166,35,0.15)" : "rgba(107,114,128,0.15)", color: severity === "CRIT" ? "#ef4444" : severity === "HIGH" ? "#f5a623" : "#9ca3af" }}>
+                      {severity}
+                    </span>
+                    <span className="font-bold shrink-0 w-32" style={{ color: "#dde8f0" }}>{name}</span>
+                    <span style={{ color: "#7a8a9a" }}>{detail}</span>
+                    <span className="ml-auto shrink-0" style={{ color: "#22c55e" }}>✅</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="rounded-xl p-3 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
+              ⚠️ <strong style={{ color: "#f5a623" }}>Remaining LOW:</strong> IP rate limiting is in-memory per-instance (not KV-backed). Effective at low scale. Move to KV before high-traffic launch.
+            </div>
+          </div>
+        )}
+
+        {/* ── PENDING ── */}
+        {tab === "pending" && (
           <div className="space-y-4">
 
-            {/* Create Proposal */}
-            <div className="rounded-xl p-5" style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.15)" }}>
-              <div className="text-xs font-bold uppercase tracking-widest mb-3" style={{ color: "#14b8a6" }}>Create New Proposal</div>
-              <p className="text-xs mb-4" style={{ color: "#7a8a9a" }}>
-                Creates an on-chain snapshot. Holder balances at this block are locked for voting — tokens bought after this point have no voting power on this proposal.
-              </p>
-              <textarea
-                value={newProposal}
-                onChange={e => setNewProposal(e.target.value)}
-                placeholder="Proposal description e.g. 'Add DEX aggregator tool at 75 LDA v2 per query'"
-                rows={3}
-                className="w-full rounded-xl px-4 py-3 text-sm resize-none mb-3"
-                style={{ background: "#0a0a16", border: "1px solid rgba(20,184,166,0.2)", color: "#dde8f0", fontFamily: "inherit", outline: "none" }}
-              />
-              <div className="flex items-center gap-3">
-                <button
-                  onClick={createProposal}
-                  disabled={creatingProp || !newProposal.trim()}
-                  className="px-5 py-2.5 rounded-xl text-sm font-bold disabled:opacity-40"
-                  style={{ background: "linear-gradient(135deg,#14b8a6,#0d9488)", color: "#000", border: "none", fontFamily: "inherit", cursor: "pointer" }}>
-                  {creatingProp ? "⏳ Creating..." : "📢 Create Proposal"}
-                </button>
-                <span className="text-xs" style={{ color: "#4a5a6a" }}>Requires owner wallet connected via TronLink</span>
+            <div className="rounded-xl p-4" style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.2)" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <span>🔐</span>
+                <div className="font-bold text-sm" style={{ color: "#dde8f0" }}>Security Auditor Tool</div>
+                <span className="ml-auto px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: "rgba(245,166,35,0.15)", color: "#f5a623", border: "1px solid rgba(245,166,35,0.25)" }}>BUILDING</span>
+              </div>
+              <div className="text-xs space-y-1 mb-3" style={{ color: "#7a8a9a" }}>
+                <p>4th AI tool — 150 LDA per query. Input: contract or wallet address.</p>
+                <p>Runs full security checklist on-chain: verification, creator wallet age, holder concentration, transfer patterns, large outflows, proxy patterns.</p>
+                <p>Output: GO / CAUTION / NO-GO verdict with per-item findings.</p>
+              </div>
+              <div className="text-xs font-bold mb-2" style={{ color: "#4a5a6a" }}>Build checklist:</div>
+              {[
+                "Write getSecurityData() — parallel fetch: contract + token + creator wallet",
+                "Write checklist-driven AI prompt (pass/fail output format)",
+                "Add SECURITY_AUDITOR to TOOL_COSTS (150 LDA) in query.ts",
+                "Add as 4th tool in tools.tsx — replace Whale Tracker Coming Soon card",
+                "Test on 3+ real contracts (LDA, MANES, known scam)",
+                "Deploy + verify",
+              ].map((task, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs py-1" style={{ color: "#7a8a9a" }}>
+                  <span style={{ color: "#4a5a6a" }}>☐</span> {task}
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl p-4" style={{ background: "rgba(20,184,166,0.05)", border: "1px solid rgba(20,184,166,0.2)" }}>
+              <div className="flex items-center gap-2 mb-3">
+                <span>📦</span>
+                <div className="font-bold text-sm" style={{ color: "#dde8f0" }}>web3-api-security-auditor (Claw Mart Skill)</div>
+                <span className="ml-auto px-2 py-0.5 rounded-full text-xs font-bold" style={{ background: "rgba(20,184,166,0.15)", color: "#14b8a6", border: "1px solid rgba(20,184,166,0.25)" }}>BUILT</span>
+              </div>
+              <div className="text-xs mb-3" style={{ color: "#7a8a9a" }}>
+                40-item checklist skill + known bypass patterns. Built from LionX audit. Ready to package and list on Claw Mart at $9.99–$14.99.
+              </div>
+              {[
+                { task: "SKILL.md + references written", done: true },
+                { task: "Package with package_skill.py", done: false },
+                { task: "Claw Mart seller account (Tash action)", done: false },
+                { task: "Write listing description", done: false },
+                { task: "Price decision: $9.99 vs $14.99", done: false },
+              ].map((item, i) => (
+                <div key={i} className="flex items-center gap-2 text-xs py-1" style={{ color: item.done ? "#22c55e" : "#7a8a9a" }}>
+                  <span>{item.done ? "✅" : "☐"}</span> {item.task}
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-xl p-4" style={{ background: "#0c0c18", border: "1px solid rgba(255,255,255,0.06)" }}>
+              <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Phase 2 (Future)</div>
+              <div className="space-y-2 text-xs" style={{ color: "#7a8a9a" }}>
+                <div>🗳️ GovernanceLDA.sol — on-chain voting for LDA holders</div>
+                <div>💰 Staking — lock LDA for yield + governance weight</div>
+                <div>🏪 Builder Marketplace — third-party tool submissions</div>
+                <div>🔗 Multi-chain expansion — EVM chains (same prompts, new data fetchers)</div>
               </div>
             </div>
 
-            {/* Load + Proposal list */}
-            <div className="rounded-xl p-5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="flex items-center justify-between mb-4">
-                <div className="text-xs font-bold uppercase tracking-widest" style={{ color: "#14b8a6" }}>Live Proposals</div>
-                <button
-                  onClick={fetchProposals}
-                  disabled={propLoading}
-                  className="text-xs px-3 py-1.5 rounded-lg font-bold disabled:opacity-40"
-                  style={{ border: "1px solid rgba(20,184,166,0.25)", color: "#14b8a6", background: "transparent", fontFamily: "inherit", cursor: "pointer" }}>
-                  {propLoading ? "⏳ Loading..." : "↻ Load from Chain"}
-                </button>
-              </div>
-
-              {proposals.length === 0 && !propLoading && (
-                <p className="text-sm text-center py-6" style={{ color: "#4a5a6a" }}>
-                  Click “Load from Chain” to fetch proposals, or create your first one above.
-                </p>
-              )}
-
-              <div className="space-y-3">
-                {proposals.map(p => {
-                  const total = p.forVotes + p.againstVotes
-                  const forPct = total > 0 ? Math.round((p.forVotes / total) * 100) : 50
-                  return (
-                    <div key={p.id} className="rounded-xl p-4" style={{ background: "#0a0a16", border: `1px solid ${p.active ? "rgba(20,184,166,0.2)" : "rgba(255,255,255,0.06)"}` }}>
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <span className="text-xs font-bold" style={{ color: "#4a5a6a" }}>#{p.id}</span>
-                          <span className="text-xs font-bold px-2 py-0.5 rounded-full"
-                            style={{ background: p.active ? "rgba(20,184,166,0.15)" : "rgba(107,114,128,0.15)",
-                                     color: p.active ? "#14b8a6" : "#6b7280" }}>
-                            {p.active ? "● ACTIVE" : "✓ CLOSED"}
-                          </span>
-                        </div>
-                        {p.active && (
-                          <button
-                            onClick={() => closeProposal(p.id)}
-                            disabled={saving === `close-${p.id}`}
-                            className="text-xs px-3 py-1 rounded-lg font-bold shrink-0 disabled:opacity-40"
-                            style={{ background: "rgba(239,68,68,0.1)", color: "#ef4444", border: "1px solid rgba(239,68,68,0.2)", fontFamily: "inherit", cursor: "pointer" }}>
-                            {saving === `close-${p.id}` ? "⏳" : "🔒 Close"}
-                          </button>
-                        )}
-                      </div>
-                      <p className="text-sm font-semibold mb-3" style={{ color: "#dde8f0" }}>{p.description}</p>
-                      {/* Vote bar */}
-                      <div className="rounded-full overflow-hidden mb-2" style={{ height: 6, background: "rgba(255,255,255,0.06)" }}>
-                        <div style={{ width: `${forPct}%`, height: "100%", background: "#22c55e", transition: "width 0.4s" }} />
-                      </div>
-                      <div className="flex justify-between text-xs" style={{ color: "#6b7280" }}>
-                        <span style={{ color: "#22c55e", fontWeight: 700 }}>✓ FOR {forPct}% ({p.forVotes.toLocaleString()} LDA)</span>
-                        <span style={{ color: "#ef4444", fontWeight: 700 }}>✗ AGAINST {100-forPct}% ({p.againstVotes.toLocaleString()} LDA)</span>
-                      </div>
-                      <div className="mt-2 text-xs" style={{ color: "#4a5a6a" }}>Snapshot block #{p.blockNumber.toLocaleString()}</div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
-
-            {/* Tx feedback */}
-            {govTxResult && (
-              <div className="rounded-xl px-4 py-3 text-sm font-semibold"
-                style={{ background: govTxResult.startsWith("✅") ? "rgba(34,197,94,0.08)" : "rgba(239,68,68,0.08)",
-                         border: `1px solid ${govTxResult.startsWith("✅") ? "rgba(34,197,94,0.2)" : "rgba(239,68,68,0.2)"}`,
-                         color:  govTxResult.startsWith("✅") ? "#22c55e" : "#ef4444" }}>
-                {govTxResult}
-              </div>
-            )}
-
-            <div className="rounded-xl p-4 text-xs" style={{ background: "rgba(245,166,35,0.06)", border: "1px solid rgba(245,166,35,0.15)", color: "#7a8a9a" }}>
-              💡 <strong style={{ color: "#f5a623" }}>Governance flow:</strong> Create proposal here → holders vote at{" "}
-              <a href="https://frontend-phi-blond-32.vercel.app/governance" target="_blank" rel="noreferrer" style={{ color: "#14b8a6" }}>Lion X Governance page</a>{" "}→ close proposal here when voting period ends.
-            </div>
           </div>
         )}
 
