@@ -75,14 +75,14 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "0-0-0",
+  record: "1-0-0",
   unitsWagered: 1,
-  unitsNet: 0,
-  roi: "0%",
+  unitsNet: 0.645,
+  roi: "+64.5%",
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-21",
+  lastUpdated: "2026-04-22",
 };
 
 const TASKS = [
@@ -1359,8 +1359,8 @@ export default function Dashboard() {
               </div>
               <ul className="space-y-2.5">
                 <li className="text-sm text-slate-300 flex items-start gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-xs font-bold text-green-400 shrink-0">✅ BET PLACED</span>
-                  <span><span className="font-bold text-white">Cleveland Guardians ML -155</span> — $10 to win $16.45 <span className="text-slate-400">(6:10 PM ET)</span></span>
+                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-xs font-bold text-green-400 shrink-0">✅ WON</span>
+                  <span><span className="font-bold text-white">Cleveland Guardians ML -155</span> — $10 → $16.45 💰</span>
                 </li>
                 <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Arizona D-backs Over 4.5 runs</span> — 1 unit <span className="text-slate-400">(TBD)</span></li>
                 <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">New York Mets ML</span> — 1 unit <span className="text-slate-400">(7:10 PM ET)</span></li>
