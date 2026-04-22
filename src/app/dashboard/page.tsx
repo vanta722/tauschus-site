@@ -311,10 +311,6 @@ export default function Dashboard() {
       });
     } catch {}
 
-        }
-      }
-      setPolyPrices(pr);
-    } catch {}
 
     setLastUpdated(new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
     setLoading(false);
