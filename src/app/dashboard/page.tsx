@@ -177,6 +177,144 @@ export default function Dashboard() {
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
     if (typeof window === "undefined") return TODAY_BETS;
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return TODAY_BETS;
+      return JSON.parse(raw) as BetEntry[];
+    } catch { return TODAY_BETS; }
+  };
+  const [bets, setBets] = useState<BetEntry[]>(loadBets);
+  const [showAddBet, setShowAddBet] = useState(false);
+  const [liveOdds, setLiveOdds] = useState<any[]>([]);
+  const [oddsLoading, setOddsLoading] = useState(false);
+  const [oddsLastFetched, setOddsLastFetched] = useState<Date | null>(null);
+  const [newBet, setNewBet] = useState<Omit<BetEntry, "id">>({
+    date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0,
+  });
+  const saveBets = (updated: BetEntry[]) => {
+    setBets(updated);
+    if (typeof window !== "undefined") localStorage.setItem(LS_KEY, JSON.stringify(updated));
+  };
+  const addBetEntry = () => {
+    const id = Math.max(0, ...bets.map(b => b.id)) + 1;
+    const pnl = newBet.result === "Won"
+      ? +(newBet.units * (parseFloat(newBet.odds) > 0 ? parseFloat(newBet.odds) / 100 : 100 / Math.abs(parseFloat(newBet.odds)))).toFixed(2)
+      : newBet.result === "Lost" ? -newBet.units
+      : 0;
+    saveBets([...bets, { ...newBet, id, pnl }]);
+    setNewBet({ date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0 });
+    setShowAddBet(false);
+  };
+  const updateBetResult = (id: number, result: BetEntry["result"]) => {
+    const updated = bets.map(b => {
+      if (b.id !== id) return b;
+      const pnl = result === "Won"
+        ? +(b.units * (parseFloat(b.odds) > 0 ? parseFloat(b.odds) / 100 : 100 / Math.abs(parseFloat(b.odds)))).toFixed(2)
+        : result === "Lost" ? -b.units
+        : 0;
+      return { ...b, result, pnl };
+    });
+    saveBets(updated);
+  };
+  const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
+  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [fileContent, setFileContent] = useState<string>("");
+  const [fileUpdatedAt, setFileUpdatedAt] = useState<string>("");
+  const [memLoading, setMemLoading] = useState(false);
+  const [memError, setMemError] = useState<string | null>(null);
+
+  // FCA state
+  type LeadStage = "New Lead" | "Contacted" | "Estimate Sent" | "Follow-Up" | "Booked" | "Lost";
+  type JobStatus = "Scheduled" | "In Progress" | "Completed";
+  interface Lead {
+    id: number; name: string; phone: string; area: string; service: string;
+    value: string; source: string; notes: string; stage: LeadStage;
+  }
+  interface Job {
+    id: number; client: string; location: string; jobType: string;
+    totalPrice: number; depositPaid: number; status: JobStatus; notes: string;
+  }
+  interface Payment { id: number; client: string; amount: number; date: string; notes: string; }
+  interface Expense { id: number; description: string; amount: number; date: string; }
+  interface Client { id: number; name: string; phone: string; jobDone: string; notes: string; repeat: boolean; referral: string; }
+
+  const [leads, setLeads] = useState<Lead[]>([
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "Collecting final $1,590 TODAY Apr 11. Poured Apr 9, sealed Apr 10. $4,885 collected.", stage: "Booked" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "CLOSED ✅ Apr 10. Net profit: $630.", stage: "Booked" },
+  ]);
+  const [jobs, setJobs] = useState<Job[]>([
+    { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 6475, status: "Completed", notes: "✅ CLOSED Apr 12. Contract: $6,475 | Collected: $6,475 | Expenses: $4,586.76 | Net Profit: $1,888.24" },
+    { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Contract: $1,250 | Concrete: $620 | Net Profit: $630. 15 Royal Leaf Lane, Palm Coast FL 32164." },
+  ]);
+  const [payments, setPayments] = useState<Payment[]>([
+    { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
+    { id: 2, client: "Joseph Noble", amount: 500, date: "2026-04-06", notes: "Remaining deposit — collected on site" },
+    { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
+    { id: 4, client: "Joseph Noble", amount: 1590, date: "2026-04-11", notes: "Final payment upon completion ✅" },
+    { id: 5, client: "Frankie (Palm Coast Demo)", amount: 1250, date: "2026-04-10", notes: "Full payment — job complete ✅" },
+  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }]);
+  const [clients, setClients] = useState<Client[]>([
+    { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "CLOSED ✅ Apr 12. Net profit: $1,888.24. Ask for Google review.", repeat: false, referral: "Facebook Marketplace" },
+    { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "CLOSED ✅ Apr 10. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
+  ]);
+
+  const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
+  const [editingLead, setEditingLead] = useState<Lead | null>(null);
+  const [editingJob, setEditingJob] = useState<Job | null>(null);
+  const [fcaSection, setFcaSection] = useState<"kpi" | "leads" | "jobs" | "money" | "photos">("kpi");
+  const [lightbox, setLightbox] = useState<string | null>(null);
+
+  const fcaKpi = {
+    leadsWeek: leads.filter(l => l.stage !== "Lost").length,
+    leadsMonth: leads.length,
+    estimatesSent: leads.filter(l => ["Estimate Sent","Follow-Up","Booked"].includes(l.stage)).length,
+    booked: leads.filter(l => l.stage === "Booked").length,
+    completed: jobs.filter(j => j.status === "Completed").length,
+    revenueWeek: payments.reduce((s, p) => s + p.amount, 0),
+    revenueMonth: payments.reduce((s, p) => s + p.amount, 0),
+    outstanding: jobs.reduce((s, j) => s + (j.totalPrice - j.depositPaid), 0),
+    activeJobs: jobs.filter(j => j.status !== "Completed").length,
+    totalExpenses: expenses.reduce((s, e) => s + e.amount, 0),
+  };
+
+  const nextLeadId = () => Math.max(0, ...leads.map(l => l.id)) + 1;
+  const nextJobId = () => Math.max(0, ...jobs.map(j => j.id)) + 1;
+  const nextPayId = () => Math.max(0, ...payments.map(p => p.id)) + 1;
+  const nextExpId = () => Math.max(0, ...expenses.map(e => e.id)) + 1;
+  const nextClientId = () => Math.max(0, ...clients.map(c => c.id)) + 1;
+
+  const tryAuth = () => {
+    if (pw === PASS) { setAuthed(true); setPwErr(false); }
+    else { setPwErr(true); }
+  };
+
+  const fetchData = async () => {
+    try {
+      const r = await fetch("https://api.crypto.com/exchange/v1/public/get-tickers");
+      const d = await r.json();
+      const tickers: Record<string, { price: string; change: string; raw: number }> = {};
+      for (const t of d?.result?.data || []) {
+        if (CRYPTO_ASSETS.find((a) => a.symbol === t.i)) {
+          const raw = parseFloat(t.a);
+          tickers[t.i] = {
+            price: raw.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 4 }),
+            change: (parseFloat(t.c) * 100).toFixed(2),
+            raw,
+          };
+        }
+      }
+      setPrices(tickers);
+      setHistory(prev => {
+        const entry = { time: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }), btc: tickers["BTC_USDT"]?.raw || 0, eth: tickers["ETH_USDT"]?.raw || 0 };
+        return [...prev.slice(-11), entry];
+      });
+    } catch {}
+
+        }
+      }
+      setPolyPrices(pr);
+    } catch {}
 
     setLastUpdated(new Date().toLocaleTimeString("en-US", { hour: "2-digit", minute: "2-digit" }));
     setLoading(false);
@@ -976,11 +1114,6 @@ export default function Dashboard() {
               ))}
             </div>
           </section>
-        </div>
-
-
-        <div className="border-t border-slate-800 pt-4 text-center">
-          <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
         </div>
 
         </> }
