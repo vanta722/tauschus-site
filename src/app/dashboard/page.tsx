@@ -979,6 +979,12 @@ export default function Dashboard() {
         </div>
 
 
+        <div className="border-t border-slate-800 pt-4 text-center">
+          <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
+        </div>
+
+        </> }
+
         {activeTab === "betting" && (
           <section className="space-y-6">
             {/* ── SEASON STATS ── */}
