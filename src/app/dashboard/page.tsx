@@ -1,7 +1,8 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-13: 08:00 UTC — 4AM sync: Hungary resolved (Magyar won), ONDO at critical $0.245 support, FCA-001+002 closed, billing restored.
+// Dashboard updated 2026-04-22: 03:00 UTC — Contract recovery plan locked. LDA staking contract (2,290 TRX/$752) — 5-step plan ready. Cost: ~$51. Net: ~$700. Awaiting mainnet execution.
 import { useEffect, useState, useCallback } from "react";
+import LionXAdmin from "./lionx-admin";
 
 const PASS = "Vanta2026";
 
@@ -71,17 +72,29 @@ const CRON_JOBS = [
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-13 11:36 UTC";
+const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
+
+const BETTING_STATS = {
+  record: "1-0-0",
+  unitsWagered: 1,
+  unitsNet: 0.645,
+  roi: "+64.5%",
+  activeSince: "Apr 21, 2026",
+  book: "Hard Rock Bet",
+  sport: "MLB",
+  lastUpdated: "2026-04-22",
+};
 
 const TASKS = [
-  { task: "🔴 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. 5 AI Safety Playbook tweet crons fire today 7–9AM ET, ALL WILL FAIL.", priority: "HIGH", pillar: "Online" },
-  { task: "🔴 CRITICAL: ONDO at $0.2455 — AT critical $0.245 support floor. If breaks below $0.240, flag immediately.", priority: "HIGH", pillar: "Crypto" },
-  { task: "🔴 Approve + list AI Safety Playbook for Concrete Contractors on Gumroad — built overnight Apr 13. File: products/ai-safety-playbook-concrete-2026.pdf. Suggested price $7–$12.", priority: "HIGH", pillar: "Online" },
-  { task: "🟡 FCA-001 CLOSED ✅ Net profit $1,888.24. FCA-002 CLOSED ✅ $1,250. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
-  { task: "🟡 Fund Polymarket — $70 USDC ready. Next non-restricted catalyst: FOMC April 28-29. Watch for new accessible markets.", priority: "MED", pillar: "Crypto" },
-  { task: "🟡 9 products pending in queue — review pending-products.md and approve/reject each for Gumroad listing.", priority: "MED", pillar: "Online" },
-  { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff)", priority: "MED", pillar: "Online" },
-  { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida)", priority: "MED", pillar: "FCA" },
+  { task: "🔑 Execute Tron contract recovery — 5 steps in TronLink with TX4KwH1X... wallet. See context/contract-recovery-plan.md. Cost ~$51, return ~$752.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🚫 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation paused.", priority: "HIGH", pillar: "Online" },
+  { task: "📦 Approve + list pending products — 10 in queue (9 PDFs + 1 markdown). Review pending-products.md and price/publish each.", priority: "HIGH", pillar: "Online" },
+  { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
+  { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff). Page live.", priority: "MED", pillar: "Online" },
+  { task: "🟡 Monitor Gumroad — track downloads + sales weekly. Posted in FB groups Mar 28. Watch for traffic.", priority: "MED", pillar: "Online" },
+  { task: "🟡 FCA: Both jobs CLOSED ✅ Noble ,888 net / Frankie 30 net. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
+  { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida — Google Maps + FB).", priority: "MED", pillar: "FCA" },
+  { task: "⚠️ Verify Resend domain for floridaconcretealliance.com — contractor welcome emails failing silently.", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
 ];
 
@@ -155,7 +168,61 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx" | "betting">("ops");
+
+  // Sports Betting state
+  interface BetEntry {
+    id: number; date: string; game: string; bet: string; odds: string;
+    units: number; result: "Pending" | "Won" | "Lost" | "Push"; pnl: number;
+    wager?: string; toWin?: string;
+  }
+  const TODAY_BETS: BetEntry[] = [
+    { id: 1, date: "2026-04-21", game: "Astros @ Guardians", bet: "Guardians ML", odds: "-155", units: 1, result: "Pending", pnl: 0, wager: "$10", toWin: "$16.45" },
+    { id: 2, date: "2026-04-21", game: "D-backs vs White Sox", bet: "D-backs Team Total Over 4.5", odds: "-125", units: 1, result: "Pending", pnl: 0 },
+    { id: 3, date: "2026-04-21", game: "Mets vs Twins", bet: "Mets ML", odds: "-108", units: 1, result: "Pending", pnl: 0 },
+  ];
+  const LS_KEY = "tauschus_bets_v1";
+  const loadBets = (): BetEntry[] => {
+    if (typeof window === "undefined") return TODAY_BETS;
+    try {
+      const raw = localStorage.getItem(LS_KEY);
+      if (!raw) return TODAY_BETS;
+      return JSON.parse(raw) as BetEntry[];
+    } catch { return TODAY_BETS; }
+  };
+  const [bets, setBets] = useState<BetEntry[]>(loadBets);
+  const [showAddBet, setShowAddBet] = useState(false);
+  const [liveOdds, setLiveOdds] = useState<any[]>([]);
+  const [oddsLoading, setOddsLoading] = useState(false);
+  const [oddsLastFetched, setOddsLastFetched] = useState<Date | null>(null);
+  const [newBet, setNewBet] = useState<Omit<BetEntry, "id">>({
+    date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0,
+  });
+  const saveBets = (updated: BetEntry[]) => {
+    setBets(updated);
+    if (typeof window !== "undefined") localStorage.setItem(LS_KEY, JSON.stringify(updated));
+  };
+  const addBetEntry = () => {
+    const id = Math.max(0, ...bets.map(b => b.id)) + 1;
+    const pnl = newBet.result === "Won"
+      ? +(newBet.units * (parseFloat(newBet.odds) > 0 ? parseFloat(newBet.odds) / 100 : 100 / Math.abs(parseFloat(newBet.odds)))).toFixed(2)
+      : newBet.result === "Lost" ? -newBet.units
+      : 0;
+    saveBets([...bets, { ...newBet, id, pnl }]);
+    setNewBet({ date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0 });
+    setShowAddBet(false);
+  };
+  const updateBetResult = (id: number, result: BetEntry["result"]) => {
+    const updated = bets.map(b => {
+      if (b.id !== id) return b;
+      const pnl = result === "Won"
+        ? +(b.units * (parseFloat(b.odds) > 0 ? parseFloat(b.odds) / 100 : 100 / Math.abs(parseFloat(b.odds)))).toFixed(2)
+        : result === "Lost" ? -b.units
+        : 0;
+      return { ...b, result, pnl };
+    });
+    saveBets(updated);
+  };
   const [memFiles, setMemFiles] = useState<{ key: string; label: string; group: string }[]>([]);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [fileContent, setFileContent] = useState<string>("");
@@ -308,11 +375,31 @@ export default function Dashboard() {
     setMemLoading(false);
   }, []);
 
+  const fetchOdds = async () => {
+    setOddsLoading(true);
+    try {
+      const r = await fetch("/api/odds");
+      const d = await r.json();
+      if (Array.isArray(d)) {
+        setLiveOdds(d);
+        setOddsLastFetched(new Date());
+      }
+    } catch {}
+    setOddsLoading(false);
+  };
+
   useEffect(() => {
     if (authed && activeTab === "memory" && memFiles.length === 0) {
       fetchMemFiles();
     }
   }, [authed, activeTab, memFiles.length, fetchMemFiles]);
+
+  useEffect(() => {
+    if (authed && activeTab === "betting" && liveOdds.length === 0) {
+      fetchOdds();
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [authed, activeTab]);
 
   useEffect(() => {
     if (selectedFile) fetchFileContent(selectedFile);
@@ -381,7 +468,7 @@ export default function Dashboard() {
 
         {/* Tab switcher */}
         <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
-          {(["ops", "fca", "memory"] as const).map((tab) => (
+          {(["ops", "fca", "memory", "lionx", "betting"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -391,7 +478,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : "🧠 Mac's Memory"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "lionx" ? "🦁 Lion X" : "⚾ Sports Betting"}
             </button>
           ))}
         </div>
@@ -1053,11 +1140,622 @@ export default function Dashboard() {
           </section>
         </div>
 
-        <div className="border-t border-slate-800 pt-4 text-center">
-          <p className="text-xs text-slate-600">Tauschus Mission Control · Powered by Mac AI · Auto-refreshes every 60s</p>
-        </div>
 
-        </> }
+        {activeTab === "betting" && (
+          <section className="space-y-6">
+            {/* ── SEASON STATS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">📊 Season Stats — {BETTING_STATS.sport}</p>
+              <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Record</p>
+                  <p className="text-2xl font-black text-white">{BETTING_STATS.record}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">W-L-P</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Units Net</p>
+                  <p className={`text-2xl font-black ${BETTING_STATS.unitsNet > 0 ? "text-green-400" : BETTING_STATS.unitsNet < 0 ? "text-red-400" : "text-white"}`}>
+                    {BETTING_STATS.unitsNet > 0 ? `+${BETTING_STATS.unitsNet.toFixed(1)}` : BETTING_STATS.unitsNet.toFixed(1)}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">{BETTING_STATS.unitsWagered}u wagered</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">ROI</p>
+                  <p className={`text-2xl font-black ${parseFloat(BETTING_STATS.roi) > 0 ? "text-green-400" : parseFloat(BETTING_STATS.roi) < 0 ? "text-red-400" : "text-white"}`}>
+                    {BETTING_STATS.roi}
+                  </p>
+                  <p className="text-xs text-slate-500 mt-0.5">Since {BETTING_STATS.activeSince}</p>
+                </div>
+                <div className="rounded-xl bg-slate-800/60 border border-slate-700/50 p-4">
+                  <p className="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-1">Book</p>
+                  <p className="text-lg font-black text-white leading-tight">{BETTING_STATS.book}</p>
+                  <p className="text-xs text-slate-500 mt-0.5">{BETTING_STATS.sport} season</p>
+                </div>
+              </div>
+              <p className="mt-2 text-right text-xs text-slate-600">Last updated: {BETTING_STATS.lastUpdated}</p>
+            </div>
+
+            {/* ── BANKROLL PROGRESS BAR ── */}
+            {(() => {
+              const BANKROLL_CURRENT = 16.45;
+              const BANKROLL_GOAL = 1000;
+              const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.645
+              const milestones = [
+                { pct: 5,  label: "Stage 2", dollar: "$50"  },
+                { pct: 10, label: "Stage 3", dollar: "$100" },
+                { pct: 25, label: "Stage 4", dollar: "$250" },
+                { pct: 50, label: "Stage 5", dollar: "$500" },
+              ];
+              const shimmerKeyframes = `
+                @keyframes hud-shimmer {
+                  0%   { transform: translateX(-100%) skewX(-15deg); }
+                  100% { transform: translateX(400%) skewX(-15deg); }
+                }
+                @keyframes hud-glow-pulse {
+                  0%, 100% { box-shadow: 0 0 8px 2px rgba(251,146,60,0.55), 0 0 20px 4px rgba(251,146,60,0.25); }
+                  50%       { box-shadow: 0 0 14px 4px rgba(251,146,60,0.85), 0 0 32px 8px rgba(251,146,60,0.40); }
+                }
+                @keyframes hud-fill-in {
+                  from { width: 0%; }
+                  to   { width: ${fillPct.toFixed(3)}%; }
+                }
+              `;
+              return (
+                <div className="rounded-xl bg-slate-900/70 border border-slate-700/50 p-5">
+                  <style>{shimmerKeyframes}</style>
+
+                  {/* Label row */}
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-orange-400" style={{ fontVariant: "small-caps", letterSpacing: "0.12em" }}>
+                      Bankroll Progress
+                    </span>
+                    <span className="text-sm font-semibold text-white tabular-nums">
+                      ${BANKROLL_CURRENT.toFixed(2)} / $1,000.00
+                    </span>
+                  </div>
+
+                  {/* Bar track + fill */}
+                  <div
+                    className="relative w-full h-7 rounded-md overflow-visible"
+                    style={{
+                      background: "rgba(15,23,42,0.8)",
+                      boxShadow: "inset 0 2px 6px rgba(0,0,0,0.7), inset 0 1px 2px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    {/* Animated fill */}
+                    <div
+                      className="absolute top-0 left-0 h-full rounded-md"
+                      style={{
+                        width: `${fillPct.toFixed(3)}%`,
+                        background: "linear-gradient(90deg, #ea580c 0%, #f97316 55%, #fbbf24 100%)",
+                        animation: "hud-fill-in 1s ease-out forwards, hud-glow-pulse 2s ease-in-out 1s infinite",
+                        overflow: "hidden",
+                        position: "relative",
+                      }}
+                    >
+                      {/* Shimmer sweep */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "40%",
+                          height: "100%",
+                          background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.38) 50%, transparent 100%)",
+                          animation: "hud-shimmer 3s ease-in-out 1.2s infinite",
+                          borderRadius: "inherit",
+                        }}
+                      />
+                    </div>
+
+                    {/* Milestone tick marks */}
+                    {milestones.map((m) => {
+                      const passed = fillPct >= m.pct;
+                      return (
+                        <div
+                          key={m.pct}
+                          style={{
+                            position: "absolute",
+                            left: `${m.pct}%`,
+                            top: 0,
+                            bottom: 0,
+                            width: "1px",
+                            background: passed ? "rgba(251,146,60,0.9)" : "rgba(255,255,255,0.22)",
+                            zIndex: 10,
+                          }}
+                        >
+                          {/* Tick label below bar */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "calc(100% + 5px)",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              whiteSpace: "nowrap",
+                              textAlign: "center",
+                            }}
+                          >
+                            <span className={`block text-[10px] font-bold uppercase tracking-wide ${passed ? "text-orange-400" : "text-slate-500"}`}>
+                              {m.dollar}
+                            </span>
+                            <span className={`block text-[9px] uppercase tracking-widest ${passed ? "text-orange-500" : "text-slate-600"}`}>
+                              {m.label}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer row — leave room for tick labels */}
+                  <div className="flex items-center justify-between mt-8 text-xs">
+                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit</span>
+                    <span className="text-slate-400 text-center">+$6.45 profit · 1-0-0 · Day 1</span>
+                    <span className="text-slate-400 font-semibold tabular-nums">$983.55 to goal</span>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* ── TOMORROW — BET THESE ── */}
+            <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
+              <div className="mb-3">
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TOMORROW — BET THESE (Apr 22)</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · Check lines before placing</p>
+              </div>
+              <ul className="space-y-2.5">
+                <li className="text-sm text-slate-300">🔥 BET: <span className="font-bold text-white">Los Angeles Angels ML (-112)</span> — 1.5 units | Soriano 0.28 ERA vs Lauer 7.13 ERA</li>
+                <li className="text-sm text-slate-300">✅ BET: <span className="font-bold text-white">Kansas City Royals ML (-124)</span> — 1 unit | Wacha 1.00 ERA vs Bassitt 6.19 ERA</li>
+                <li className="text-sm text-slate-300">⏭️ SKIP: <span className="font-bold text-white">Cleveland Guardians</span> — juice not clean enough today</li>
+              </ul>
+            </div>
+
+            {/* ── LIVE LINES ── */}
+            {(() => {
+              const TARGET_GAMES = [
+                { home: "Cleveland Guardians", away: "Houston Astros", pickSide: "Cleveland Guardians" },
+                { home: "New York Mets",       away: "Minnesota Twins",   pickSide: "New York Mets"      },
+                { home: "Arizona Diamondbacks",away: "Chicago White Sox", pickSide: "Arizona Diamondbacks"},
+              ];
+
+              const formatOdds = (n: number) => (n > 0 ? `+${n}` : `${n}`);
+
+              const teamIncludes = (teamName: string, target: string) =>
+                teamName.toLowerCase().includes(target.toLowerCase()) ||
+                target.toLowerCase().includes(teamName.toLowerCase());
+
+              const findGame = (t: typeof TARGET_GAMES[0]) =>
+                liveOdds.find(g =>
+                  (teamIncludes(g.home_team, t.home) && teamIncludes(g.away_team, t.away)) ||
+                  (teamIncludes(g.home_team, t.away) && teamIncludes(g.away_team, t.home))
+                );
+
+              const getBookmaker = (game: any) =>
+                game?.bookmakers?.find((b: any) => b.key === "fandraft") ||
+                game?.bookmakers?.find((b: any) => b.key === "fanduel") ||
+                game?.bookmakers?.[0];
+
+              const getH2H = (bm: any) =>
+                bm?.markets?.find((m: any) => m.key === "h2h");
+
+              const getTotals = (bm: any) =>
+                bm?.markets?.find((m: any) => m.key === "totals");
+
+              const getBestML = (game: any, teamName: string) => {
+                if (!game?.bookmakers) return null;
+                let best: number | null = null;
+                for (const bm of game.bookmakers) {
+                  const h2h = bm.markets?.find((m: any) => m.key === "h2h");
+                  const outcome = h2h?.outcomes?.find((o: any) =>
+                    teamIncludes(o.name, teamName)
+                  );
+                  if (outcome) {
+                    if (best === null || outcome.price > best) best = outcome.price;
+                  }
+                }
+                return best;
+              };
+
+              const toET = (utc: string) => {
+                try {
+                  return new Date(utc).toLocaleTimeString("en-US", {
+                    timeZone: "America/New_York",
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                  }) + " ET";
+                } catch { return ""; }
+              };
+
+              const minsFetched = oddsLastFetched
+                ? Math.floor((Date.now() - oddsLastFetched.getTime()) / 60000)
+                : null;
+
+              return (
+                <div>
+                  <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-cyan-400">📡 LIVE LINES</p>
+                      {minsFetched !== null && (
+                        <p className="text-xs text-slate-500 mt-0.5">
+                          Last fetched: {minsFetched === 0 ? "just now" : `${minsFetched} min ago`}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={fetchOdds}
+                      disabled={oddsLoading}
+                      className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-bold text-slate-300 hover:border-cyan-400 hover:text-cyan-400 transition disabled:opacity-50"
+                    >
+                      {oddsLoading ? "Loading…" : "🔄 Refresh"}
+                    </button>
+                  </div>
+
+                  {oddsLoading && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-500 animate-pulse">
+                      Fetching live odds…
+                    </div>
+                  )}
+
+                  {!oddsLoading && liveOdds.length === 0 && (
+                    <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6 text-center text-sm text-slate-500">
+                      No odds data — click Refresh to load.
+                    </div>
+                  )}
+
+                  {!oddsLoading && liveOdds.length > 0 && (
+                    <div className="grid gap-4 md:grid-cols-3">
+                      {TARGET_GAMES.map((tg, i) => {
+                        const game = findGame(tg);
+                        const bm = game ? getBookmaker(game) : null;
+                        const h2h = bm ? getH2H(bm) : null;
+                        const totals = bm ? getTotals(bm) : null;
+                        const homeOutcome = h2h?.outcomes?.find((o: any) => teamIncludes(o.name, game?.home_team));
+                        const awayOutcome = h2h?.outcomes?.find((o: any) => teamIncludes(o.name, game?.away_team));
+                        const overOutcome = totals?.outcomes?.find((o: any) => o.name === "Over");
+                        const underOutcome = totals?.outcomes?.find((o: any) => o.name === "Under");
+                        const bestML = game ? getBestML(game, tg.pickSide) : null;
+
+                        return (
+                          <div key={i} className="rounded-2xl border border-slate-700/60 bg-slate-900/70 p-5 space-y-3">
+                            {!game ? (
+                              <div className="text-sm text-slate-500 text-center py-4">
+                                {tg.away} @ {tg.home}
+                                <br /><span className="text-xs">Game not found in feed</span>
+                              </div>
+                            ) : (
+                              <>
+                                {/* Matchup + time */}
+                                <div>
+                                  <p className="text-sm font-black text-white">
+                                    {game.away_team} <span className="text-slate-500 font-normal">@</span> {game.home_team}
+                                  </p>
+                                  {game.commence_time && (
+                                    <p className="text-xs text-slate-500 mt-0.5">{toET(game.commence_time)}</p>
+                                  )}
+                                  {bm && (
+                                    <p className="text-xs text-slate-600 mt-0.5">Source: {bm.title}</p>
+                                  )}
+                                </div>
+
+                                {/* ML odds */}
+                                <div>
+                                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Moneyline</p>
+                                  {h2h ? (
+                                    <div className="flex gap-2">
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400 truncate">{game.away_team.split(" ").slice(-1)[0]}</p>
+                                        <p className={`text-base font-black mt-0.5 ${awayOutcome?.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {awayOutcome ? formatOdds(awayOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400 truncate">{game.home_team.split(" ").slice(-1)[0]}</p>
+                                        <p className={`text-base font-black mt-0.5 ${homeOutcome?.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {homeOutcome ? formatOdds(homeOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <p className="text-xs text-slate-600">ML not available</p>
+                                  )}
+                                </div>
+
+                                {/* Total */}
+                                <div>
+                                  <p className="text-xs font-bold uppercase tracking-widest text-slate-400 mb-1.5">Total</p>
+                                  {totals && overOutcome ? (
+                                    <div className="flex gap-2">
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400">O {overOutcome.point}</p>
+                                        <p className={`text-sm font-bold mt-0.5 ${overOutcome.price > 0 ? "text-green-400" : "text-white"}`}>
+                                          {formatOdds(overOutcome.price)}
+                                        </p>
+                                      </div>
+                                      <div className="flex-1 rounded-lg bg-slate-800/80 px-3 py-2 text-center">
+                                        <p className="text-xs text-slate-400">U {underOutcome?.point ?? overOutcome.point}</p>
+                                        <p className={`text-sm font-bold mt-0.5 ${(underOutcome?.price ?? 0) > 0 ? "text-green-400" : "text-white"}`}>
+                                          {underOutcome ? formatOdds(underOutcome.price) : "—"}
+                                        </p>
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <p className="text-xs text-slate-600">Total not available</p>
+                                  )}
+                                </div>
+
+                                {/* Best line highlight */}
+                                {bestML !== null && (
+                                  <div className="rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 flex items-center justify-between">
+                                    <div>
+                                      <p className="text-xs font-bold text-cyan-400">⭐ Best Line — Pick Side</p>
+                                      <p className="text-xs text-slate-400 mt-0.5 truncate">{tg.pickSide.split(" ").slice(-1)[0]}</p>
+                                    </div>
+                                    <p className={`text-lg font-black ${bestML > 0 ? "text-green-400" : "text-white"}`}>
+                                      {formatOdds(bestML)}
+                                    </p>
+                                  </div>
+                                )}
+                              </>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* ── DAILY PLAYS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
+              <div className="grid gap-4 md:grid-cols-3">
+                {[
+                  {
+                    matchup: "Guardians vs Astros",
+                    time: "6:10 PM ET",
+                    bet: "Guardians ML",
+                    odds: "-115",
+                    reason: "Parker Messick 1.05 ERA vs opener — fade the Astros bullpen game",
+                    confidence: "High" as const,
+                    status: "Pending" as const,
+                  },
+                  {
+                    matchup: "D-backs vs White Sox",
+                    time: "",
+                    bet: "D-backs Team Total Over 4.5",
+                    odds: "-125",
+                    reason: "D-backs averaging 5.6 runs/game; Sean Burke sitting at 4.43 ERA",
+                    confidence: "High" as const,
+                    status: "Pending" as const,
+                  },
+                  {
+                    matchup: "Mets vs Twins",
+                    time: "7:10 PM ET",
+                    bet: "Mets ML",
+                    odds: "-108",
+                    reason: "Noah McLean hot (8 Ks in 3 of 4 starts) vs Woods Richardson (12 runs in last 2 starts)",
+                    confidence: "Med" as const,
+                    status: "Pending" as const,
+                  },
+                ].map((pick, i) => {
+                  const confColor = pick.confidence === "High" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                    : pick.confidence === "Med" ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
+                    : "bg-slate-700 text-slate-400";
+                  const statusColor = pick.status === "Won" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                    : pick.status === "Lost" ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                    : "bg-slate-700/80 text-slate-400 border border-slate-600";
+                  return (
+                    <div key={i} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5 space-y-3">
+                      <div className="flex items-start justify-between gap-2">
+                        <div>
+                          <p className="text-sm font-black text-white">{pick.matchup}</p>
+                          {pick.time && <p className="text-xs text-slate-500 mt-0.5">{pick.time}</p>}
+                        </div>
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-bold shrink-0 border ${statusColor}`}>{pick.status}</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-orange-400">{pick.bet} <span className="text-slate-500 font-normal">({pick.odds})</span></p>
+                        <p className="text-xs text-slate-400 mt-1 leading-relaxed">{pick.reason}</p>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className={`rounded-full px-2 py-0.5 text-xs font-bold ${confColor}`}>{pick.confidence}</span>
+                        <span className="text-xs text-slate-600">confidence</span>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* ── BET TRACKER ── */}
+            <div>
+              <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
+                <p className="text-xs font-bold uppercase tracking-widest text-orange-400">📋 Bet Tracker</p>
+                <button
+                  onClick={() => setShowAddBet(v => !v)}
+                  className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-bold text-slate-300 hover:border-orange-400 hover:text-orange-400 transition"
+                >
+                  {showAddBet ? "✕ Cancel" : "+ Add Bet"}
+                </button>
+              </div>
+
+              {/* Inline add-bet form */}
+              {showAddBet && (
+                <div className="rounded-2xl border border-orange-400/30 bg-slate-900/80 p-5 mb-4 space-y-3">
+                  <p className="text-xs font-bold text-orange-400 uppercase tracking-widest">New Bet Entry</p>
+                  <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                    {([
+                      ["date", "Date", "date"],
+                      ["game", "Game / Matchup", "text"],
+                      ["bet", "Bet Type", "text"],
+                      ["odds", "Odds (e.g. -115)", "text"],
+                    ] as [keyof typeof newBet, string, string][]).map(([field, label, type]) => (
+                      <div key={field} className="flex flex-col gap-1">
+                        <label className="text-xs font-bold text-slate-400">{label}</label>
+                        <input
+                          type={type}
+                          value={newBet[field] as string}
+                          onChange={e => setNewBet(prev => ({ ...prev, [field]: e.target.value }))}
+                          className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                        />
+                      </div>
+                    ))}
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Units</label>
+                      <input
+                        type="number"
+                        min={0.5}
+                        step={0.5}
+                        value={newBet.units}
+                        onChange={e => setNewBet(prev => ({ ...prev, units: parseFloat(e.target.value) || 1 }))}
+                        className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                      />
+                    </div>
+                    <div className="flex flex-col gap-1">
+                      <label className="text-xs font-bold text-slate-400">Result</label>
+                      <select
+                        value={newBet.result}
+                        onChange={e => setNewBet(prev => ({ ...prev, result: e.target.value as BetEntry["result"] }))}
+                        className="rounded-xl bg-slate-800 border border-slate-700 px-3 py-2 text-sm text-white focus:border-orange-400 focus:outline-none"
+                      >
+                        {["Pending", "Won", "Lost", "Push"].map(r => <option key={r}>{r}</option>)}
+                      </select>
+                    </div>
+                  </div>
+                  <button
+                    onClick={addBetEntry}
+                    disabled={!newBet.game || !newBet.bet || !newBet.odds}
+                    className="rounded-xl bg-orange-400 px-5 py-2.5 text-sm font-bold text-slate-950 hover:bg-orange-300 transition disabled:opacity-40 disabled:cursor-not-allowed"
+                  >
+                    Save Bet
+                  </button>
+                </div>
+              )}
+
+              {/* Table */}
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 overflow-hidden">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="border-b border-slate-800">
+                        {["Date", "Game", "Bet", "Odds", "Units", "Result", "P&L"].map(h => (
+                          <th key={h} className={`px-4 py-3 font-semibold text-slate-500 ${h === "P&L" || h === "Units" || h === "Odds" || h === "Result" ? "text-right" : "text-left"}`}>{h}</th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {bets.map((b) => {
+                        const resultColor = b.result === "Won" ? "bg-green-500/20 text-green-300 border border-green-500/30"
+                          : b.result === "Lost" ? "bg-red-500/20 text-red-300 border border-red-500/30"
+                          : b.result === "Push" ? "bg-slate-700 text-slate-400"
+                          : "bg-slate-800 text-slate-500 border border-slate-600";
+                        const pnlColor = b.pnl > 0 ? "text-green-400 font-bold" : b.pnl < 0 ? "text-red-400 font-bold" : "text-slate-500";
+                        return (
+                          <tr key={b.id} className="border-b border-slate-800/60 hover:bg-slate-800/30 transition">
+                            <td className="px-4 py-3 text-slate-400">{b.date}</td>
+                            <td className="px-4 py-3 text-slate-300 font-medium">{b.game}</td>
+                            <td className="px-4 py-3 text-white">{b.bet}</td>
+                            <td className="px-4 py-3 text-right text-slate-300">{b.odds}</td>
+                            <td className="px-4 py-3 text-right text-slate-300">{b.units}u</td>
+                            <td className="px-4 py-3 text-right">
+                              <select
+                                value={b.result}
+                                onChange={e => updateBetResult(b.id, e.target.value as BetEntry["result"])}
+                                className={`rounded-full px-2 py-0.5 text-xs font-bold border cursor-pointer bg-transparent ${resultColor}`}
+                              >
+                                {["Pending", "Won", "Lost", "Push"].map(r => <option key={r} value={r} className="bg-slate-900 text-white">{r}</option>)}
+                              </select>
+                            </td>
+                            <td className={`px-4 py-3 text-right ${pnlColor}`}>
+                              {b.result === "Pending" ? "—" : b.pnl >= 0 ? `+${b.pnl.toFixed(2)}u` : `${b.pnl.toFixed(2)}u`}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                    <tfoot>
+                      <tr className="border-t border-slate-700 bg-slate-800/40">
+                        <td colSpan={5} className="px-4 py-3 text-xs font-bold text-slate-400 uppercase tracking-widest">Running P&amp;L</td>
+                        <td />
+                        <td className={`px-4 py-3 text-right text-sm font-black ${bets.reduce((s, b) => s + b.pnl, 0) >= 0 ? "text-green-400" : "text-red-400"}`}>
+                          {(() => { const total = bets.reduce((s, b) => s + b.pnl, 0); return total >= 0 ? `+${total.toFixed(2)}u` : `${total.toFixed(2)}u`; })()}
+                        </td>
+                      </tr>
+                    </tfoot>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            {/* ── STRATEGY REMINDERS ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">📌 Strategy Reminders</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                <div className="grid gap-2 sm:grid-cols-2">
+                  {[
+                    { icon: "⚾", text: "MLB only (for now)" },
+                    { icon: "🎯", text: "1–2 units per game max" },
+                    { icon: "📱", text: "Hard Rock Sportsbook only" },
+                    { icon: "📉", text: "Fade heavy public chalk" },
+                    { icon: "🔍", text: "Focus on starting pitcher matchups — F5 and full game" },
+                    { icon: "📊", text: "Track CLV (closing line value) — did you beat the closing number?" },
+                  ].map((r, i) => (
+                    <div key={i} className="flex items-start gap-3 rounded-xl bg-slate-800/50 px-4 py-3">
+                      <span className="text-base leading-none mt-0.5">{r.icon}</span>
+                      <span className="text-xs text-slate-300 leading-relaxed">{r.text}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* ── BANKROLL GROWTH PLAN ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">💰 BANKROLL GROWTH PLAN — Target $1,000</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Stage</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Bankroll</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Unit Size</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {[
+                        { stage: "1", bankroll: "$16–$50",     unit: "$5/bet",  status: "🟡 CURRENT", current: true },
+                        { stage: "2", bankroll: "$50–$100",    unit: "$8/bet",  status: "⬜ Locked",  current: false },
+                        { stage: "3", bankroll: "$100–$250",   unit: "$15/bet", status: "⬜ Locked",  current: false },
+                        { stage: "4", bankroll: "$250–$500",   unit: "$25/bet", status: "⬜ Locked",  current: false },
+                        { stage: "5", bankroll: "$500–$1,000", unit: "$50/bet", status: "⬜ Locked",  current: false },
+                      ].map((row) => (
+                        <tr
+                          key={row.stage}
+                          className={row.current ? "bg-orange-500/10" : ""}
+                        >
+                          <td className={`py-2.5 pr-4 font-bold ${row.current ? "text-orange-400" : "text-slate-400"}`}>{row.stage}</td>
+                          <td className={`py-2.5 pr-4 ${row.current ? "text-orange-300 font-semibold" : "text-slate-300"}`}>{row.bankroll}</td>
+                          <td className={`py-2.5 pr-4 ${row.current ? "text-orange-300 font-semibold" : "text-slate-300"}`}>{row.unit}</td>
+                          <td className={`py-2.5 text-xs font-bold ${row.current ? "text-orange-400" : "text-slate-500"}`}>{row.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-4 text-xs text-slate-400 border-t border-slate-800 pt-3">
+                  Current balance: <span className="font-bold text-white">$16.45</span> · Est. timeline: <span className="font-bold text-white">10–14 weeks</span>
+                </p>
+              </div>
+            </div>
+
+          </section>
+        )}
+
+        {activeTab === "lionx" && <LionXAdmin/>}
 
       </div>
     </main>
