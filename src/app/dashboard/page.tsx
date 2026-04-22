@@ -1351,6 +1351,128 @@ export default function Dashboard() {
               <p className="mt-2 text-right text-xs text-slate-600">Last updated: {BETTING_STATS.lastUpdated}</p>
             </div>
 
+            {/* ── BANKROLL PROGRESS BAR ── */}
+            {(() => {
+              const BANKROLL_CURRENT = 16.45;
+              const BANKROLL_GOAL = 1000;
+              const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.645
+              const milestones = [
+                { pct: 5,  label: "Stage 2", dollar: "$50"  },
+                { pct: 10, label: "Stage 3", dollar: "$100" },
+                { pct: 25, label: "Stage 4", dollar: "$250" },
+                { pct: 50, label: "Stage 5", dollar: "$500" },
+              ];
+              const shimmerKeyframes = `
+                @keyframes hud-shimmer {
+                  0%   { transform: translateX(-100%) skewX(-15deg); }
+                  100% { transform: translateX(400%) skewX(-15deg); }
+                }
+                @keyframes hud-glow-pulse {
+                  0%, 100% { box-shadow: 0 0 8px 2px rgba(251,146,60,0.55), 0 0 20px 4px rgba(251,146,60,0.25); }
+                  50%       { box-shadow: 0 0 14px 4px rgba(251,146,60,0.85), 0 0 32px 8px rgba(251,146,60,0.40); }
+                }
+                @keyframes hud-fill-in {
+                  from { width: 0%; }
+                  to   { width: ${fillPct.toFixed(3)}%; }
+                }
+              `;
+              return (
+                <div className="rounded-xl bg-slate-900/70 border border-slate-700/50 p-5">
+                  <style>{shimmerKeyframes}</style>
+
+                  {/* Label row */}
+                  <div className="flex items-baseline justify-between mb-2">
+                    <span className="text-xs font-bold uppercase tracking-widest text-orange-400" style={{ fontVariant: "small-caps", letterSpacing: "0.12em" }}>
+                      Bankroll Progress
+                    </span>
+                    <span className="text-sm font-semibold text-white tabular-nums">
+                      ${BANKROLL_CURRENT.toFixed(2)} / $1,000.00
+                    </span>
+                  </div>
+
+                  {/* Bar track + fill */}
+                  <div
+                    className="relative w-full h-7 rounded-md overflow-visible"
+                    style={{
+                      background: "rgba(15,23,42,0.8)",
+                      boxShadow: "inset 0 2px 6px rgba(0,0,0,0.7), inset 0 1px 2px rgba(0,0,0,0.5)",
+                    }}
+                  >
+                    {/* Animated fill */}
+                    <div
+                      className="absolute top-0 left-0 h-full rounded-md"
+                      style={{
+                        width: `${fillPct.toFixed(3)}%`,
+                        background: "linear-gradient(90deg, #ea580c 0%, #f97316 55%, #fbbf24 100%)",
+                        animation: "hud-fill-in 1s ease-out forwards, hud-glow-pulse 2s ease-in-out 1s infinite",
+                        overflow: "hidden",
+                        position: "relative",
+                      }}
+                    >
+                      {/* Shimmer sweep */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          width: "40%",
+                          height: "100%",
+                          background: "linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.38) 50%, transparent 100%)",
+                          animation: "hud-shimmer 3s ease-in-out 1.2s infinite",
+                          borderRadius: "inherit",
+                        }}
+                      />
+                    </div>
+
+                    {/* Milestone tick marks */}
+                    {milestones.map((m) => {
+                      const passed = fillPct >= m.pct;
+                      return (
+                        <div
+                          key={m.pct}
+                          style={{
+                            position: "absolute",
+                            left: `${m.pct}%`,
+                            top: 0,
+                            bottom: 0,
+                            width: "1px",
+                            background: passed ? "rgba(251,146,60,0.9)" : "rgba(255,255,255,0.22)",
+                            zIndex: 10,
+                          }}
+                        >
+                          {/* Tick label below bar */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "calc(100% + 5px)",
+                              left: "50%",
+                              transform: "translateX(-50%)",
+                              whiteSpace: "nowrap",
+                              textAlign: "center",
+                            }}
+                          >
+                            <span className={`block text-[10px] font-bold uppercase tracking-wide ${passed ? "text-orange-400" : "text-slate-500"}`}>
+                              {m.dollar}
+                            </span>
+                            <span className={`block text-[9px] uppercase tracking-widest ${passed ? "text-orange-500" : "text-slate-600"}`}>
+                              {m.label}
+                            </span>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Footer row — leave room for tick labels */}
+                  <div className="flex items-center justify-between mt-8 text-xs">
+                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit</span>
+                    <span className="text-slate-400 text-center">+$6.45 profit · 1-0-0 · Day 1</span>
+                    <span className="text-slate-400 font-semibold tabular-nums">$983.55 to goal</span>
+                  </div>
+                </div>
+              );
+            })()}
+
             {/* ── TOMORROW — BET THESE ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
