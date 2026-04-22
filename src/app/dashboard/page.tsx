@@ -1351,19 +1351,16 @@ export default function Dashboard() {
               <p className="mt-2 text-right text-xs text-slate-600">Last updated: {BETTING_STATS.lastUpdated}</p>
             </div>
 
-            {/* ── TONIGHT — BET THESE ── */}
+            {/* ── TOMORROW — BET THESE ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
-                <p className="text-sm font-black uppercase tracking-widest text-orange-400">🔥 TONIGHT — BET THESE</p>
-                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · 1 unit each · Check lines before placing</p>
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TOMORROW — BET THESE (Apr 22)</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · Check lines before placing</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300 flex items-start gap-2">
-                  <span className="inline-flex items-center gap-1.5 rounded-full bg-green-500/15 border border-green-500/30 px-2 py-0.5 text-xs font-bold text-green-400 shrink-0">✅ WON</span>
-                  <span><span className="font-bold text-white">Cleveland Guardians ML -155</span> — $10 → $16.45 💰</span>
-                </li>
-                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">Arizona D-backs Over 4.5 runs</span> — 1 unit <span className="text-slate-400">(TBD)</span></li>
-                <li className="text-sm text-slate-300">⚾ BET: <span className="font-bold text-white">New York Mets ML</span> — 1 unit <span className="text-slate-400">(7:10 PM ET)</span></li>
+                <li className="text-sm text-slate-300">🔥 BET: <span className="font-bold text-white">Los Angeles Angels ML (-112)</span> — 1.5 units | Soriano 0.28 ERA vs Lauer 7.13 ERA</li>
+                <li className="text-sm text-slate-300">✅ BET: <span className="font-bold text-white">Kansas City Royals ML (-124)</span> — 1 unit | Wacha 1.00 ERA vs Bassitt 6.19 ERA</li>
+                <li className="text-sm text-slate-300">⏭️ SKIP: <span className="font-bold text-white">Cleveland Guardians</span> — juice not clean enough today</li>
               </ul>
             </div>
 
@@ -1765,6 +1762,47 @@ export default function Dashboard() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* ── BANKROLL GROWTH PLAN ── */}
+            <div>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">💰 BANKROLL GROWTH PLAN — Target $1,000</p>
+              <div className="rounded-2xl border border-slate-800 bg-slate-900/60 p-5">
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-slate-700">
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Stage</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Bankroll</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Unit Size</th>
+                        <th className="pb-2 text-left text-xs font-bold uppercase tracking-widest text-slate-500">Status</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-slate-800">
+                      {[
+                        { stage: "1", bankroll: "$16–$50",     unit: "$5/bet",  status: "🟡 CURRENT", current: true },
+                        { stage: "2", bankroll: "$50–$100",    unit: "$8/bet",  status: "⬜ Locked",  current: false },
+                        { stage: "3", bankroll: "$100–$250",   unit: "$15/bet", status: "⬜ Locked",  current: false },
+                        { stage: "4", bankroll: "$250–$500",   unit: "$25/bet", status: "⬜ Locked",  current: false },
+                        { stage: "5", bankroll: "$500–$1,000", unit: "$50/bet", status: "⬜ Locked",  current: false },
+                      ].map((row) => (
+                        <tr
+                          key={row.stage}
+                          className={row.current ? "bg-orange-500/10" : ""}
+                        >
+                          <td className={`py-2.5 pr-4 font-bold ${row.current ? "text-orange-400" : "text-slate-400"}`}>{row.stage}</td>
+                          <td className={`py-2.5 pr-4 ${row.current ? "text-orange-300 font-semibold" : "text-slate-300"}`}>{row.bankroll}</td>
+                          <td className={`py-2.5 pr-4 ${row.current ? "text-orange-300 font-semibold" : "text-slate-300"}`}>{row.unit}</td>
+                          <td className={`py-2.5 text-xs font-bold ${row.current ? "text-orange-400" : "text-slate-500"}`}>{row.status}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+                <p className="mt-4 text-xs text-slate-400 border-t border-slate-800 pt-3">
+                  Current balance: <span className="font-bold text-white">$16.45</span> · Est. timeline: <span className="font-bold text-white">10–14 weeks</span>
+                </p>
               </div>
             </div>
 
