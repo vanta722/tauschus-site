@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-15: 08:00 UTC — 4AM sync: BTC $73,703 (-0.01%), ETH $2,315 (-0.03%). FCA 0 active / 2 closed ($2,518 net). Twitter suspended, 10 products pending.
+// Dashboard updated 2026-04-22: 03:00 UTC — Contract recovery plan locked. LDA staking contract (2,290 TRX/$752) — 5-step plan ready. Cost: ~$51. Net: ~$700. Awaiting mainnet execution.
 import { useEffect, useState, useCallback } from "react";
 import LionXAdmin from "./lionx-admin";
 
@@ -86,6 +86,7 @@ const BETTING_STATS = {
 };
 
 const TASKS = [
+  { task: "🔑 Execute Tron contract recovery — 5 steps in TronLink with TX4KwH1X... wallet. See context/contract-recovery-plan.md. Cost ~$51, return ~$752.", priority: "HIGH", pillar: "Crypto" },
   { task: "🚫 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation paused.", priority: "HIGH", pillar: "Online" },
   { task: "📦 Approve + list pending products — 10 in queue (9 PDFs + 1 markdown). Review pending-products.md and price/publish each.", priority: "HIGH", pillar: "Online" },
   { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
