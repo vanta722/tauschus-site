@@ -70,13 +70,13 @@ const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
   record: "1-0-0",
-  unitsWagered: 1,
+  unitsWagered: 3,
   unitsNet: 0.645,
-  roi: "+64.5%",
+  roi: "+21.5%",
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-22",
+  lastUpdated: "2026-04-24",
 };
 
 const TASKS = [
@@ -170,9 +170,9 @@ export default function Dashboard() {
     wager?: string; toWin?: string;
   }
   const TODAY_BETS: BetEntry[] = [
-    { id: 1, date: "2026-04-21", game: "Astros @ Guardians", bet: "Guardians ML", odds: "-155", units: 1, result: "Pending", pnl: 0, wager: "$10", toWin: "$16.45" },
-    { id: 2, date: "2026-04-21", game: "D-backs vs White Sox", bet: "D-backs Team Total Over 4.5", odds: "-125", units: 1, result: "Pending", pnl: 0 },
-    { id: 3, date: "2026-04-21", game: "Mets vs Twins", bet: "Mets ML", odds: "-108", units: 1, result: "Pending", pnl: 0 },
+    { id: 1, date: "2026-04-21", game: "Astros @ Guardians", bet: "Guardians ML", odds: "-155", units: 1, result: "Won", pnl: 0.645, wager: "$10", toWin: "$16.45" },
+    { id: 2, date: "2026-04-24", game: "Red Sox @ Orioles", bet: "Orioles ML", odds: "-120", units: 1, result: "Pending", pnl: 0, wager: "$8", toWin: "$14.67" },
+    { id: 3, date: "2026-04-24", game: "Guardians @ Blue Jays", bet: "Guardians ML", odds: "-125", units: 1, result: "Pending", pnl: 0, wager: "$8", toWin: "$14.40" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
@@ -1262,24 +1262,22 @@ export default function Dashboard() {
 
                   {/* Footer row — leave room for tick labels */}
                   <div className="flex items-center justify-between mt-8 text-xs">
-                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit</span>
-                    <span className="text-slate-400 text-center">+$6.45 profit · 1-0-0 · Day 1</span>
-                    <span className="text-slate-400 font-semibold tabular-nums">$983.55 to goal</span>
+                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit · +$6.45 profit · 1-0-0 · Day 4 · $983.55 to goal · 2 bets live tonight</span>
                   </div>
                 </div>
               );
             })()}
 
-            {/* ── TOMORROW — BET THESE ── */}
+            {/* ── TODAY — BETS PLACED ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
-                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TOMORROW — BET THESE (Apr 22)</p>
-                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · Check lines before placing</p>
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TODAY — BETS PLACED (Apr 24)</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB only · Results tonight ~7 PM ET</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300">🔥 BET: <span className="font-bold text-white">Los Angeles Angels ML (-112)</span> — 1.5 units | Soriano 0.28 ERA vs Lauer 7.13 ERA</li>
-                <li className="text-sm text-slate-300">✅ BET: <span className="font-bold text-white">Kansas City Royals ML (-124)</span> — 1 unit | Wacha 1.00 ERA vs Bassitt 6.19 ERA</li>
-                <li className="text-sm text-slate-300">⏭️ SKIP: <span className="font-bold text-white">Cleveland Guardians</span> — juice not clean enough today</li>
+                <li className="text-sm text-slate-300">✅ BET PLACED: <span className="font-bold text-white">Baltimore Orioles ML -120</span> — $8 to win $14.67 (7:05 PM ET)</li>
+                <li className="text-sm text-slate-300">✅ BET PLACED: <span className="font-bold text-white">Cleveland Guardians ML -125</span> — $8 to win $14.40 (7:07 PM ET)</li>
+                <li className="text-sm text-slate-300">⏳ Awaiting results — both games live tonight</li>
               </ul>
             </div>
 
