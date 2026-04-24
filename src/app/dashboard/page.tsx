@@ -1,6 +1,6 @@
 "use client";
 // Memory API: CRONS.md added to core file list (2026-03-28)
-// Dashboard updated 2026-04-22: 03:00 UTC — Contract recovery plan locked. LDA staking contract (2,290 TRX/$752) — 5-step plan ready. Cost: ~$51. Net: ~$700. Awaiting mainnet execution.
+// Dashboard updated 2026-04-24: FCA-003 added — 72 sqft slab, $320 profit. LDA staking contract (2,290 TRX/$752) — 5-step plan ready. Cost: ~$51. Net: ~$700. Awaiting mainnet execution.
 import { useEffect, useState, useCallback } from "react";
 import LionXAdmin from "./lionx-admin";
 
@@ -86,7 +86,7 @@ const TASKS = [
   { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff). Page live.", priority: "MED", pillar: "Online" },
   { task: "🟡 Monitor Gumroad — track downloads + sales weekly. Posted in FB groups Mar 28. Watch for traffic.", priority: "MED", pillar: "Online" },
-  { task: "🟡 FCA: Both jobs CLOSED ✅ Noble ,888 net / Frankie 30 net. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
+  { task: "🟡 FCA: 3 jobs closed ✅ Noble $1,888 / Frankie $630 / FCA-003 $320. Total net: $2,838.24. Ask Joseph Noble for Google review.", priority: "MED", pillar: "FCA" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida — Google Maps + FB).", priority: "MED", pillar: "FCA" },
   { task: "⚠️ Verify Resend domain for floridaconcretealliance.com — contractor welcome emails failing silently.", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
@@ -241,10 +241,12 @@ export default function Dashboard() {
   const [leads, setLeads] = useState<Lead[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", area: "Jacksonville, FL", service: "Stamped Concrete", value: "$6,475", source: "Facebook Marketplace", notes: "Collecting final $1,590 TODAY Apr 11. Poured Apr 9, sealed Apr 10. $4,885 collected.", stage: "Booked" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", area: "Palm Coast, FL", service: "Driveway Extension — 12'x12' 4\" depth", value: "$1,250", source: "Facebook Marketplace", notes: "CLOSED ✅ Apr 10. Net profit: $630.", stage: "Booked" },
+    { id: 3, name: "FCA-003 Client", phone: "", area: "Jacksonville, FL", service: "Concrete Slab — 9x8 (72 sqft) w/ Rebar", value: "$720", source: "Direct", notes: "IN PROGRESS Apr 24. 30 bags Quikrete + HD truck. Hot tub area rebar. $320 net profit.", stage: "Booked" },
   ]);
   const [jobs, setJobs] = useState<Job[]>([
     { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 6475, status: "Completed", notes: "✅ CLOSED Apr 12. Contract: $6,475 | Collected: $6,475 | Expenses: $4,586.76 | Net Profit: $1,888.24" },
     { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Contract: $1,250 | Concrete: $620 | Net Profit: $630. 15 Royal Leaf Lane, Palm Coast FL 32164." },
+    { id: 3, client: "FCA-003 Client", location: "Jacksonville, FL", jobType: "Concrete Slab — 9x8 72 sqft w/ Rebar", totalPrice: 720, depositPaid: 720, status: "Completed", notes: "✅ COMPLETED Apr 24. Contract: $720 | Materials: $250 (30 bags) + Truck: $150 | Net Profit: $320 (44% margin). Self-supply via Quikrete bags." },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
@@ -252,11 +254,13 @@ export default function Dashboard() {
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
     { id: 4, client: "Joseph Noble", amount: 1590, date: "2026-04-11", notes: "Final payment upon completion ✅" },
     { id: 5, client: "Frankie (Palm Coast Demo)", amount: 1250, date: "2026-04-10", notes: "Full payment — job complete ✅" },
+    { id: 6, client: "FCA-003 Client", amount: 720, date: "2026-04-24", notes: "Full payment — 72 sqft slab ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }, { id: 13, description: "Quikrete bags (30) — FCA-003", amount: 250, date: "2026-04-24" }, { id: 14, description: "Home Depot truck rental — FCA-003", amount: 150, date: "2026-04-24" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "CLOSED ✅ Apr 12. Net profit: $1,888.24. Ask for Google review.", repeat: false, referral: "Facebook Marketplace" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "CLOSED ✅ Apr 10. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
+    { id: 3, name: "FCA-003 Client", phone: "", jobDone: "Concrete Slab 72 sqft w/ Rebar", notes: "COMPLETED ✅ Apr 24. Net profit: $320. 44% margin. Self-supply Quikrete bags.", repeat: false, referral: "Direct" },
   ]);
 
   const [fcaModal, setFcaModal] = useState<null | "lead" | "job" | "payment" | "expense">(null);
@@ -644,6 +648,7 @@ export default function Dashboard() {
                         {[
                           { job: "FCA-001 — Joseph Noble (Stamped, Jacksonville)", revenue: 6475, expenses: 4586.76, date: "Apr 12" },
                           { job: "FCA-002 — Frankie (Driveway, Palm Coast)", revenue: 1250, expenses: 620, date: "Apr 10" },
+                          { job: "FCA-003 — Slab 72 sqft w/ Rebar (Jacksonville)", revenue: 720, expenses: 400, date: "Apr 24" },
                         ].map((row, i) => {
                           const net = row.revenue - row.expenses;
                           const margin = ((net / row.revenue) * 100).toFixed(1);
@@ -658,11 +663,11 @@ export default function Dashboard() {
                           );
                         })}
                         <tr className="bg-slate-800/40">
-                          <td className="px-4 py-3 text-orange-400 font-black uppercase tracking-wide text-xs">Total (2 Jobs)</td>
-                          <td className="px-4 py-3 text-right text-white font-black">$7,725</td>
-                          <td className="px-4 py-3 text-right text-red-400 font-black">$5,206.76</td>
-                          <td className="px-4 py-3 text-right text-green-400 font-black text-sm">$2,518.24</td>
-                          <td className="px-4 py-3 text-right text-cyan-400 font-black">32.6%</td>
+                          <td className="px-4 py-3 text-orange-400 font-black uppercase tracking-wide text-xs">Total (3 Jobs)</td>
+                          <td className="px-4 py-3 text-right text-white font-black">$8,445</td>
+                          <td className="px-4 py-3 text-right text-red-400 font-black">$5,606.76</td>
+                          <td className="px-4 py-3 text-right text-green-400 font-black text-sm">$2,838.24</td>
+                          <td className="px-4 py-3 text-right text-cyan-400 font-black">33.6%</td>
                         </tr>
                       </tbody>
                     </table>
