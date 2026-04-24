@@ -86,7 +86,7 @@ const TASKS = [
   { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff). Page live.", priority: "MED", pillar: "Online" },
   { task: "🟡 Monitor Gumroad — track downloads + sales weekly. Posted in FB groups Mar 28. Watch for traffic.", priority: "MED", pillar: "Online" },
-  { task: "🚧 FCA-003 IN PROGRESS (Apr 24) — 72 sqft slab $720. HD Truck $175 ✅. Bags + pour + collect still pending. Ask Joseph Noble for Google review.", priority: "HIGH", pillar: "FCA" },
+  { task: "🚧 FCA-003 IN PROGRESS — $500 collected ✅ | $220 remaining on completion | Supplies run in progress | Pour + finish pending.", priority: "HIGH", pillar: "FCA" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida — Google Maps + FB).", priority: "MED", pillar: "FCA" },
   { task: "⚠️ Verify Resend domain for floridaconcretealliance.com — contractor welcome emails failing silently.", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
@@ -246,7 +246,7 @@ export default function Dashboard() {
   const [jobs, setJobs] = useState<Job[]>([
     { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 6475, status: "Completed", notes: "✅ CLOSED Apr 12. Contract: $6,475 | Collected: $6,475 | Expenses: $4,586.76 | Net Profit: $1,888.24" },
     { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Contract: $1,250 | Concrete: $620 | Net Profit: $630. 15 Royal Leaf Lane, Palm Coast FL 32164." },
-    { id: 3, client: "FCA-003 Client", location: "Jacksonville, FL", jobType: "Concrete Slab — 9x8 72 sqft w/ Rebar", totalPrice: 720, depositPaid: 0, status: "In Progress", notes: "🚧 IN PROGRESS Apr 24. Contract: $720 | HD Truck $175 ✅ | Bags + rebar + pour pending. Due back Apr 25 @ 6AM." },
+    { id: 3, client: "FCA-003 Client", location: "Jacksonville, FL", jobType: "Concrete Slab — 9x8 72 sqft w/ Rebar", totalPrice: 720, depositPaid: 500, status: "In Progress", notes: "🚧 IN PROGRESS Apr 24. Contract: $720 | $500 collected ✅ | $220 remaining on completion | HD Truck $168.89 ✅ | Supplies run in progress." },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
@@ -254,7 +254,7 @@ export default function Dashboard() {
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
     { id: 4, client: "Joseph Noble", amount: 1590, date: "2026-04-11", notes: "Final payment upon completion ✅" },
     { id: 5, client: "Frankie (Palm Coast Demo)", amount: 1250, date: "2026-04-10", notes: "Full payment — job complete ✅" },
-    { id: 6, client: "FCA-003 Client", amount: 0, date: "2026-04-24", notes: "⏳ PENDING — collect on completion" },
+    { id: 6, client: "FCA-003 Client", amount: 500, date: "2026-04-24", notes: "✅ $500 collected Apr 24. Remaining balance: $220 due on completion." },
   ]);
   const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }, { id: 13, description: "Quikrete bags (30) — FCA-003", amount: 250, date: "2026-04-24" }, { id: 14, description: "Home Depot flatbed truck rental — FCA-003 (Contract #250195)", amount: 168.89, date: "2026-04-24" }]);
   const [clients, setClients] = useState<Client[]>([
