@@ -86,7 +86,7 @@ const TASKS = [
   { task: "🎯 Fund Polymarket — $70 USDC ready. $40 Clarity Act YES + $30 recession hedge. Next catalyst: FOMC April 28-29.", priority: "HIGH", pillar: "Crypto" },
   { task: "🟡 First AI Chief of Staff client — post pitch in contractor FB groups (tauschus.com/ai-chief-of-staff). Page live.", priority: "MED", pillar: "Online" },
   { task: "🟡 Monitor Gumroad — track downloads + sales weekly. Posted in FB groups Mar 28. Watch for traffic.", priority: "MED", pillar: "Online" },
-  { task: "🚧 FCA-003 IN PROGRESS — $500 collected ✅ | $220 remaining on completion | Supplies run in progress | Pour + finish pending.", priority: "HIGH", pillar: "FCA" },
+  { task: "🟡 FCA: 3 jobs closed ✅ Noble $1,888 / Frankie $630 / FCA-003 $376. Total net: $2,894.35. Ask Joseph Noble for a Google review.", priority: "MED", pillar: "FCA" },
   { task: "🟡 Build property manager outreach list (20–30 contacts, NE Florida — Google Maps + FB).", priority: "MED", pillar: "FCA" },
   { task: "⚠️ Verify Resend domain for floridaconcretealliance.com — contractor welcome emails failing silently.", priority: "MED", pillar: "FCA" },
   { task: "Upgrade Twitter to Basic API tier after account reinstated + 50–100 followers", priority: "LOW", pillar: "Online" },
@@ -246,7 +246,7 @@ export default function Dashboard() {
   const [jobs, setJobs] = useState<Job[]>([
     { id: 1, client: "Joseph Noble", location: "Jacksonville, FL", jobType: "Stamped Concrete — 730 sq ft", totalPrice: 6475, depositPaid: 6475, status: "Completed", notes: "✅ CLOSED Apr 12. Contract: $6,475 | Collected: $6,475 | Expenses: $4,586.76 | Net Profit: $1,888.24" },
     { id: 2, client: "Frankie (Palm Coast Demo)", location: "Palm Coast, FL", jobType: "Driveway Extension — 12'x12' 4\" depth", totalPrice: 1250, depositPaid: 1250, status: "Completed", notes: "CLOSED ✅ Apr 10. Contract: $1,250 | Concrete: $620 | Net Profit: $630. 15 Royal Leaf Lane, Palm Coast FL 32164." },
-    { id: 3, client: "FCA-003 Client", location: "Jacksonville, FL", jobType: "Concrete Slab — 9x8 72 sqft w/ Rebar", totalPrice: 720, depositPaid: 500, status: "In Progress", notes: "🚧 IN PROGRESS Apr 24. Contract: $720 | $500 collected ✅ | $220 remaining | Truck $168.89 ✅ | Concrete + rebar $160 ✅ | Total spent: $383.89 | Pour pending." },
+    { id: 3, client: "FCA-003 Client", location: "Jacksonville, FL", jobType: "Concrete Slab — 9x8 72 sqft w/ Rebar", totalPrice: 760, depositPaid: 760, status: "Completed", notes: "✅ CLOSED Apr 24. Contract $720 + $40 tip = $760 total | Expenses $383.89 | Net Profit $376.11 (49.5% margin). Pour finished, customer happy." },
   ]);
   const [payments, setPayments] = useState<Payment[]>([
     { id: 1, client: "Joseph Noble", amount: 1000, date: "2026-04-04", notes: "Initial deposit" },
@@ -254,9 +254,10 @@ export default function Dashboard() {
     { id: 3, client: "Joseph Noble", amount: 3385, date: "2026-04-08", notes: "Morning of pour — collected ✅" },
     { id: 4, client: "Joseph Noble", amount: 1590, date: "2026-04-11", notes: "Final payment upon completion ✅" },
     { id: 5, client: "Frankie (Palm Coast Demo)", amount: 1250, date: "2026-04-10", notes: "Full payment — job complete ✅" },
-    { id: 6, client: "FCA-003 Client", amount: 500, date: "2026-04-24", notes: "✅ $500 collected Apr 24. Remaining balance: $220 due on completion." },
+    { id: 6, client: "FCA-003 Client", amount: 500, date: "2026-04-24", notes: "✅ $500 deposit collected Apr 24." },
+    { id: 7, client: "FCA-003 Client", amount: 260, date: "2026-04-24", notes: "✅ Final $220 + $40 tip on completion. Job CLOSED ✅" },
   ]);
-  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }, { id: 13, description: "Quikrete bags (30) — FCA-003", amount: 250, date: "2026-04-24" }, { id: 14, description: "Home Depot flatbed truck rental — FCA-003 (Contract #250195)", amount: 168.89, date: "2026-04-24" }, { id: 15, description: "Concrete + rebar — FCA-003", amount: 160, date: "2026-04-24" }, { id: 16, description: "Home Depot supplies — FCA-003", amount: 55, date: "2026-04-24" }]);
+  const [expenses, setExpenses] = useState<Expense[]>([{ id: 1, description: "Truck rental", amount: 520, date: "2026-04-05" }, { id: 2, description: "Home Depot — materials", amount: 145, date: "2026-04-06" }, { id: 3, description: "Gas", amount: 75, date: "2026-04-08" }, { id: 4, description: "Dark grey power release", amount: 171, date: "2026-04-08" }, { id: 5, description: "Concrete (3000 PSI)", amount: 1960, date: "2026-04-09" }, { id: 6, description: "Pumping service", amount: 450, date: "2026-04-09" }, { id: 7, description: "Stamp crew", amount: 1000, date: "2026-04-09" }, { id: 8, description: "Home Depot", amount: 9, date: "2026-04-09" }, { id: 9, description: "Home Depot — sealing supplies (receipt #00002-61941)", amount: 126.68, date: "2026-04-11" }, { id: 10, description: "Home Depot — sealing supplies (receipt #00006-12358)", amount: 30.08, date: "2026-04-11" }, { id: 11, description: "Gas", amount: 100, date: "2026-04-11" }, { id: 12, description: "Concrete — FCA-002 Frankie (Palm Coast)", amount: 620, date: "2026-04-10" }, { id: 13, description: "Home Depot flatbed truck rental — FCA-003 (Contract #250195)", amount: 168.89, date: "2026-04-24" }, { id: 14, description: "Concrete + rebar — FCA-003", amount: 160, date: "2026-04-24" }, { id: 15, description: "Home Depot supplies — FCA-003", amount: 55, date: "2026-04-24" }]);
   const [clients, setClients] = useState<Client[]>([
     { id: 1, name: "Joseph Noble", phone: "(904) 563-1660", jobDone: "Stamped Concrete — 730 sq ft", notes: "CLOSED ✅ Apr 12. Net profit: $1,888.24. Ask for Google review.", repeat: false, referral: "Facebook Marketplace" },
     { id: 2, name: "Frankie (Palm Coast Demo)", phone: "", jobDone: "Driveway Extension 12'x12'", notes: "CLOSED ✅ Apr 10. Frank@palmcoastdemo.com", repeat: false, referral: "Facebook Marketplace" },
@@ -648,6 +649,7 @@ export default function Dashboard() {
                         {[
                           { job: "FCA-001 — Joseph Noble (Stamped, Jacksonville)", revenue: 6475, expenses: 4586.76, date: "Apr 12" },
                           { job: "FCA-002 — Frankie (Driveway, Palm Coast)", revenue: 1250, expenses: 620, date: "Apr 10" },
+                          { job: "FCA-003 — Slab 72 sqft w/ Rebar (Jacksonville)", revenue: 760, expenses: 383.89, date: "Apr 24" },
 
                         ].map((row, i) => {
                           const net = row.revenue - row.expenses;
@@ -663,11 +665,11 @@ export default function Dashboard() {
                           );
                         })}
                         <tr className="bg-slate-800/40">
-                          <td className="px-4 py-3 text-orange-400 font-black uppercase tracking-wide text-xs">Total (2 Closed)</td>
-                          <td className="px-4 py-3 text-right text-white font-black">$7,725</td>
-                          <td className="px-4 py-3 text-right text-red-400 font-black">$5,206.76</td>
-                          <td className="px-4 py-3 text-right text-green-400 font-black text-sm">$2,518.24</td>
-                          <td className="px-4 py-3 text-right text-cyan-400 font-black">32.6%</td>
+                          <td className="px-4 py-3 text-orange-400 font-black uppercase tracking-wide text-xs">Total (3 Closed)</td>
+                          <td className="px-4 py-3 text-right text-white font-black">$8,485</td>
+                          <td className="px-4 py-3 text-right text-red-400 font-black">$5,590.65</td>
+                          <td className="px-4 py-3 text-right text-green-400 font-black text-sm">$2,894.35</td>
+                          <td className="px-4 py-3 text-right text-cyan-400 font-black">34.1%</td>
                         </tr>
                       </tbody>
                     </table>
