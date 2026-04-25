@@ -122,6 +122,15 @@ const FCA_PHOTOS: Record<string, { id: string; label: string; photos: { url: str
       ],
     },
   ],
+  "FCA-003": [
+    {
+      id: "fca-003",
+      label: "FCA-003 — Concrete Slab 72 sqft w/ Rebar | Jacksonville FL",
+      photos: [
+        { url: "/fca-photos/fca-003/fca-003-slab-pour.jpg", caption: "72 sqft concrete slab — freshly poured, rebar reinforced, Jacksonville FL", date: "2026-04-24" },
+      ],
+    },
+  ],
 };
 
 function PriorityBadge({ p }: { p: string }) {
