@@ -207,6 +207,7 @@ export default function Dashboard() {
     { id: 2, date: "2026-04-24", game: "Red Sox @ Orioles", bet: "Orioles ML", odds: "-120", units: 1, result: "Won", pnl: 0.667, wager: "$8", toWin: "$14.67" },
     { id: 3, date: "2026-04-24", game: "Guardians @ Blue Jays", bet: "Guardians ML", odds: "-125", units: 1, result: "Won", pnl: 0.640, wager: "$8", toWin: "$14.40" },
     { id: 4, date: "2026-04-25", game: "Padres @ D-backs", bet: "D-backs ML", odds: "-120", units: 1, result: "Lost", pnl: -1, wager: "$10", toWin: "$18.33" },
+    { id: 5, date: "2026-04-26", game: "Yankees @ Astros", bet: "Astros ML", odds: "+115", units: 1.8, result: "Pending", pnl: 0, wager: "$9", toWin: "$10.35" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
