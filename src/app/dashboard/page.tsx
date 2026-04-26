@@ -69,14 +69,14 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "3-1-0",
-  unitsWagered: 4,
-  unitsNet: 0.952,
-  roi: "+23.8%",
+  record: "4-2-0",
+  unitsWagered: 6.8,
+  unitsNet: 2.022,
+  roi: "+29.7%",
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-26",
+  lastUpdated: "2026-04-26 (EOD)",
 };
 
 // Apr 26 picks from Ace model
@@ -89,17 +89,17 @@ const APR26_PICKS = [
     units: 2.0,
     reason: "Luis Gil high walk rate (11.2% BB) vs Arrighetti. Market undervaluing HOU home edge. FIP edge: 3.80 vs 4.20.",
     confidence: "High" as const,
-    status: "Pending" as const,
+    status: "Won" as const,
   },
   {
     matchup: "Cubs @ Dodgers",
     time: "4:11 PM ET",
     bet: "Cubs ML",
-    odds: "+112",
-    units: 1.55,
+    odds: "+110",
+    units: 1.0,
     reason: "Imanaga (FIP 3.25) vs Wrobleski (FIP 4.50, rookie). SP mismatch overcomes LAD offense edge.",
     confidence: "Med" as const,
-    status: "Pending" as const,
+    status: "Lost" as const,
   },
 ];
 
@@ -207,7 +207,8 @@ export default function Dashboard() {
     { id: 2, date: "2026-04-24", game: "Red Sox @ Orioles", bet: "Orioles ML", odds: "-120", units: 1, result: "Won", pnl: 0.667, wager: "$8", toWin: "$14.67" },
     { id: 3, date: "2026-04-24", game: "Guardians @ Blue Jays", bet: "Guardians ML", odds: "-125", units: 1, result: "Won", pnl: 0.640, wager: "$8", toWin: "$14.40" },
     { id: 4, date: "2026-04-25", game: "Padres @ D-backs", bet: "D-backs ML", odds: "-120", units: 1, result: "Lost", pnl: -1, wager: "$10", toWin: "$18.33" },
-    { id: 5, date: "2026-04-26", game: "Yankees @ Astros", bet: "Astros ML", odds: "+115", units: 1.8, result: "Pending", pnl: 0, wager: "$9", toWin: "$10.35" },
+    { id: 5, date: "2026-04-26", game: "Yankees @ Astros", bet: "Astros ML", odds: "+115", units: 1.8, result: "Won", pnl: 2.07, wager: "$9", toWin: "$10.35" },
+    { id: 6, date: "2026-04-26", game: "Cubs @ Dodgers", bet: "Cubs ML", odds: "+110", units: 1.0, result: "Lost", pnl: -1.0, wager: "$5", toWin: "$10.50" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
@@ -1192,7 +1193,7 @@ export default function Dashboard() {
 
             {/* ── BANKROLL PROGRESS BAR ── */}
             {(() => {
-              const BANKROLL_CURRENT = 19.52;
+              const BANKROLL_CURRENT = 24.87;
               const BANKROLL_GOAL = 1000;
               const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.952
               const milestones = [
@@ -1304,7 +1305,7 @@ export default function Dashboard() {
 
                   {/* Footer row — leave room for tick labels */}
                   <div className="flex items-center justify-between mt-8 text-xs">
-                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit · +$9.52 profit · 3-1-0 · Day 6 · $980.48 to goal</span>
+                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit · +$8.87 profit · 4-2-0 · Day 6 · $975.13 to goal</span>
                   </div>
                 </div>
               );
@@ -1318,6 +1319,8 @@ export default function Dashboard() {
               </div>
               <ul className="space-y-2.5">
                 <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Arizona Diamondbacks ML -120</span> — SD 6, ARI 4</li>
+                <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Astros ML +115</span> — HOU 7, NYY 4 (+$10.35)</li>
+                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Cubs ML +110</span> — LAD 6, CHC 0 (-$5.00)</li>
                 <li className="text-sm text-slate-300">💰 Still up +$9.52 overall — System: 3-1-0</li>
                 <li className="text-sm text-slate-300">⏳ Result tonight ~6 PM ET</li>
               </ul>
