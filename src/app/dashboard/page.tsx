@@ -79,6 +79,30 @@ const BETTING_STATS = {
   lastUpdated: "2026-04-26",
 };
 
+// Apr 26 picks from Ace model
+const APR26_PICKS = [
+  {
+    matchup: "NYY @ Astros",
+    time: "2:11 PM ET",
+    bet: "Astros ML",
+    odds: "+116",
+    units: 2.0,
+    reason: "Luis Gil high walk rate (11.2% BB) vs Arrighetti. Market undervaluing HOU home edge. FIP edge: 3.80 vs 4.20.",
+    confidence: "High" as const,
+    status: "Pending" as const,
+  },
+  {
+    matchup: "Cubs @ Dodgers",
+    time: "4:11 PM ET",
+    bet: "Cubs ML",
+    odds: "+112",
+    units: 1.55,
+    reason: "Imanaga (FIP 3.25) vs Wrobleski (FIP 4.50, rookie). SP mismatch overcomes LAD offense edge.",
+    confidence: "Med" as const,
+    status: "Pending" as const,
+  },
+];
+
 const TASKS = [
   { task: "🔑 Execute Tron contract recovery — 5 steps in TronLink with TX4KwH1X... wallet. See context/contract-recovery-plan.md. Cost ~$51, return ~$752.", priority: "HIGH", pillar: "Crypto" },
   { task: "🚫 CRITICAL: Appeal Twitter/X account suspension — twitter.com/account/suspended. All tweet automation paused.", priority: "HIGH", pillar: "Online" },
@@ -1497,37 +1521,9 @@ export default function Dashboard() {
 
             {/* ── DAILY PLAYS ── */}
             <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — {new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" })}</p>
-              <div className="grid gap-4 md:grid-cols-3">
-                {[
-                  {
-                    matchup: "Guardians vs Astros",
-                    time: "6:10 PM ET",
-                    bet: "Guardians ML",
-                    odds: "-115",
-                    reason: "Parker Messick 1.05 ERA vs opener — fade the Astros bullpen game",
-                    confidence: "High" as const,
-                    status: "Pending" as const,
-                  },
-                  {
-                    matchup: "D-backs vs White Sox",
-                    time: "",
-                    bet: "D-backs Team Total Over 4.5",
-                    odds: "-125",
-                    reason: "D-backs averaging 5.6 runs/game; Sean Burke sitting at 4.43 ERA",
-                    confidence: "High" as const,
-                    status: "Pending" as const,
-                  },
-                  {
-                    matchup: "Mets vs Twins",
-                    time: "7:10 PM ET",
-                    bet: "Mets ML",
-                    odds: "-108",
-                    reason: "Noah McLean hot (8 Ks in 3 of 4 starts) vs Woods Richardson (12 runs in last 2 starts)",
-                    confidence: "Med" as const,
-                    status: "Pending" as const,
-                  },
-                ].map((pick, i) => {
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — Apr 26, 2026 <span className="ml-2 text-slate-500 normal-case font-normal">(Ace Model v1)</span></p>
+              <div className="grid gap-4 md:grid-cols-2">
+                {APR26_PICKS.map((pick, i) => {
                   const confColor = pick.confidence === "High" ? "bg-green-500/20 text-green-300 border border-green-500/30"
                     : pick.confidence === "Med" ? "bg-yellow-500/20 text-yellow-300 border border-yellow-500/30"
                     : "bg-slate-700 text-slate-400";
