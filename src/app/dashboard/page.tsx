@@ -69,14 +69,14 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "3-0-0",
+  record: "3-1-0",
   unitsWagered: 4,
-  unitsNet: 1.952,
-  roi: "+48.8%",
+  unitsNet: 0.952,
+  roi: "+23.8%",
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-25",
+  lastUpdated: "2026-04-26",
 };
 
 const TASKS = [
@@ -182,7 +182,7 @@ export default function Dashboard() {
     { id: 1, date: "2026-04-21", game: "Astros @ Guardians", bet: "Guardians ML", odds: "-155", units: 1, result: "Won", pnl: 0.645, wager: "$10", toWin: "$16.45" },
     { id: 2, date: "2026-04-24", game: "Red Sox @ Orioles", bet: "Orioles ML", odds: "-120", units: 1, result: "Won", pnl: 0.667, wager: "$8", toWin: "$14.67" },
     { id: 3, date: "2026-04-24", game: "Guardians @ Blue Jays", bet: "Guardians ML", odds: "-125", units: 1, result: "Won", pnl: 0.640, wager: "$8", toWin: "$14.40" },
-    { id: 4, date: "2026-04-25", game: "Padres @ D-backs", bet: "D-backs ML", odds: "-120", units: 1, result: "Pending", pnl: 0, wager: "$10", toWin: "$18.33" },
+    { id: 4, date: "2026-04-25", game: "Padres @ D-backs", bet: "D-backs ML", odds: "-120", units: 1, result: "Lost", pnl: -1, wager: "$10", toWin: "$18.33" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
@@ -1167,9 +1167,9 @@ export default function Dashboard() {
 
             {/* ── BANKROLL PROGRESS BAR ── */}
             {(() => {
-              const BANKROLL_CURRENT = 29.52;
+              const BANKROLL_CURRENT = 19.52;
               const BANKROLL_GOAL = 1000;
-              const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 2.952
+              const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.952
               const milestones = [
                 { pct: 5,  label: "Stage 2", dollar: "$50"  },
                 { pct: 10, label: "Stage 3", dollar: "$100" },
@@ -1279,7 +1279,7 @@ export default function Dashboard() {
 
                   {/* Footer row — leave room for tick labels */}
                   <div className="flex items-center justify-between mt-8 text-xs">
-                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit · +$19.52 profit · 3-0-0 · Day 5 · $970.48 to goal</span>
+                    <span className="text-slate-300 font-semibold">🟡 Stage 1 — $5/unit · +$9.52 profit · 3-1-0 · Day 6 · $980.48 to goal</span>
                   </div>
                 </div>
               );
@@ -1288,12 +1288,12 @@ export default function Dashboard() {
             {/* ── TODAY — BETS PLACED ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
-                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TODAY — BET PLACED (Apr 25)</p>
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ RESULT (Apr 25) — LOSS</p>
                 <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB · 3-0-0 all-time</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300">✅ BET PLACED: <span className="font-bold text-white">Arizona Diamondbacks ML -120</span> — $10 to win $18.33 (6:05 PM ET)</li>
-                <li className="text-sm text-slate-300">📊 Gallen on the mound — Padres @ D-backs</li>
+                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Arizona Diamondbacks ML -120</span> — SD 6, ARI 4</li>
+                <li className="text-sm text-slate-300">💰 Still up +$9.52 overall — System: 3-1-0</li>
                 <li className="text-sm text-slate-300">⏳ Result tonight ~6 PM ET</li>
               </ul>
             </div>
