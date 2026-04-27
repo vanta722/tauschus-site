@@ -194,7 +194,7 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx" | "betting">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx" | "betting" | "clearance">("ops");
 
   // Sports Betting state
   interface BetEntry {
@@ -224,6 +224,10 @@ export default function Dashboard() {
   const [liveOdds, setLiveOdds] = useState<any[]>([]);
   const [oddsLoading, setOddsLoading] = useState(false);
   const [oddsLastFetched, setOddsLastFetched] = useState<Date | null>(null);
+  const [clearanceDeals, setClearanceDeals] = useState<any[]>([]);
+  const [clearanceLoading, setClearanceLoading] = useState(false);
+  const [clearanceLastFetched, setClearanceLastFetched] = useState<Date | null>(null);
+  const [clearanceQuota, setClearanceQuota] = useState<number | null>(null);
   const [newBet, setNewBet] = useState<Omit<BetEntry, "id">>({
     date: new Date().toISOString().slice(0, 10), game: "", bet: "", odds: "", units: 1, result: "Pending", pnl: 0,
   });
@@ -388,6 +392,17 @@ export default function Dashboard() {
     setMemLoading(false);
   }, []);
 
+  const fetchClearance = async () => {
+    setClearanceLoading(true);
+    try {
+      const r = await fetch("/api/clearance");
+      const data = await r.json();
+      setClearanceDeals(data.deals || []);
+      setClearanceQuota(data.quota_left ?? null);
+      setClearanceLastFetched(new Date());
+    } catch { } finally { setClearanceLoading(false); }
+  };
+
   const fetchOdds = async () => {
     setOddsLoading(true);
     try {
@@ -406,6 +421,10 @@ export default function Dashboard() {
       fetchMemFiles();
     }
   }, [authed, activeTab, memFiles.length, fetchMemFiles]);
+
+  useEffect(() => {
+    if (authed && activeTab === "clearance" && clearanceDeals.length === 0) fetchClearance();
+  }, [authed, activeTab, clearanceDeals.length]);
 
   useEffect(() => {
     if (authed && activeTab === "betting" && liveOdds.length === 0) {
@@ -481,7 +500,7 @@ export default function Dashboard() {
 
         {/* Tab switcher */}
         <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
-          {(["ops", "fca", "memory", "lionx", "betting"] as const).map((tab) => (
+          {(["ops", "fca", "memory", "lionx", "betting", "clearance"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -491,7 +510,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "lionx" ? "🦁 Lion X" : "⚾ Sports Betting"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "lionx" ? "🦁 Lion X" : tab === "betting" ? "⚾ Sports Betting" : "🛒 Clearance"}
             </button>
           ))}
         </div>
@@ -1741,6 +1760,78 @@ export default function Dashboard() {
             </div>
 
           </section>
+        )}
+
+        {activeTab === "clearance" && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-lg font-bold text-white">🛒 HD Clearance Scanner</h2>
+                <p className="text-xs text-slate-400">
+                  {clearanceLastFetched ? `Last fetched: ${clearanceLastFetched.toLocaleTimeString()}` : "Not loaded"}
+                  {clearanceQuota !== null && <span className="ml-3 text-orange-400">{clearanceQuota} SerpApi calls left</span>}
+                </p>
+              </div>
+              <button onClick={fetchClearance} disabled={clearanceLoading} className="rounded-xl bg-orange-500 hover:bg-orange-400 disabled:opacity-50 px-4 py-2 text-sm font-semibold text-white transition">
+                {clearanceLoading ? "Scanning..." : "↻ Refresh"}
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="rounded-xl bg-slate-800 border border-slate-700 p-3 text-center">
+                <div className="text-2xl font-bold text-orange-400">{clearanceDeals.length}</div>
+                <div className="text-xs text-slate-400 mt-1">Total Deals</div>
+              </div>
+              <div className="rounded-xl bg-slate-800 border border-slate-700 p-3 text-center">
+                <div className="text-2xl font-bold text-green-400">{clearanceDeals.filter((d: any) => (d.pct_off || 0) >= 50).length}</div>
+                <div className="text-xs text-slate-400 mt-1">50%+ Off</div>
+              </div>
+              <div className="rounded-xl bg-slate-800 border border-slate-700 p-3 text-center">
+                <div className="text-2xl font-bold text-yellow-400">{clearanceDeals.length > 0 ? Math.max(...clearanceDeals.map((d: any) => d.pct_off || 0)).toFixed(0) + "%" : "—"}</div>
+                <div className="text-xs text-slate-400 mt-1">Best Discount</div>
+              </div>
+            </div>
+            {clearanceLoading ? (
+              <div className="text-center py-12 text-slate-400">Scanning...</div>
+            ) : clearanceDeals.length === 0 ? (
+              <div className="text-center py-12 text-slate-500">No deals loaded. Click Refresh.</div>
+            ) : (
+              <div className="rounded-xl border border-slate-700 overflow-hidden">
+                <table className="w-full text-sm">
+                  <thead className="bg-slate-800 text-slate-400 text-xs uppercase">
+                    <tr>
+                      <th className="px-3 py-2 text-left">Item</th>
+                      <th className="px-3 py-2 text-right">Price</th>
+                      <th className="px-3 py-2 text-right">Was</th>
+                      <th className="px-3 py-2 text-center">Off</th>
+                      <th className="px-3 py-2 text-left">Signal</th>
+                      <th className="px-3 py-2 text-left">Store</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-700/50">
+                    {clearanceDeals.map((deal: any, i: number) => {
+                      const pct = deal.pct_off || 0;
+                      const discountColor = pct >= 60 ? "text-green-400 font-bold" : pct >= 40 ? "text-yellow-400" : "text-slate-300";
+                      return (
+                        <tr key={i} className="hover:bg-slate-800/50 transition">
+                          <td className="px-3 py-2">
+                            <a href={`https://www.homedepot.com/p/${deal.itemId}`} target="_blank" rel="noopener noreferrer" className="hover:underline">
+                              <div className="font-medium text-white text-xs">{deal.brand || "—"}</div>
+                              <div className="text-slate-400 text-xs truncate max-w-[200px]">{deal.name || deal.itemId}</div>
+                            </a>
+                          </td>
+                          <td className="px-3 py-2 text-right font-bold text-white">${deal.price?.toFixed(2) ?? "—"}</td>
+                          <td className="px-3 py-2 text-right text-slate-500 line-through text-xs">{deal.list_price ? `$${deal.list_price.toFixed(2)}` : "—"}</td>
+                          <td className={`px-3 py-2 text-center ${discountColor}`}>{pct > 0 ? `-${pct.toFixed(0)}%` : "—"}</td>
+                          <td className="px-3 py-2 text-xs text-slate-400">{deal.clearance_signal?.replace(/_/g, " ") || "—"}</td>
+                          <td className="px-3 py-2 text-xs text-slate-300">{deal.store_name || deal.store_id}</td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
         )}
 
         {activeTab === "lionx" && <LionXAdmin/>}
