@@ -69,14 +69,14 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "4-2-0",
-  unitsWagered: 6.8,
-  unitsNet: 2.022,
-  roi: "+29.7%",
+  record: "5-3-0",
+  unitsWagered: 9.1,
+  unitsNet: 2.47,
+  roi: "+27.1%",
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-26 (EOD)",
+  lastUpdated: "2026-04-28",
 };
 
 // Apr 26 picks from Ace model
