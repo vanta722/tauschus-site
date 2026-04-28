@@ -73,33 +73,24 @@ const BETTING_STATS = {
   unitsWagered: 9.1,
   unitsNet: 2.47,
   roi: "+27.1%",
+  bankroll: 37.54,
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
   lastUpdated: "2026-04-28",
 };
 
-// Apr 26 picks from Ace model
+// Apr 28 picks — Mac + ACE cross-validated
 const APR26_PICKS = [
   {
-    matchup: "NYY @ Astros",
-    time: "2:11 PM ET",
-    bet: "Astros ML",
-    odds: "+116",
-    units: 2.0,
-    reason: "Luis Gil high walk rate (11.2% BB) vs Arrighetti. Market undervaluing HOU home edge. FIP edge: 3.80 vs 4.20.",
-    confidence: "High" as const,
-    status: "Won" as const,
-  },
-  {
-    matchup: "Cubs @ Dodgers",
-    time: "4:11 PM ET",
-    bet: "Cubs ML",
-    odds: "+110",
+    matchup: "BOS @ TOR",
+    time: "7:07 PM ET",
+    bet: "Red Sox ML",
+    odds: "+100",
     units: 1.0,
-    reason: "Imanaga (FIP 3.25) vs Wrobleski (FIP 4.50, rookie). SP mismatch overcomes LAD offense edge.",
-    confidence: "Med" as const,
-    status: "Lost" as const,
+    reason: "Tolle dominant debut (6 IP, 1 ER, 11 Ks vs NYY). Yesavage is a minor league callup — zero MLB track record. Clear qualitative edge at positive odds. Mac + ACE both confirm.",
+    confidence: "High" as const,
+    status: "Pending" as const,
   },
 ];
 
@@ -209,6 +200,9 @@ export default function Dashboard() {
     { id: 4, date: "2026-04-25", game: "Padres @ D-backs", bet: "D-backs ML", odds: "-120", units: 1, result: "Lost", pnl: -1, wager: "$10", toWin: "$18.33" },
     { id: 5, date: "2026-04-26", game: "Yankees @ Astros", bet: "Astros ML", odds: "+115", units: 1.8, result: "Won", pnl: 2.07, wager: "$9", toWin: "$10.35" },
     { id: 6, date: "2026-04-26", game: "Cubs @ Dodgers", bet: "Cubs ML", odds: "+110", units: 1.0, result: "Lost", pnl: -1.0, wager: "$5", toWin: "$10.50" },
+    { id: 7, date: "2026-04-27", game: "Rays @ Guardians", bet: "Guardians ML", odds: "-140", units: 0.8, result: "Lost", pnl: -0.8, wager: "$4", toWin: "$6.86" },
+    { id: 8, date: "2026-04-27", game: "Cubs @ Padres", bet: "Padres ML", odds: "-120", units: 1.5, result: "Won", pnl: 1.25, wager: "$20", toWin: "$36.67" },
+    { id: 9, date: "2026-04-28", game: "Red Sox @ Blue Jays", bet: "Red Sox ML", odds: "+100", units: 1.0, result: "Pending", pnl: 0, wager: "$17", toWin: "$34.00" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
@@ -1212,7 +1206,7 @@ export default function Dashboard() {
 
             {/* ── BANKROLL PROGRESS BAR ── */}
             {(() => {
-              const BANKROLL_CURRENT = 24.87;
+              const BANKROLL_CURRENT = 37.54;
               const BANKROLL_GOAL = 1000;
               const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.952
               const milestones = [
@@ -1333,24 +1327,23 @@ export default function Dashboard() {
             {/* ── TODAY — BETS PLACED ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
-                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ RESULT (Apr 25) — LOSS</p>
-                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB · 3-0-0 all-time</p>
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ RECENT RESULTS — Record 5-3-0</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB · Bankroll $37.54</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Arizona Diamondbacks ML -120</span> — SD 6, ARI 4</li>
-                <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Astros ML +115</span> — HOU 7, NYY 4 (+$10.35)</li>
-                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Cubs ML +110</span> — LAD 6, CHC 0 (-$5.00)</li>
-                <li className="text-sm text-slate-300">💰 Still up +$9.52 overall — System: 3-1-0</li>
-                <li className="text-sm text-slate-300">⏳ Result tonight ~6 PM ET</li>
+                <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Padres ML -120</span> — SD 9, CHC 7 (+$16.67) · Apr 27</li>
+                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Guardians ML -140</span> — TB 3, CLE 2 (-$4.00) · Apr 27</li>
+                <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Astros ML +115</span> — HOU 7, NYY 4 (+$10.35) · Apr 26</li>
+                <li className="text-sm text-slate-300">⏳ LIVE: <span className="font-bold text-white">Red Sox ML +100</span> — BOS @ TOR · 7:07 PM ET</li>
               </ul>
             </div>
 
             {/* ── LIVE LINES ── */}
             {(() => {
               const TARGET_GAMES = [
-                { home: "Cleveland Guardians", away: "Houston Astros", pickSide: "Cleveland Guardians" },
-                { home: "New York Mets",       away: "Minnesota Twins",   pickSide: "New York Mets"      },
-                { home: "Arizona Diamondbacks",away: "Chicago White Sox", pickSide: "Arizona Diamondbacks"},
+                { home: "Toronto Blue Jays", away: "Boston Red Sox", pickSide: "Boston Red Sox" },
+                { home: "Minnesota Twins", away: "Seattle Mariners", pickSide: "Minnesota Twins" },
+                { home: "Atlanta Braves", away: "Detroit Tigers", pickSide: "Detroit Tigers" },
               ];
 
               const formatOdds = (n: number) => (n > 0 ? `+${n}` : `${n}`);
@@ -1544,7 +1537,7 @@ export default function Dashboard() {
 
             {/* ── DAILY PLAYS ── */}
             <div>
-              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — Apr 26, 2026 <span className="ml-2 text-slate-500 normal-case font-normal">(Ace Model v1)</span></p>
+              <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">⚾ Daily Plays — Apr 28, 2026 <span className="ml-2 text-slate-500 normal-case font-normal">(Mac + ACE cross-validated)</span></p>
               <div className="grid gap-4 md:grid-cols-2">
                 {APR26_PICKS.map((pick, i) => {
                   const confColor = pick.confidence === "High" ? "bg-green-500/20 text-green-300 border border-green-500/30"
