@@ -351,7 +351,7 @@ export default function Home() {
 
         /* ── Text ── */
         .cosmic-title {
-          background: linear-gradient(135deg, #38BDF8 0%, #A78BFA 35%, #F472B6 65%, #38BDF8 100%);
+          background: linear-gradient(135deg, #38BDF8 0%, #A78BFA 35%, #2DD4BF 65%, #38BDF8 100%);
           background-size: 200% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
@@ -476,7 +476,7 @@ export default function Home() {
           <p className="fade-up d3 font-body font-light mb-4" style={{ fontSize: "clamp(16px, 2.5vw, 22px)", color: "#7DD3FC", letterSpacing: "0.04em", lineHeight: 1.6, textShadow: "0 0 30px rgba(125,211,252,0.35)" }}>
             Building from orbit.
           </p>
-          <p className="fade-up d4 font-body font-light max-w-lg mx-auto" style={{ fontSize: "14px", color: "#94A3B8", lineHeight: 1.8, letterSpacing: "0.03em" }}>
+          <p className="fade-up d4 font-body font-light max-w-lg mx-auto" style={{ fontSize: "14px", color: "#7DD3FC", lineHeight: 1.8, letterSpacing: "0.03em", opacity: 0.75 }}>
             A collection of ventures built at the intersection of AI, finance, and the trades.
             Each project a satellite. Each orbit intentional.
           </p>
