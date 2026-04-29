@@ -228,17 +228,17 @@ function ProjectCard({ p, i }: { p: typeof PROJECTS[0]; i: number }) {
       </div>
 
       {/* Name */}
-      <h3 className="font-display font-bold mb-2 transition-all duration-300 px-4" style={{ fontSize: "clamp(16px, 2vw, 20px)", color: hovered ? p.color : "#E8E8E8", lineHeight: 1.2 }}>
+      <h3 className="font-display font-bold mb-2 transition-all duration-300 px-4" style={{ fontSize: "clamp(16px, 2vw, 20px)", color: hovered ? p.color : "#BAE6FD", lineHeight: 1.2, textShadow: hovered ? `0 0 16px ${p.color}` : "0 0 10px rgba(186,230,253,0.25)" }}>
         {p.name}
       </h3>
 
       {/* Tag */}
-      <div className="font-body text-xs mb-3" style={{ color: "rgba(255,255,255,0.2)", letterSpacing: "0.15em", fontSize: "9px" }}>{p.tag}</div>
+      <div className="font-body text-xs mb-3" style={{ color: "#67E8F9", letterSpacing: "0.15em", fontSize: "9px", opacity: 0.6 }}>{p.tag}</div>
 
       {/* Desc — only visible on hover */}
       <p className="font-body px-6 transition-all duration-300" style={{
         fontSize: "12px",
-        color: "rgba(232,232,232,0.45)",
+        color: "#BAE6FD",
         lineHeight: 1.6,
         maxHeight: hovered ? "80px" : "0px",
         overflow: "hidden",
@@ -351,17 +351,24 @@ export default function Home() {
 
         /* ── Text ── */
         .cosmic-title {
-          background: linear-gradient(135deg, #E0E7FF 0%, #BAE6FD 30%, #E0E7FF 60%, #F0F9FF 100%);
+          background: linear-gradient(135deg, #38BDF8 0%, #A78BFA 35%, #F472B6 65%, #38BDF8 100%);
+          background-size: 200% auto;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
+          animation: aurora-shift 6s linear infinite;
+        }
+        @keyframes aurora-shift {
+          0%   { background-position: 0% center; }
+          100% { background-position: 200% center; }
         }
         .cosmic-sub {
-          background: linear-gradient(135deg, #64748B 0%, #94A3B8 50%, #64748B 100%);
+          background: linear-gradient(135deg, #67E8F9 0%, #A5F3FC 50%, #67E8F9 100%);
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
           background-clip: text;
         }
+        .neon-label { color: #67E8F9; letter-spacing: 0.3em; text-shadow: 0 0 12px rgba(103,232,249,0.5); }
 
         /* ── Animations ── */
         @keyframes fade-up {
@@ -428,7 +435,7 @@ export default function Home() {
         /* ── Divider ── */
         .cosmic-line {
           height: 1px;
-          background: linear-gradient(90deg, transparent, rgba(148,163,184,0.15), transparent);
+          background: linear-gradient(90deg, transparent, rgba(34,211,238,0.25), transparent);
         }
       `}</style>
 
@@ -456,7 +463,7 @@ export default function Home() {
           {/* Eyebrow */}
           <div className="fade-in d1 inline-flex items-center gap-3 mb-8">
             <div className="h-px w-10" style={{ background: "linear-gradient(90deg, transparent, rgba(148,163,184,0.4))" }} />
-            <span className="font-body text-xs tracking-widest" style={{ color: "rgba(148,163,184,0.5)", letterSpacing: "0.3em" }}>TAUSCHUS VENTURES</span>
+            <span className="font-body text-xs neon-label">TAUSCHUS VENTURES</span>
             <div className="h-px w-10" style={{ background: "linear-gradient(90deg, rgba(148,163,184,0.4), transparent)" }} />
           </div>
 
@@ -466,17 +473,17 @@ export default function Home() {
           </h1>
 
           {/* Tagline */}
-          <p className="fade-up d3 font-body font-light mb-4" style={{ fontSize: "clamp(16px, 2.5vw, 22px)", color: "rgba(226,232,240,0.45)", letterSpacing: "0.04em", lineHeight: 1.6 }}>
+          <p className="fade-up d3 font-body font-light mb-4" style={{ fontSize: "clamp(16px, 2.5vw, 22px)", color: "#7DD3FC", letterSpacing: "0.04em", lineHeight: 1.6, textShadow: "0 0 30px rgba(125,211,252,0.35)" }}>
             Building from orbit.
           </p>
-          <p className="fade-up d4 font-body font-light max-w-lg mx-auto" style={{ fontSize: "14px", color: "rgba(148,163,184,0.35)", lineHeight: 1.8, letterSpacing: "0.03em" }}>
+          <p className="fade-up d4 font-body font-light max-w-lg mx-auto" style={{ fontSize: "14px", color: "#94A3B8", lineHeight: 1.8, letterSpacing: "0.03em" }}>
             A collection of ventures built at the intersection of AI, finance, and the trades.
             Each project a satellite. Each orbit intentional.
           </p>
 
           {/* Scroll cue */}
-          <div className="fade-in d5 mt-14 flex flex-col items-center gap-1" style={{ color: "rgba(148,163,184,0.2)" }}>
-            <span className="font-body text-xs tracking-widest" style={{ letterSpacing: "0.25em" }}>VENTURES BELOW</span>
+          <div className="fade-in d5 mt-14 flex flex-col items-center gap-1">
+            <span className="font-body text-xs neon-label" style={{ opacity: 0.5 }}>VENTURES BELOW</span>
             <svg width="16" height="24" viewBox="0 0 16 24" fill="none" style={{ opacity: 0.3, marginTop: "6px" }}>
               <path d="M8 0v20M2 14l6 6 6-6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
@@ -491,7 +498,7 @@ export default function Home() {
           {/* Section label */}
           <div className="flex items-center gap-4 mb-10">
             <div className="cosmic-line flex-1" />
-            <span className="font-body text-xs tracking-widest" style={{ color: "rgba(148,163,184,0.3)", letterSpacing: "0.3em" }}>ACTIVE VENTURES</span>
+            <span className="font-body text-xs neon-label">ACTIVE VENTURES</span>
             <div className="cosmic-line flex-1" />
           </div>
 
@@ -507,7 +514,7 @@ export default function Home() {
       {/* ── FOOTER ────────────────────────────────────────────────────────────── */}
       <footer className="relative z-10 py-12 px-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.03)" }}>
         <div className="font-display text-xl cosmic-title font-bold mb-2">Tauschus</div>
-        <p className="font-body text-xs" style={{ color: "rgba(148,163,184,0.2)", letterSpacing: "0.1em" }}>
+        <p className="font-body text-xs" style={{ color: "#67E8F9", letterSpacing: "0.1em", opacity: 0.35 }}>
           Building in orbit · {new Date().getFullYear()}
         </p>
       </footer>
