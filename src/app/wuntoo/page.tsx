@@ -456,11 +456,7 @@ export default function WunToo() {
         <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full animate-float pointer-events-none"
           style={{ background: "radial-gradient(circle, rgba(192,192,192,0.03) 0%, transparent 70%)", filter: "blur(40px)", animationDelay: "3s" }} />
 
-        {/* Scroll indicator */}
-        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2 animate-pulse-gold">
-          <span className="font-body text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.4)" }}>SCROLL</span>
-          <div className="w-px h-12" style={{ background: "linear-gradient(180deg, rgba(212,175,55,0.4), transparent)" }} />
-        </div>
+
       </section>
 
       {/* ── TODAY'S PICKS ──────────────────────────────────────────────────── */}
