@@ -436,7 +436,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "#020209", color: "#E8E8E8" }}>
+    <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "transparent", color: "#E8E8E8" }}>
       <ImmersiveScene mode={immersiveMode} quality="med" interactive={false} />
       <StarField />
       <Earth />
