@@ -181,6 +181,8 @@ function Earth() {
       <div className="earth-sphere">
         <div className="earth-surface" />
         <div className="earth-clouds" />
+        <div className="earth-night" />
+        <div className="earth-atmosphere-edge" />
         <div className="earth-atmosphere" />
         <div className="earth-shine" />
       </div>
@@ -281,15 +283,15 @@ export default function Home() {
         /* ── Earth ── */
         .earth-wrap {
           position: fixed;
-          bottom: -280px;
+          bottom: -300px;
           left: 50%;
           transform: translateX(-50%);
           z-index: 1;
-          width: 700px;
-          height: 700px;
+          width: 740px;
+          height: 740px;
         }
         @media (max-width: 768px) {
-          .earth-wrap { width: 420px; height: 420px; bottom: -180px; }
+          .earth-wrap { width: 440px; height: 440px; bottom: -190px; }
         }
         .earth-sphere {
           width: 100%;
@@ -297,56 +299,68 @@ export default function Home() {
           border-radius: 50%;
           position: relative;
           overflow: hidden;
-          animation: earth-spin 80s linear infinite;
         }
         .earth-surface {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          background:
-            radial-gradient(ellipse at 35% 30%, #1B6CA8 0%, transparent 50%),
-            radial-gradient(ellipse at 65% 55%, #2E7D32 0%, transparent 40%),
-            radial-gradient(ellipse at 20% 70%, #1565C0 0%, transparent 45%),
-            radial-gradient(ellipse at 75% 20%, #1976D2 0%, transparent 35%),
-            radial-gradient(ellipse at 50% 80%, #2E7D32 0%, transparent 30%),
-            radial-gradient(circle, #0D47A1 0%, #1A237E 40%, #0A0A2E 75%, #020209 100%);
+          background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/The_Blue_Marble_%28remastered%29.jpg/2048px-The_Blue_Marble_%28remastered%29.jpg');
+          background-size: 200% 100%;
+          background-repeat: repeat-x;
+          animation: earth-rotate 40s linear infinite;
+        }
+        @keyframes earth-rotate {
+          from { background-position: 0% center; }
+          to   { background-position: 100% center; }
+        }
+        .earth-night {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: radial-gradient(circle at 72% 50%, transparent 38%, rgba(2,2,9,0.55) 58%, rgba(2,2,9,0.92) 75%);
+          pointer-events: none;
         }
         .earth-clouds {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          background:
-            radial-gradient(ellipse at 40% 25%, rgba(255,255,255,0.12) 0%, transparent 30%),
-            radial-gradient(ellipse at 70% 60%, rgba(255,255,255,0.08) 0%, transparent 25%),
-            radial-gradient(ellipse at 20% 55%, rgba(255,255,255,0.07) 0%, transparent 20%);
-          animation: cloud-drift 120s linear infinite;
+          background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/Clouds_reflecting_sunlight_%28Aqua%2C_2008%29.jpg/2048px-Clouds_reflecting_sunlight_%28Aqua%2C_2008%29.jpg');
+          background-size: 200% 100%;
+          background-repeat: repeat-x;
+          opacity: 0.18;
+          mix-blend-mode: screen;
+          animation: earth-rotate 55s linear infinite reverse;
         }
         .earth-atmosphere {
           position: absolute;
-          inset: -12px;
+          inset: -16px;
           border-radius: 50%;
           background: transparent;
           box-shadow:
-            inset 0 0 60px rgba(79,195,247,0.15),
-            0 0 60px rgba(79,195,247,0.12),
-            0 0 120px rgba(21,101,192,0.08),
-            0 0 200px rgba(13,71,161,0.05);
+            inset 0 0 50px rgba(79,195,247,0.18),
+            0 0 70px rgba(79,195,247,0.18),
+            0 0 140px rgba(21,101,192,0.1),
+            0 0 220px rgba(13,71,161,0.06);
+          pointer-events: none;
+        }
+        .earth-atmosphere-edge {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: radial-gradient(ellipse at 50% 50%,
+            transparent 60%,
+            rgba(56,189,248,0.06) 72%,
+            rgba(56,189,248,0.18) 82%,
+            rgba(56,189,248,0.08) 90%,
+            transparent 100%);
           pointer-events: none;
         }
         .earth-shine {
           position: absolute;
           inset: 0;
           border-radius: 50%;
-          background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08) 0%, transparent 50%);
+          background: radial-gradient(circle at 28% 22%, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0.04) 20%, transparent 50%);
           pointer-events: none;
-        }
-        @keyframes earth-spin {
-          from { filter: hue-rotate(0deg); }
-          to   { filter: hue-rotate(5deg); }
-        }
-        @keyframes cloud-drift {
-          from { transform: rotate(0deg); }
-          to   { transform: rotate(360deg); }
         }
 
         /* ── Text ── */
