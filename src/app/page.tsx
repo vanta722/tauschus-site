@@ -188,7 +188,7 @@ function Earth() {
   );
 }
 
-// ─── PROJECT CARD ─────────────────────────────────────────────────────────────
+// ─── BUBBLE CARD ─────────────────────────────────────────────────────────────
 function ProjectCard({ p, i }: { p: typeof PROJECTS[0]; i: number }) {
   const [hovered, setHovered] = useState(false);
 
@@ -197,66 +197,62 @@ function ProjectCard({ p, i }: { p: typeof PROJECTS[0]; i: number }) {
       href={p.href}
       target={p.href.startsWith("http") ? "_blank" : "_self"}
       rel="noopener noreferrer"
-      className="project-card block rounded-sm transition-all duration-500"
+      className="bubble-card flex flex-col items-center justify-center text-center transition-all duration-500"
       style={{
         animationDelay: `${i * 0.15}s`,
-        border: `1px solid ${hovered ? p.border : "rgba(255,255,255,0.06)"}`,
-        boxShadow: hovered ? `0 0 40px ${p.glow}, 0 0 80px ${p.glow.replace("0.3", "0.08")}` : "none",
-        background: hovered
-          ? `linear-gradient(135deg, ${p.glow.replace("0.3", "0.06")} 0%, rgba(0,0,0,0.85) 100%)`
-          : "rgba(5,5,15,0.7)",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
         cursor: p.href === "#" ? "default" : "pointer",
+        transform: hovered ? "translateY(-8px) scale(1.04)" : "translateY(0) scale(1)",
+        boxShadow: hovered
+          ? `0 0 60px ${p.glow}, 0 0 120px ${p.glow.replace("0.3","0.1")}, inset 0 1px 1px rgba(255,255,255,0.15)`
+          : `0 0 20px ${p.glow.replace("0.3","0.06")}, inset 0 1px 1px rgba(255,255,255,0.06)`,
+        background: hovered
+          ? `radial-gradient(circle at 35% 30%, ${p.glow.replace("0.3","0.18")} 0%, rgba(5,5,20,0.85) 70%)`
+          : `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.05) 0%, rgba(5,5,20,0.7) 70%)`,
+        borderColor: hovered ? p.color : "rgba(255,255,255,0.08)",
       }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <div className="p-7">
-        {/* Top row */}
-        <div className="flex items-start justify-between mb-5">
-          <div className="flex items-center gap-3">
-            <span style={{ fontSize: "28px" }}>{p.icon}</span>
-            <div>
-              <div className="font-body text-xs tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em" }}>{p.tag}</div>
-            </div>
-          </div>
-          <span
-            className="font-body text-xs px-2 py-1 rounded-sm"
-            style={{
-              background: p.status === "LIVE" ? "rgba(74,222,128,0.1)" : p.status === "BETA" ? "rgba(212,175,55,0.1)" : "rgba(100,116,139,0.1)",
-              color: p.status === "LIVE" ? "#4ADE80" : p.status === "BETA" ? "#D4AF37" : "#64748B",
-              border: `1px solid ${p.status === "LIVE" ? "rgba(74,222,128,0.25)" : p.status === "BETA" ? "rgba(212,175,55,0.25)" : "rgba(100,116,139,0.2)"}`,
-              letterSpacing: "0.15em",
-            }}
-          >
-            {p.status}
-          </span>
-        </div>
-
-        {/* Name */}
-        <h3
-          className="font-display text-2xl font-bold mb-3 transition-all duration-300"
-          style={{ color: hovered ? p.color : "#E8E8E8" }}
-        >
-          {p.name}
-        </h3>
-
-        {/* Desc */}
-        <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(232,232,232,0.4)" }}>
-          {p.desc}
-        </p>
-
-        {/* Arrow */}
-        {p.href !== "#" && (
-          <div
-            className="mt-5 flex items-center gap-2 font-body text-xs transition-all duration-300"
-            style={{ color: hovered ? p.color : "rgba(255,255,255,0.2)", letterSpacing: "0.15em" }}
-          >
-            <span>ENTER</span>
-            <span style={{ transform: hovered ? "translateX(4px)" : "translateX(0)", transition: "transform 0.3s" }}>→</span>
-          </div>
-        )}
+      {/* Icon */}
+      <div className="mb-3 transition-all duration-300" style={{ fontSize: "36px", transform: hovered ? "scale(1.15)" : "scale(1)" }}>
+        {p.icon}
       </div>
+
+      {/* Status dot */}
+      <div className="flex items-center gap-1.5 mb-3">
+        <div className="w-1.5 h-1.5 rounded-full" style={{
+          background: p.status === "LIVE" ? "#4ADE80" : p.status === "BETA" ? "#D4AF37" : "#64748B",
+          boxShadow: p.status === "LIVE" ? "0 0 6px #4ADE80" : p.status === "BETA" ? "0 0 6px #D4AF37" : "none",
+        }} />
+        <span className="font-body text-xs tracking-widest" style={{ color: p.status === "LIVE" ? "#4ADE80" : p.status === "BETA" ? "#D4AF37" : "#64748B", letterSpacing: "0.2em", fontSize: "10px" }}>{p.status}</span>
+      </div>
+
+      {/* Name */}
+      <h3 className="font-display font-bold mb-2 transition-all duration-300 px-4" style={{ fontSize: "clamp(16px, 2vw, 20px)", color: hovered ? p.color : "#E8E8E8", lineHeight: 1.2 }}>
+        {p.name}
+      </h3>
+
+      {/* Tag */}
+      <div className="font-body text-xs mb-3" style={{ color: "rgba(255,255,255,0.2)", letterSpacing: "0.15em", fontSize: "9px" }}>{p.tag}</div>
+
+      {/* Desc — only visible on hover */}
+      <p className="font-body px-6 transition-all duration-300" style={{
+        fontSize: "12px",
+        color: "rgba(232,232,232,0.45)",
+        lineHeight: 1.6,
+        maxHeight: hovered ? "80px" : "0px",
+        overflow: "hidden",
+        opacity: hovered ? 1 : 0,
+      }}>
+        {p.desc}
+      </p>
+
+      {/* Arrow */}
+      {p.href !== "#" && (
+        <div className="mt-3 transition-all duration-300" style={{ color: hovered ? p.color : "transparent", fontSize: "16px" }}>
+          ↗
+        </div>
+      )}
     </a>
   );
 }
@@ -384,8 +380,32 @@ export default function Home() {
         .d4 { animation-delay: 0.65s; }
         .d5 { animation-delay: 0.85s; }
 
-        /* ── Cards ── */
-        .project-card { backdrop-filter: blur(20px); }
+        /* ── Bubbles ── */
+        .bubble-card {
+          width: 200px;
+          height: 200px;
+          border-radius: 50%;
+          border: 1px solid rgba(255,255,255,0.08);
+          backdrop-filter: blur(24px);
+          -webkit-backdrop-filter: blur(24px);
+          position: relative;
+          overflow: hidden;
+        }
+        .bubble-card::before {
+          content: '';
+          position: absolute;
+          top: 8%;
+          left: 18%;
+          width: 35%;
+          height: 18%;
+          border-radius: 50%;
+          background: rgba(255,255,255,0.07);
+          filter: blur(4px);
+          pointer-events: none;
+        }
+        @media (max-width: 640px) {
+          .bubble-card { width: 155px; height: 155px; }
+        }
         .cards-enter > * {
           opacity: 0;
           animation: fade-up 0.7s ease-out forwards;
@@ -475,8 +495,8 @@ export default function Home() {
             <div className="cosmic-line flex-1" />
           </div>
 
-          {/* Grid */}
-          <div className="cards-enter grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Bubble Grid */}
+          <div className="cards-enter grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
             {PROJECTS.map((p, i) => (
               <ProjectCard key={p.id} p={p} i={i} />
             ))}
