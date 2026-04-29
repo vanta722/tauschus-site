@@ -69,15 +69,15 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "5-3-0",
-  unitsWagered: 9.1,
-  unitsNet: 2.47,
-  roi: "+27.1%",
-  bankroll: 37.54,
+  record: "5-4-0",
+  unitsWagered: 10.1,
+  unitsNet: 1.47,
+  roi: "+14.6%",
+  bankroll: 20.54,
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
-  lastUpdated: "2026-04-28",
+  lastUpdated: "2026-04-29",
 };
 
 // Apr 28 picks — Mac + ACE cross-validated
@@ -90,7 +90,7 @@ const APR26_PICKS = [
     units: 1.0,
     reason: "Tolle dominant debut (6 IP, 1 ER, 11 Ks vs NYY). Yesavage is a minor league callup — zero MLB track record. Clear qualitative edge at positive odds. Mac + ACE both confirm.",
     confidence: "High" as const,
-    status: "Pending" as const,
+    status: "Lost" as const,
   },
 ];
 
@@ -1206,7 +1206,7 @@ export default function Dashboard() {
 
             {/* ── BANKROLL PROGRESS BAR ── */}
             {(() => {
-              const BANKROLL_CURRENT = 37.54;
+              const BANKROLL_CURRENT = 20.54;
               const BANKROLL_GOAL = 1000;
               const fillPct = (BANKROLL_CURRENT / BANKROLL_GOAL) * 100; // 1.952
               const milestones = [
@@ -1334,7 +1334,7 @@ export default function Dashboard() {
                 <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Padres ML -120</span> — SD 9, CHC 7 (+$16.67) · Apr 27</li>
                 <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Guardians ML -140</span> — TB 3, CLE 2 (-$4.00) · Apr 27</li>
                 <li className="text-sm text-slate-300">✅ WON: <span className="font-bold text-white">Astros ML +115</span> — HOU 7, NYY 4 (+$10.35) · Apr 26</li>
-                <li className="text-sm text-slate-300">⏳ LIVE: <span className="font-bold text-white">Red Sox ML +100</span> — BOS @ TOR · 7:07 PM ET</li>
+                <li className="text-sm text-slate-300">❌ LOST: <span className="font-bold text-white">Red Sox ML +100</span> — TOR 3, BOS 0 (-$17.00) · Apr 28</li>
               </ul>
             </div>
 
