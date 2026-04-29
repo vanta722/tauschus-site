@@ -379,6 +379,13 @@ export default function WunToo() {
       {/* ── HERO ───────────────────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex flex-col items-center justify-center text-center px-6 grid-bg">
         <div className="relative z-10 max-w-5xl mx-auto">
+          {/* Baseball */}
+          <div className="opacity-0 animate-fade delay-1 flex justify-center mb-6">
+            <div className="animate-float" style={{ fontSize: "clamp(48px, 8vw, 80px)", filter: "drop-shadow(0 0 20px rgba(212,175,55,0.4)) drop-shadow(0 0 40px rgba(212,175,55,0.15))" }}>
+              ⚾
+            </div>
+          </div>
+
           {/* Eyebrow */}
           <div className="opacity-0 animate-fade delay-1 inline-flex items-center gap-3 mb-8">
             <div className="h-px w-12" style={{ background: "linear-gradient(90deg, transparent, #D4AF37)" }} />
