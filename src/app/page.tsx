@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import ImmersiveScene, { type ImmersiveMode } from "@/components/scene/ImmersiveScene";
-import { getInitialMode } from "@/lib/personalization/mode";
 
 // ─── PROJECTS ────────────────────────────────────────────────────────────────
 const PROJECTS = [
@@ -352,7 +350,7 @@ function Earth() {
 }
 
 // ─── BUBBLE CARD ─────────────────────────────────────────────────────────────
-function ProjectCard({ p, i, onFocus }: { p: typeof PROJECTS[0]; i: number; onFocus: (id: ImmersiveMode) => void }) {
+function ProjectCard({ p, i }: { p: typeof PROJECTS[0]; i: number }) {
   const [hovered, setHovered] = useState(false);
 
   return (
@@ -373,7 +371,7 @@ function ProjectCard({ p, i, onFocus }: { p: typeof PROJECTS[0]; i: number; onFo
           : `radial-gradient(circle at 35% 30%, rgba(255,255,255,0.05) 0%, rgba(5,5,20,0.7) 70%)`,
         borderColor: hovered ? p.color : "rgba(255,255,255,0.08)",
       }}
-      onMouseEnter={() => { setHovered(true); onFocus(p.id as ImmersiveMode); }}
+      onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Icon */}
@@ -422,11 +420,6 @@ function ProjectCard({ p, i, onFocus }: { p: typeof PROJECTS[0]; i: number; onFo
 
 // ─── MAIN ─────────────────────────────────────────────────────────────────────
 export default function Home() {
-  const [immersiveMode, setImmersiveMode] = useState<ImmersiveMode>("lionx");
-
-  useEffect(() => {
-    setImmersiveMode(getInitialMode("lionx"));
-  }, []);
   const [scrollY, setScrollY] = useState(0);
 
   useEffect(() => {
@@ -436,8 +429,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "transparent", color: "#E8E8E8" }}>
-      <ImmersiveScene mode={immersiveMode} quality="med" interactive={false} />
+    <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "#020209", color: "#E8E8E8" }}>
       <StarField />
       <Earth />
 
@@ -693,7 +685,7 @@ export default function Home() {
           {/* Bubble Grid */}
           <div className="cards-enter grid grid-cols-2 md:grid-cols-4 gap-6 justify-items-center">
             {PROJECTS.map((p, i) => (
-              <ProjectCard key={p.id} p={p} i={i} onFocus={setImmersiveMode} />
+              <ProjectCard key={p.id} p={p} i={i} />
             ))}
           </div>
         </div>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import ImmersiveScene from "@/components/scene/ImmersiveScene";
 
 // ─── LIVE DATA (update daily) ───────────────────────────────────────────────
 const STATS = {
@@ -218,7 +217,6 @@ export default function WunToo() {
 
   return (
     <div className="relative min-h-screen overflow-x-hidden" style={{ background: "#030303", color: "#E8E8E8" }}>
-      <ImmersiveScene mode="wuntoo" quality="med" interactive={false} />
       <ParticleField />
 
       {/* ── GLOBAL STYLES ── */}
