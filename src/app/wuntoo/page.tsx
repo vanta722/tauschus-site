@@ -13,13 +13,40 @@ const STATS = {
   since: "APR 21 2026",
 };
 
+// ─── TEAM LOGO MAP (ESPN CDN) ───────────────────────────────────────────────
+const TEAM_LOGOS: Record<string, string> = {
+  BOS: "https://a.espncdn.com/i/teamlogos/mlb/500/bos.png",
+  TOR: "https://a.espncdn.com/i/teamlogos/mlb/500/tor.png",
+  NYY: "https://a.espncdn.com/i/teamlogos/mlb/500/nyy.png",
+  HOU: "https://a.espncdn.com/i/teamlogos/mlb/500/hou.png",
+  CHC: "https://a.espncdn.com/i/teamlogos/mlb/500/chc.png",
+  LAD: "https://a.espncdn.com/i/teamlogos/mlb/500/lad.png",
+  ATL: "https://a.espncdn.com/i/teamlogos/mlb/500/atl.png",
+  NYM: "https://a.espncdn.com/i/teamlogos/mlb/500/nym.png",
+  PHI: "https://a.espncdn.com/i/teamlogos/mlb/500/phi.png",
+  MIL: "https://a.espncdn.com/i/teamlogos/mlb/500/mil.png",
+  TB:  "https://a.espncdn.com/i/teamlogos/mlb/500/tb.png",
+  CLE: "https://a.espncdn.com/i/teamlogos/mlb/500/cle.png",
+  SD:  "https://a.espncdn.com/i/teamlogos/mlb/500/sd.png",
+  COL: "https://a.espncdn.com/i/teamlogos/mlb/500/col.png",
+  SF:  "https://a.espncdn.com/i/teamlogos/mlb/500/sf.png",
+  MIN: "https://a.espncdn.com/i/teamlogos/mlb/500/min.png",
+  DET: "https://a.espncdn.com/i/teamlogos/mlb/500/det.png",
+  SEA: "https://a.espncdn.com/i/teamlogos/mlb/500/sea.png",
+  TEX: "https://a.espncdn.com/i/teamlogos/mlb/500/tex.png",
+  OAK: "https://a.espncdn.com/i/teamlogos/mlb/500/oak.png",
+};
+
 const PICKS = [
   {
     id: 1,
     status: "LOCKED",
     game: "BOS @ TOR",
+    awayTeam: "BOS",
+    homeTeam: "TOR",
     time: "7:07 PM ET",
     bet: "BOS ML",
+    betTeam: "BOS",
     odds: "+100",
     units: "1.0u",
     confidence: 78,
@@ -447,16 +474,54 @@ export default function WunToo() {
           {PICKS.map((pick) => (
             <div key={pick.id} className="ticket-card rounded-sm mb-6 p-8 animate-border-glow glow-gold">
               {/* Header row */}
-              <div className="flex flex-wrap items-start justify-between gap-4 mb-8">
-                <div>
-                  <div className="flex items-center gap-3 mb-2">
+              <div className="flex flex-wrap items-start justify-between gap-6 mb-8">
+                {/* Left: badges + matchup with logos */}
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-4">
                     <span className="font-body text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.5)", letterSpacing: "0.2em" }}>PICK #{pick.id}</span>
                     <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: pick.status === "LOCKED" ? "rgba(74,222,128,0.1)" : "rgba(212,175,55,0.1)", color: pick.status === "LOCKED" ? "#4ADE80" : "#FFD700", border: `1px solid ${pick.status === "LOCKED" ? "rgba(74,222,128,0.3)" : "rgba(212,175,55,0.3)"}`, letterSpacing: "0.15em" }}>{pick.status}</span>
                     <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: "rgba(212,175,55,0.08)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.2)", letterSpacing: "0.1em" }}>{pick.tag}</span>
                   </div>
-                  <div className="font-display text-3xl font-bold" style={{ color: "#E8E8E8" }}>{pick.game}</div>
-                  <div className="font-body text-sm mt-1" style={{ color: "rgba(232,232,232,0.35)" }}>{pick.time}</div>
+                  {/* Team logos + matchup */}
+                  <div className="flex items-center gap-4 mb-2">
+                    {/* Away team */}
+                    <div className="flex flex-col items-center gap-2">
+                      {TEAM_LOGOS[pick.awayTeam] && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={TEAM_LOGOS[pick.awayTeam]}
+                          alt={pick.awayTeam}
+                          width={56}
+                          height={56}
+                          className="object-contain drop-shadow-lg"
+                          style={{ filter: pick.betTeam === pick.awayTeam ? "drop-shadow(0 0 10px rgba(212,175,55,0.6))" : "grayscale(30%) opacity(0.7)" }}
+                        />
+                      )}
+                      <span className="font-body text-xs font-bold" style={{ color: pick.betTeam === pick.awayTeam ? "#FFD700" : "rgba(232,232,232,0.4)", letterSpacing: "0.1em" }}>{pick.awayTeam}</span>
+                    </div>
+                    {/* @ divider */}
+                    <div className="flex flex-col items-center">
+                      <span className="font-display text-2xl" style={{ color: "rgba(232,232,232,0.15)" }}>@</span>
+                    </div>
+                    {/* Home team */}
+                    <div className="flex flex-col items-center gap-2">
+                      {TEAM_LOGOS[pick.homeTeam] && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={TEAM_LOGOS[pick.homeTeam]}
+                          alt={pick.homeTeam}
+                          width={56}
+                          height={56}
+                          className="object-contain drop-shadow-lg"
+                          style={{ filter: pick.betTeam === pick.homeTeam ? "drop-shadow(0 0 10px rgba(212,175,55,0.6))" : "grayscale(30%) opacity(0.7)" }}
+                        />
+                      )}
+                      <span className="font-body text-xs font-bold" style={{ color: pick.betTeam === pick.homeTeam ? "#FFD700" : "rgba(232,232,232,0.4)", letterSpacing: "0.1em" }}>{pick.homeTeam}</span>
+                    </div>
+                  </div>
+                  <div className="font-body text-sm" style={{ color: "rgba(232,232,232,0.35)" }}>{pick.time}</div>
                 </div>
+                {/* Right: bet info */}
                 <div className="text-right">
                   <div className="font-body text-xs tracking-widest mb-1" style={{ color: "rgba(212,175,55,0.5)" }}>BET</div>
                   <div className="font-display text-4xl font-black gold-text">{pick.bet}</div>
