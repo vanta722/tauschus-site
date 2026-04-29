@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 // ─── LIVE DATA (update daily) ───────────────────────────────────────────────
 const STATS = {
-  record: "5-3",
-  roi: "+27.1%",
-  units: "+2.47u",
-  clv: "+3.2%",
-  streak: "W2",
-  bankroll: "$37.54",
+  record: "5-4",
+  roi: "+14.6%",
+  units: "+1.47u",
+  clv: "TBD",
+  streak: "L1",
+  bankroll: "$20.54",
   since: "APR 21 2026",
 };
 
@@ -40,30 +40,32 @@ const TEAM_LOGOS: Record<string, string> = {
 const PICKS = [
   {
     id: 1,
-    status: "LOCKED",
+    status: "SETTLED",
     game: "BOS @ TOR",
     awayTeam: "BOS",
     homeTeam: "TOR",
-    time: "7:07 PM ET",
+    time: "FINAL — TOR 3, BOS 0",
     bet: "BOS ML",
     betTeam: "BOS",
     odds: "+100",
     units: "1.0u",
     confidence: 78,
-    macSignal: "ERA GAP +1.4",
-    aceSignal: "MKT EDGE +6.2pp",
-    combined: "HIGH",
-    tag: "DUAL CONFIRMED",
+    macSignal: "ERA GAP — Tolle debut vs callup",
+    aceSignal: "MKT EDGE +3.5% (callup adj)",
+    combined: "LOSS",
+    tag: "SETTLED ❌",
   },
 ];
 
 const BET_LOG = [
-  { date: "APR 27", game: "Cubs @ Padres", bet: "SD ML", odds: "-120", result: "WIN", units: "+1.25u" },
-  { date: "APR 27", game: "Rays @ Guardians", bet: "CLE ML", odds: "-140", result: "LOSS", units: "-0.8u" },
+  { date: "APR 28", game: "BOS @ TOR", bet: "BOS ML", odds: "+100", result: "LOSS", units: "-1.0u" },
+  { date: "APR 27", game: "CHC @ SD", bet: "SD ML", odds: "-120", result: "WIN", units: "+1.25u" },
+  { date: "APR 27", game: "TB @ CLE", bet: "CLE ML", odds: "-140", result: "LOSS", units: "-0.8u" },
   { date: "APR 26", game: "NYY @ HOU", bet: "HOU ML", odds: "+115", result: "WIN", units: "+1.8u" },
   { date: "APR 26", game: "CHC @ LAD", bet: "CHC ML", odds: "+110", result: "LOSS", units: "-1.0u" },
-  { date: "APR 25", game: "ATL @ NYM", bet: "NYM ML", odds: "+105", result: "WIN", units: "+1.05u" },
-  { date: "APR 24", game: "PHI @ MIL", bet: "PHI ML", odds: "-115", result: "WIN", units: "+0.87u" },
+  { date: "APR 25", game: "SD @ ARI", bet: "ARI ML", odds: "-120", result: "LOSS", units: "-1.0u" },
+  { date: "APR 24", game: "BOS @ BAL", bet: "BAL ML", odds: "-120", result: "WIN", units: "+0.67u" },
+  { date: "APR 24", game: "CLE @ TOR", bet: "CLE ML", odds: "-125", result: "WIN", units: "+0.64u" },
 ];
 
 // ─── PARTICLE CANVAS ────────────────────────────────────────────────────────
