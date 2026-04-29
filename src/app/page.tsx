@@ -1,568 +1,496 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
-const PRODUCTS = [
+// ─── PROJECTS ────────────────────────────────────────────────────────────────
+const PROJECTS = [
   {
-    badge: "FREE",
-    badgeGreen: true,
-    icon: "📘",
-    title: "The Concrete Contractor's AI Estimating Playbook 2026",
-    description: "Stop losing bids to bad numbers. The exact AI tools, prompts, and workflow used to estimate faster, win more jobs, and protect your margins.",
-    bullets: ["5 AI tools reviewed", "6-step estimating workflow", "7+ ready-to-use ChatGPT prompts"],
-    cta: "Download Free →",
-    url: "https://tauschus.gumroad.com/l/vbfat",
-    tag: "Most Downloaded",
+    id: "lionx",
+    name: "LionX AI",
+    tag: "WEB3 · AI TOOLS",
+    desc: "Token-gated AI platform. Pay crypto, access premium intelligence. Built on Tron.",
+    href: "https://lionxai.com",
+    color: "#7C3AED",
+    glow: "rgba(124,58,237,0.3)",
+    border: "rgba(124,58,237,0.3)",
+    status: "LIVE",
+    icon: "🦁",
   },
   {
-    badge: "FREE",
-    badgeGreen: true,
-    icon: "📊",
-    title: "The Job Costing Fix for Concrete Contractors",
-    description: "A contractor can show $200K in annual profit while losing money on 40% of jobs. This guide gives you 5 AI-powered fixes to find exactly where your margins are bleeding — and stop it.",
-    bullets: ["5 most common job costing mistakes", "AI prompts to track labor by job", "Free tool stack to fix it today"],
-    cta: "Download Free →",
-    url: "https://vantaai3.gumroad.com/l/jobcostingfix26",
-    tag: "New Release",
+    id: "wuntoo",
+    name: "WunToo",
+    tag: "MLB · BETTING INTEL",
+    desc: "Dual-model MLB picks engine. ERA differential meets market edge. Zero guesswork.",
+    href: "/wuntoo",
+    color: "#D4AF37",
+    glow: "rgba(212,175,55,0.3)",
+    border: "rgba(212,175,55,0.3)",
+    status: "BETA",
+    icon: "⚾",
   },
   {
-    badge: "$1.99",
-    badgeGreen: false,
-    icon: "💰",
-    title: "The Concrete Contractor's Margin Protection Playbook",
-    description: "Material costs are up 7.1% annualized in 2026. Steel, rebar, diesel, cement — all moving against you. This playbook gives you 5 systems to protect your profits when costs spike.",
-    bullets: ["Price escalation clauses for every bid", "Material pre-purchasing strategy", "AI cost tracking tools (free)"],
-    cta: "Get It for $1.99 →",
-    url: "https://vantaai3.gumroad.com/l/marginplaybook26",
-    tag: "Best Value",
-  },
-  {
-    badge: "$9",
-    badgeGreen: false,
-    icon: "🦺",
-    title: "The Labor Shortage Survival Guide for Concrete Contractors",
-    description: "The industry is short 349,000 workers in 2026. You can't hire your way out — but you can systematize your way through it with AI.",
-    bullets: ["7 AI systems to run lean", "Lead auto-response & estimating automation", "Crew scheduling, invoicing & review systems"],
-    cta: "Get It for $9 →",
-    url: "https://vantaai3.gumroad.com/l/pdcsgr",
-    tag: "New Release",
-  },
-  {
-    badge: "$9",
-    badgeGreen: false,
+    id: "fca",
+    name: "Florida Concrete Alliance",
+    tag: "CONSTRUCTION · FLORIDA",
+    desc: "Concrete services for residential, commercial, and property management across Florida.",
+    href: "https://floridaconcretealliance.com",
+    color: "#F97316",
+    glow: "rgba(249,115,22,0.3)",
+    border: "rgba(249,115,22,0.3)",
+    status: "LIVE",
     icon: "🏗️",
-    title: "The Data Center Concrete Playbook",
-    description: "Data centers are being built at record pace. Learn exactly how to position your concrete business to land data center work — the fastest-growing construction segment in 2026.",
-    bullets: ["How to find data center projects near you", "Bid strategy for large commercial pours", "Key contacts & procurement process"],
-    cta: "Get It for $9 →",
-    url: "https://vantaai3.gumroad.com/l/datacenter26",
-    tag: "Hot Market",
+  },
+  {
+    id: "next",
+    name: "??? INCOMING",
+    tag: "CLASSIFIED · SOON",
+    desc: "Something new is being built. Keep watching.",
+    href: "#",
+    color: "#64748B",
+    glow: "rgba(100,116,139,0.15)",
+    border: "rgba(100,116,139,0.15)",
+    status: "SOON",
+    icon: "🛰️",
   },
 ];
 
-// ── OpenClaw Skills ──────────────────────────────────────────────────────────
-// To add a new skill: append one object to this array and redeploy. That's it.
-const SKILLS = [
-  {
-    icon: "📋",
-    title: "OpenClaw Quick-Start Checklist",
-    tag: "Email Capture",
-    tagColor: "blue",
-    description: "Top-of-funnel — every download = an email contact. The fastest way to start building your list inside OpenClaw.",
-    price: "FREE",
-    priceGreen: true,
-    url: "https://tauschus.gumroad.com/l/dwbmym",
-  },
-  {
-    icon: "🚀",
-    title: "Twitter Autopilot for OpenClaw",
-    tag: "No Ban Risk",
-    tagColor: "purple",
-    description: "API-based Twitter automation — 30+ days live, zero failures. Rotates a content library, posts on schedule, tracks state across restarts.",
-    price: "$9",
-    priceGreen: false,
-    url: "https://tauschus.gumroad.com/l/Twitterautopilot",
-  },
-  {
-    icon: "⏰",
-    title: "Cron Starter Kit",
-    tag: "Background Tasks",
-    tagColor: "teal",
-    description: "4-file pattern + 3 real production examples. Drop-in cron jobs for OpenClaw — heartbeats, market scans, overnight builders.",
-    price: "$9",
-    priceGreen: false,
-    url: "https://tauschus.gumroad.com/l/yqvhl",
-  },
-  {
-    icon: "⚙️",
-    title: "Small Business Ops Bundle",
-    tag: "7 Files",
-    tagColor: "orange",
-    description: "Full production workspace in 5 minutes — battle-tested. SOUL, HEARTBEAT, MEMORY, TOOLS, AGENTS, SECURITY, and FINANCE all pre-wired.",
-    price: "$19",
-    priceGreen: false,
-    url: "https://tauschus.gumroad.com/l/gikcus",
-  },
-];
+// ─── STAR FIELD ──────────────────────────────────────────────────────────────
+function StarField() {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-const TAG_COLORS: Record<string, string> = {
-  blue:   "bg-blue-500/20 text-blue-300 border border-blue-500/30",
-  purple: "bg-purple-500/20 text-purple-300 border border-purple-500/30",
-  teal:   "bg-teal-500/20 text-teal-300 border border-teal-500/30",
-  orange: "bg-orange-400/20 text-orange-300 border border-orange-400/30",
-};
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-const BENEFITS = [
-  { icon: "⚡", title: "Instant Download", body: "No waiting, no shipping. Every product is delivered the moment you check out." },
-  { icon: "🎯", title: "Built for Trades", body: "Not generic AI content. Every guide is built specifically for concrete contractors and trades businesses." },
-  { icon: "🔧", title: "Actionable Systems", body: "Step-by-step workflows with real prompts you can copy and use today. No fluff." },
-  { icon: "📈", title: "Real ROI", body: "From cutting 3 hours off your estimating to automating follow-up — these tools pay for themselves fast." },
-];
+    const resize = () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    };
+    resize();
+    window.addEventListener("resize", resize);
 
-function EmailCapture() {
-  const [email, setEmail] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const formData = new FormData();
-      formData.append("email", email);
-      formData.append("formType", "email_signup");
-      await fetch("/api/intake", { method: "POST", body: formData });
-    } catch (_) {
-      // fail silently
-    } finally {
-      setLoading(false);
-      setSubmitted(true);
+    // Stars
+    const stars: { x: number; y: number; r: number; op: number; speed: number; twinkle: number }[] = [];
+    for (let i = 0; i < 300; i++) {
+      stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight,
+        r: Math.random() * 1.5 + 0.2,
+        op: Math.random() * 0.8 + 0.1,
+        speed: Math.random() * 0.015 + 0.003,
+        twinkle: Math.random() * Math.PI * 2,
+      });
     }
-  }
 
+    // Shooting stars
+    const shoots: { x: number; y: number; len: number; speed: number; op: number; active: boolean; angle: number }[] = [];
+    for (let i = 0; i < 3; i++) {
+      shoots.push({ x: 0, y: 0, len: 0, speed: 0, op: 0, active: false, angle: 0 });
+    }
+
+    let t = 0;
+    let frame: number;
+
+    const spawnShoot = (s: typeof shoots[0]) => {
+      s.x = Math.random() * window.innerWidth * 0.6;
+      s.y = Math.random() * window.innerHeight * 0.4;
+      s.len = Math.random() * 120 + 60;
+      s.speed = Math.random() * 8 + 6;
+      s.op = 1;
+      s.active = true;
+      s.angle = Math.PI / 4 + (Math.random() - 0.5) * 0.3;
+    };
+
+    const animate = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      t += 0.01;
+
+      // Draw stars
+      stars.forEach((s) => {
+        s.twinkle += s.speed;
+        const opacity = s.op * (0.6 + 0.4 * Math.sin(s.twinkle));
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(255,255,255,${opacity})`;
+        ctx.fill();
+      });
+
+      // Nebula wisps
+      const grad1 = ctx.createRadialGradient(
+        window.innerWidth * 0.15, window.innerHeight * 0.25, 0,
+        window.innerWidth * 0.15, window.innerHeight * 0.25, 300
+      );
+      grad1.addColorStop(0, "rgba(99,102,241,0.04)");
+      grad1.addColorStop(1, "transparent");
+      ctx.fillStyle = grad1;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      const grad2 = ctx.createRadialGradient(
+        window.innerWidth * 0.8, window.innerHeight * 0.1, 0,
+        window.innerWidth * 0.8, window.innerHeight * 0.1, 250
+      );
+      grad2.addColorStop(0, "rgba(14,165,233,0.03)");
+      grad2.addColorStop(1, "transparent");
+      ctx.fillStyle = grad2;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Shooting stars
+      shoots.forEach((s, i) => {
+        if (!s.active) {
+          if (Math.random() < 0.002) spawnShoot(s);
+          return;
+        }
+        s.x += Math.cos(s.angle) * s.speed;
+        s.y += Math.sin(s.angle) * s.speed;
+        s.op -= 0.02;
+        if (s.op <= 0) { s.active = false; return; }
+
+        const tailX = s.x - Math.cos(s.angle) * s.len;
+        const tailY = s.y - Math.sin(s.angle) * s.len;
+        const grad = ctx.createLinearGradient(tailX, tailY, s.x, s.y);
+        grad.addColorStop(0, "transparent");
+        grad.addColorStop(1, `rgba(255,255,255,${s.op * 0.8})`);
+        ctx.beginPath();
+        ctx.moveTo(tailX, tailY);
+        ctx.lineTo(s.x, s.y);
+        ctx.strokeStyle = grad;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+        void i;
+      });
+
+      frame = requestAnimationFrame(animate);
+    };
+    animate();
+
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("resize", resize);
+    };
+  }, []);
+
+  return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
+}
+
+// ─── EARTH ────────────────────────────────────────────────────────────────────
+function Earth() {
   return (
-    <section className="mx-auto max-w-6xl px-6 py-16">
-      <div className="rounded-3xl border border-orange-400/30 bg-slate-900/80 p-10 text-center">
-        <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Weekly Newsletter</p>
-        <h2 className="mb-4 text-3xl font-black text-white">The Contractor AI Edge — Weekly</h2>
-        <p className="mx-auto mb-8 max-w-xl text-slate-400">
-          Every week: one AI tool, one prompt, one system contractors can use to win more jobs and protect margins. Straight to your inbox. No fluff, no spam.
-        </p>
-        {submitted ? (
-          <div className="inline-flex items-center gap-2 rounded-full bg-orange-400/20 px-6 py-3 text-sm font-bold text-orange-300">
-            ✓ You&apos;re in! We&apos;ll be in touch.
-          </div>
-        ) : (
-          <form onSubmit={handleSubmit} className="mx-auto flex max-w-md flex-col gap-3 sm:flex-row">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="your@email.com"
-              className="flex-1 rounded-2xl border border-slate-700 bg-slate-950 px-5 py-3 text-sm text-white placeholder-slate-500 outline-none focus:border-orange-400 transition"
-            />
-            <button
-              type="submit"
-              disabled={loading}
-              className="rounded-2xl bg-orange-400 px-6 py-3 text-sm font-black text-slate-950 transition hover:bg-orange-300 disabled:opacity-60 whitespace-nowrap"
-            >
-              {loading ? "Sending…" : "Subscribe Free →"}
-            </button>
-          </form>
-        )}
+    <div className="earth-wrap pointer-events-none" aria-hidden>
+      <div className="earth-sphere">
+        <div className="earth-surface" />
+        <div className="earth-clouds" />
+        <div className="earth-atmosphere" />
+        <div className="earth-shine" />
       </div>
-    </section>
+    </div>
   );
 }
 
-export default function Home() {
-  return (
-    <main className="min-h-screen bg-slate-950 text-slate-100">
+// ─── PROJECT CARD ─────────────────────────────────────────────────────────────
+function ProjectCard({ p, i }: { p: typeof PROJECTS[0]; i: number }) {
+  const [hovered, setHovered] = useState(false);
 
-      {/* NAV */}
-      <nav className="sticky top-0 z-50 border-b border-slate-800 bg-slate-950/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
+  return (
+    <a
+      href={p.href}
+      target={p.href.startsWith("http") ? "_blank" : "_self"}
+      rel="noopener noreferrer"
+      className="project-card block rounded-sm transition-all duration-500"
+      style={{
+        animationDelay: `${i * 0.15}s`,
+        border: `1px solid ${hovered ? p.border : "rgba(255,255,255,0.06)"}`,
+        boxShadow: hovered ? `0 0 40px ${p.glow}, 0 0 80px ${p.glow.replace("0.3", "0.08")}` : "none",
+        background: hovered
+          ? `linear-gradient(135deg, ${p.glow.replace("0.3", "0.06")} 0%, rgba(0,0,0,0.85) 100%)`
+          : "rgba(5,5,15,0.7)",
+        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        cursor: p.href === "#" ? "default" : "pointer",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      <div className="p-7">
+        {/* Top row */}
+        <div className="flex items-start justify-between mb-5">
           <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 text-sm font-black text-slate-950">V</div>
-            <span className="font-bold tracking-wide text-white">Tauschus AI</span>
+            <span style={{ fontSize: "28px" }}>{p.icon}</span>
+            <div>
+              <div className="font-body text-xs tracking-widest mb-1" style={{ color: "rgba(255,255,255,0.25)", letterSpacing: "0.2em" }}>{p.tag}</div>
+            </div>
           </div>
-          <div className="flex items-center gap-3">
-            <a href="#products" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Products</a>
-            <a href="#skills" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">Skills</a>
-            <a href="#about" className="hidden text-sm text-slate-400 transition hover:text-white sm:block">About</a>
-            <a href="/ai-chief-of-staff" className="hidden text-sm font-semibold text-orange-400 transition hover:text-orange-300 sm:block">For Contractors</a>
-            <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer"
-              className="rounded-full bg-orange-400 px-4 py-2 text-xs font-bold text-slate-950 transition hover:bg-orange-300">
-              Free Playbook →
-            </a>
+          <span
+            className="font-body text-xs px-2 py-1 rounded-sm"
+            style={{
+              background: p.status === "LIVE" ? "rgba(74,222,128,0.1)" : p.status === "BETA" ? "rgba(212,175,55,0.1)" : "rgba(100,116,139,0.1)",
+              color: p.status === "LIVE" ? "#4ADE80" : p.status === "BETA" ? "#D4AF37" : "#64748B",
+              border: `1px solid ${p.status === "LIVE" ? "rgba(74,222,128,0.25)" : p.status === "BETA" ? "rgba(212,175,55,0.25)" : "rgba(100,116,139,0.2)"}`,
+              letterSpacing: "0.15em",
+            }}
+          >
+            {p.status}
+          </span>
+        </div>
+
+        {/* Name */}
+        <h3
+          className="font-display text-2xl font-bold mb-3 transition-all duration-300"
+          style={{ color: hovered ? p.color : "#E8E8E8" }}
+        >
+          {p.name}
+        </h3>
+
+        {/* Desc */}
+        <p className="font-body text-sm leading-relaxed" style={{ color: "rgba(232,232,232,0.4)" }}>
+          {p.desc}
+        </p>
+
+        {/* Arrow */}
+        {p.href !== "#" && (
+          <div
+            className="mt-5 flex items-center gap-2 font-body text-xs transition-all duration-300"
+            style={{ color: hovered ? p.color : "rgba(255,255,255,0.2)", letterSpacing: "0.15em" }}
+          >
+            <span>ENTER</span>
+            <span style={{ transform: hovered ? "translateX(4px)" : "translateX(0)", transition: "transform 0.3s" }}>→</span>
           </div>
+        )}
+      </div>
+    </a>
+  );
+}
+
+// ─── MAIN ─────────────────────────────────────────────────────────────────────
+export default function Home() {
+  const [scrollY, setScrollY] = useState(0);
+
+  useEffect(() => {
+    const onScroll = () => setScrollY(window.scrollY);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  return (
+    <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "#020209", color: "#E8E8E8" }}>
+      <StarField />
+      <Earth />
+
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        .font-display { font-family: 'Playfair Display', serif; }
+        .font-body    { font-family: 'Space Grotesk', sans-serif; }
+
+        /* ── Earth ── */
+        .earth-wrap {
+          position: fixed;
+          bottom: -280px;
+          left: 50%;
+          transform: translateX(-50%);
+          z-index: 1;
+          width: 700px;
+          height: 700px;
+        }
+        @media (max-width: 768px) {
+          .earth-wrap { width: 420px; height: 420px; bottom: -180px; }
+        }
+        .earth-sphere {
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          position: relative;
+          overflow: hidden;
+          animation: earth-spin 80s linear infinite;
+        }
+        .earth-surface {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background:
+            radial-gradient(ellipse at 35% 30%, #1B6CA8 0%, transparent 50%),
+            radial-gradient(ellipse at 65% 55%, #2E7D32 0%, transparent 40%),
+            radial-gradient(ellipse at 20% 70%, #1565C0 0%, transparent 45%),
+            radial-gradient(ellipse at 75% 20%, #1976D2 0%, transparent 35%),
+            radial-gradient(ellipse at 50% 80%, #2E7D32 0%, transparent 30%),
+            radial-gradient(circle, #0D47A1 0%, #1A237E 40%, #0A0A2E 75%, #020209 100%);
+        }
+        .earth-clouds {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background:
+            radial-gradient(ellipse at 40% 25%, rgba(255,255,255,0.12) 0%, transparent 30%),
+            radial-gradient(ellipse at 70% 60%, rgba(255,255,255,0.08) 0%, transparent 25%),
+            radial-gradient(ellipse at 20% 55%, rgba(255,255,255,0.07) 0%, transparent 20%);
+          animation: cloud-drift 120s linear infinite;
+        }
+        .earth-atmosphere {
+          position: absolute;
+          inset: -12px;
+          border-radius: 50%;
+          background: transparent;
+          box-shadow:
+            inset 0 0 60px rgba(79,195,247,0.15),
+            0 0 60px rgba(79,195,247,0.12),
+            0 0 120px rgba(21,101,192,0.08),
+            0 0 200px rgba(13,71,161,0.05);
+          pointer-events: none;
+        }
+        .earth-shine {
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          background: radial-gradient(circle at 30% 25%, rgba(255,255,255,0.08) 0%, transparent 50%);
+          pointer-events: none;
+        }
+        @keyframes earth-spin {
+          from { filter: hue-rotate(0deg); }
+          to   { filter: hue-rotate(5deg); }
+        }
+        @keyframes cloud-drift {
+          from { transform: rotate(0deg); }
+          to   { transform: rotate(360deg); }
+        }
+
+        /* ── Text ── */
+        .cosmic-title {
+          background: linear-gradient(135deg, #E0E7FF 0%, #BAE6FD 30%, #E0E7FF 60%, #F0F9FF 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+        .cosmic-sub {
+          background: linear-gradient(135deg, #64748B 0%, #94A3B8 50%, #64748B 100%);
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          background-clip: text;
+        }
+
+        /* ── Animations ── */
+        @keyframes fade-up {
+          from { opacity: 0; transform: translateY(24px); }
+          to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes fade-in {
+          from { opacity: 0; }
+          to   { opacity: 1; }
+        }
+        .fade-up { opacity: 0; animation: fade-up 0.9s ease-out forwards; }
+        .fade-in { opacity: 0; animation: fade-in 1.2s ease-out forwards; }
+        .d1 { animation-delay: 0.1s; }
+        .d2 { animation-delay: 0.25s; }
+        .d3 { animation-delay: 0.45s; }
+        .d4 { animation-delay: 0.65s; }
+        .d5 { animation-delay: 0.85s; }
+
+        /* ── Cards ── */
+        .project-card { backdrop-filter: blur(20px); }
+        .cards-enter > * {
+          opacity: 0;
+          animation: fade-up 0.7s ease-out forwards;
+        }
+        .cards-enter > *:nth-child(1) { animation-delay: 0.7s; }
+        .cards-enter > *:nth-child(2) { animation-delay: 0.85s; }
+        .cards-enter > *:nth-child(3) { animation-delay: 1.0s; }
+        .cards-enter > *:nth-child(4) { animation-delay: 1.15s; }
+
+        /* ── Nav ── */
+        .nav-dot {
+          width: 6px; height: 6px; border-radius: 50%; background: #4ADE80;
+          animation: pulse-dot 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-dot {
+          0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
+          50% { opacity:0.7; box-shadow: 0 0 0 6px rgba(74,222,128,0); }
+        }
+
+        /* ── Divider ── */
+        .cosmic-line {
+          height: 1px;
+          background: linear-gradient(90deg, transparent, rgba(148,163,184,0.15), transparent);
+        }
+      `}</style>
+
+      {/* ── NAV ─────────────────────────────────────────────────────────────── */}
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-8 py-5"
+        style={{
+          background: scrollY > 60 ? "rgba(2,2,9,0.9)" : "transparent",
+          backdropFilter: scrollY > 60 ? "blur(20px)" : "none",
+          borderBottom: scrollY > 60 ? "1px solid rgba(255,255,255,0.04)" : "none",
+          transition: "all 0.4s ease",
+        }}
+      >
+        <div className="font-display text-lg font-bold cosmic-title tracking-wide">Tauschus</div>
+        <div className="flex items-center gap-2">
+          <div className="nav-dot" />
+          <span className="font-body text-xs tracking-widest" style={{ color: "#4ADE80", letterSpacing: "0.15em" }}>SYSTEMS ONLINE</span>
         </div>
       </nav>
 
-      {/* HERO */}
-      <section className="mx-auto max-w-6xl px-6 py-20 text-center lg:py-28">
-        <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/30 bg-orange-400/10 px-4 py-2 text-xs font-bold text-orange-300">
-          <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
-          Updated Q2 2026 — Built for Today&apos;s Market
+      {/* ── HERO ──────────────────────────────────────────────────────────────── */}
+      <section className="relative z-10 min-h-screen flex flex-col items-center justify-center text-center px-6 pb-40">
+        <div className="max-w-3xl mx-auto">
+
+          {/* Eyebrow */}
+          <div className="fade-in d1 inline-flex items-center gap-3 mb-8">
+            <div className="h-px w-10" style={{ background: "linear-gradient(90deg, transparent, rgba(148,163,184,0.4))" }} />
+            <span className="font-body text-xs tracking-widest" style={{ color: "rgba(148,163,184,0.5)", letterSpacing: "0.3em" }}>TAUSCHUS VENTURES</span>
+            <div className="h-px w-10" style={{ background: "linear-gradient(90deg, rgba(148,163,184,0.4), transparent)" }} />
+          </div>
+
+          {/* Title */}
+          <h1 className="fade-up d2 font-display font-black leading-none mb-5" style={{ fontSize: "clamp(64px, 12vw, 140px)" }}>
+            <span className="cosmic-title">Tauschus</span>
+          </h1>
+
+          {/* Tagline */}
+          <p className="fade-up d3 font-body font-light mb-4" style={{ fontSize: "clamp(16px, 2.5vw, 22px)", color: "rgba(226,232,240,0.45)", letterSpacing: "0.04em", lineHeight: 1.6 }}>
+            Building from orbit.
+          </p>
+          <p className="fade-up d4 font-body font-light max-w-lg mx-auto" style={{ fontSize: "14px", color: "rgba(148,163,184,0.35)", lineHeight: 1.8, letterSpacing: "0.03em" }}>
+            A collection of ventures built at the intersection of AI, finance, and the trades.
+            Each project a satellite. Each orbit intentional.
+          </p>
+
+          {/* Scroll cue */}
+          <div className="fade-in d5 mt-14 flex flex-col items-center gap-1" style={{ color: "rgba(148,163,184,0.2)" }}>
+            <span className="font-body text-xs tracking-widest" style={{ letterSpacing: "0.25em" }}>VENTURES BELOW</span>
+            <svg width="16" height="24" viewBox="0 0 16 24" fill="none" style={{ opacity: 0.3, marginTop: "6px" }}>
+              <path d="M8 0v20M2 14l6 6 6-6" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
         </div>
-        <h1 className="mx-auto max-w-4xl text-4xl font-black leading-tight text-white sm:text-5xl lg:text-6xl">
-          Work Smarter.<br />
-          <span className="text-orange-400">Win More Jobs.</span><br />
-          Protect Your Margins.
-        </h1>
-        <p className="mx-auto mt-6 max-w-2xl text-lg text-slate-400">
-          Practical AI playbooks and systems built specifically for concrete contractors and trades businesses. Download instantly. Start using today.
+      </section>
+
+      {/* ── PROJECTS ──────────────────────────────────────────────────────────── */}
+      <section className="relative z-10 px-6 pb-40">
+        <div className="max-w-5xl mx-auto">
+
+          {/* Section label */}
+          <div className="flex items-center gap-4 mb-10">
+            <div className="cosmic-line flex-1" />
+            <span className="font-body text-xs tracking-widest" style={{ color: "rgba(148,163,184,0.3)", letterSpacing: "0.3em" }}>ACTIVE VENTURES</span>
+            <div className="cosmic-line flex-1" />
+          </div>
+
+          {/* Grid */}
+          <div className="cards-enter grid grid-cols-1 md:grid-cols-2 gap-4">
+            {PROJECTS.map((p, i) => (
+              <ProjectCard key={p.id} p={p} i={i} />
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FOOTER ────────────────────────────────────────────────────────────── */}
+      <footer className="relative z-10 py-12 px-6 text-center" style={{ borderTop: "1px solid rgba(255,255,255,0.03)" }}>
+        <div className="font-display text-xl cosmic-title font-bold mb-2">Tauschus</div>
+        <p className="font-body text-xs" style={{ color: "rgba(148,163,184,0.2)", letterSpacing: "0.1em" }}>
+          Building in orbit · {new Date().getFullYear()}
         </p>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
-          <a href="#products"
-            className="rounded-full bg-orange-400 px-8 py-4 text-base font-bold text-slate-950 shadow-xl shadow-orange-500/20 transition hover:bg-orange-300">
-            Browse Products
-          </a>
-          <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer"
-            className="rounded-full border border-slate-600 px-8 py-4 text-base font-semibold text-slate-300 transition hover:border-slate-400 hover:text-white">
-            Free Playbook ↗
-          </a>
-        </div>
-        <div className="mt-10 flex flex-wrap items-center justify-center gap-8 text-sm text-slate-500">
-          <span>✓ Instant download</span>
-          <span>✓ No fluff, no filler</span>
-          <span>✓ Built for real contractors</span>
-        </div>
-      </section>
-
-      {/* PRODUCTS */}
-      <section id="products" className="mx-auto max-w-6xl px-6 py-16">
-        <div className="mb-12 text-center">
-          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Digital Products</p>
-          <h2 className="text-3xl font-black text-white">Tools That Pay for Themselves</h2>
-          <p className="mx-auto mt-3 max-w-xl text-slate-400">Every product is built around a real problem contractors face. Actionable, specific, and ready to use today.</p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-2">
-          {PRODUCTS.map((p) => (
-            <div key={p.title} className="group flex flex-col rounded-3xl border border-slate-800 bg-slate-900/60 p-7 transition-all duration-300 hover:border-orange-400/40">
-              <div className="mb-5 flex items-center justify-between">
-                <span className="rounded-full bg-orange-400/20 px-3 py-1 text-xs font-bold text-orange-300">{p.tag}</span>
-                <span className={`rounded-full px-4 py-1.5 text-sm font-black ${p.badgeGreen ? "bg-green-500 text-white" : "bg-orange-400 text-slate-950"}`}>
-                  {p.badge}
-                </span>
-              </div>
-              <div className="mb-4 text-4xl">{p.icon}</div>
-              <h3 className="mb-3 text-xl font-black leading-tight text-white">{p.title}</h3>
-              <p className="mb-5 flex-1 text-sm text-slate-400">{p.description}</p>
-              <ul className="mb-7 space-y-2">
-                {p.bullets.map((b) => (
-                  <li key={b} className="flex items-center gap-2 text-sm text-slate-300">
-                    <span className="font-bold text-orange-400">✓</span> {b}
-                  </li>
-                ))}
-              </ul>
-              <a href={p.url} target="_blank" rel="noreferrer"
-                className={`block w-full rounded-2xl py-4 text-center text-sm font-black shadow-lg transition ${p.badgeGreen ? "bg-orange-400 text-slate-950 hover:bg-orange-300" : "bg-white text-slate-950 hover:bg-slate-100"}`}>
-                {p.cta}
-              </a>
-            </div>
-          ))}
-        </div>
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-7 text-center">
-          <p className="text-sm text-slate-500">
-            More products dropping regularly — follow{" "}
-            <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">@Vanta69 on X</a>
-            {" "}to get notified.
-          </p>
-        </div>
-      </section>
-
-      {/* ── OPENCLAW SKILLS ──────────────────────────────────────────────── */}
-      {/* Social Proof */}
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="mb-10 text-center">
-          <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Real Results</p>
-          <h2 className="text-3xl font-black text-white">Built on the Job Site, Not in a Lab</h2>
-          <p className="mx-auto mt-3 max-w-xl text-slate-400">Every tool here runs live inside a real concrete business. These are the results.</p>
-        </div>
-        <div className="grid gap-6 lg:grid-cols-3">
-          {[
-            {
-              quote: "We booked a $6,475 stamped concrete job from a Facebook Marketplace lead — the AI wrote the follow-up, scheduled the post, and handled the estimate workflow. I just showed up.",
-              name: "FCA — Florida Concrete Alliance",
-              role: "Jacksonville, FL · Active Client",
-              result: "$6,475 job closed",
-            },
-            {
-              quote: "The AI estimating workflow cut my bid time from about 4 hours down to under an hour. I'm submitting more bids and actually winning more of them because I have time to follow up.",
-              name: "Concrete Sub, Northeast Florida",
-              role: "Residential & Commercial Flatwork",
-              result: "4x faster estimates",
-            },
-            {
-              quote: "I was skeptical — I'm not a tech guy. But the playbook had me using ChatGPT for proposals in 20 minutes. First week I sent 3 more follow-ups than I normally would. Won one of them.",
-              name: "Independent Contractor",
-              role: "Driveways & Patios · Florida",
-              result: "1 extra job won week 1",
-            },
-          ].map((t, i) => (
-            <div key={i} className="flex flex-col rounded-3xl border border-slate-800 bg-slate-900/60 p-7">
-              <div className="mb-4 text-orange-400 text-xl">★★★★★</div>
-              <p className="flex-1 text-sm text-slate-300 leading-relaxed italic">&ldquo;{t.quote}&rdquo;</p>
-              <div className="mt-6 pt-5 border-t border-slate-800">
-                <div className="flex items-center justify-between gap-2">
-                  <div>
-                    <p className="text-sm font-bold text-white">{t.name}</p>
-                    <p className="text-xs text-slate-500 mt-0.5">{t.role}</p>
-                  </div>
-                  <span className="shrink-0 rounded-full bg-orange-400/20 border border-orange-400/30 px-3 py-1 text-xs font-bold text-orange-300">{t.result}</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section id="skills" className="mx-auto max-w-6xl px-6 py-16">
-        {/* Header */}
-        <div className="mb-10 flex flex-col items-start gap-4 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800/60 px-3 py-1.5 text-xs font-bold text-slate-300">
-              <span className="text-base">🦾</span> OpenClaw Skills
-              <span className="ml-1 rounded-full bg-slate-700 px-2 py-0.5 text-[10px] font-bold text-slate-400">
-                {SKILLS.length} live
-              </span>
-            </div>
-            <h2 className="text-3xl font-black text-white">Installable Agent Skills</h2>
-            <p className="mt-2 max-w-xl text-slate-400">
-              Drop-in automations for OpenClaw operators. Battle-tested in production — Twitter, cron jobs, ops systems. Install in minutes, not days.
-            </p>
-          </div>
-          <a
-            href="https://tauschus.gumroad.com"
-            target="_blank"
-            rel="noreferrer"
-            className="shrink-0 rounded-full border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-orange-400 hover:text-orange-300"
-          >
-            All Skills on Gumroad ↗
-          </a>
-        </div>
-
-        {/* Skills grid — data-driven: add to SKILLS array above to add a card */}
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-2">
-          {SKILLS.map((s) => (
-            <a
-              key={s.title}
-              href={s.url}
-              target="_blank"
-              rel="noreferrer"
-              className="group flex items-start gap-5 rounded-2xl border border-slate-800 bg-slate-900/60 p-6 transition-all duration-200 hover:border-slate-600 hover:bg-slate-900"
-            >
-              {/* Icon */}
-              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border border-slate-700 bg-slate-800 text-2xl">
-                {s.icon}
-              </div>
-
-              {/* Content */}
-              <div className="flex flex-1 flex-col gap-2">
-                <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-base font-bold text-white leading-snug group-hover:text-orange-300 transition-colors">
-                    {s.title}
-                  </h3>
-                  <span className={`shrink-0 rounded-full px-3 py-1 text-xs font-black ${s.priceGreen ? "bg-green-500 text-white" : "bg-orange-400 text-slate-950"}`}>
-                    {s.price}
-                  </span>
-                </div>
-                <span className={`w-fit rounded-full px-2.5 py-0.5 text-[11px] font-semibold ${TAG_COLORS[s.tagColor] ?? TAG_COLORS.orange}`}>
-                  {s.tag}
-                </span>
-                <p className="text-sm text-slate-400 leading-relaxed">{s.description}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-
-        {/* "More coming" footer */}
-        <div className="mt-6 rounded-2xl border border-dashed border-slate-700 bg-slate-900/30 p-5 text-center">
-          <p className="text-sm text-slate-500">
-            New skills added frequently —{" "}
-            <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="text-orange-400 hover:underline">
-              follow @Vanta69
-            </a>{" "}
-            or drop your email above to get notified first.
-          </p>
-        </div>
-      </section>
-      {/* ── END OPENCLAW SKILLS ──────────────────────────────────────────── */}
-
-      {/* AI CHIEF OF STAFF SERVICE */}
-      <section className="mx-auto max-w-6xl px-6 py-16">
-        <div className="relative overflow-hidden rounded-3xl border border-orange-400/40 bg-gradient-to-br from-slate-900 via-slate-900 to-orange-950/30 p-8 lg:p-12">
-          {/* Decorative gradient orb */}
-          <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-orange-400/10 blur-3xl" />
-          <div className="pointer-events-none absolute -bottom-10 -left-10 h-48 w-48 rounded-full bg-orange-500/10 blur-2xl" />
-
-          <div className="relative">
-            {/* Badge */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-orange-400/50 bg-orange-400/15 px-4 py-1.5 text-xs font-bold text-orange-300">
-              <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-orange-400" />
-              For Contractors
-            </div>
-
-            <div className="grid gap-10 lg:grid-cols-2 lg:items-center">
-              {/* Left: text */}
-              <div>
-                <h2 className="mb-4 text-3xl font-black leading-tight text-white lg:text-4xl">
-                  Want This Running for<br />
-                  <span className="text-orange-400">Your Business?</span>
-                </h2>
-                <p className="mb-8 text-slate-300 leading-relaxed">
-                  We built a fully automated AI marketing system for Florida Concrete Alliance — daily social posts, lead capture, 5-minute lead response, and a live dashboard. Now we&apos;re installing it for other contractors.
-                </p>
-
-                <ul className="mb-8 space-y-3">
-                  {[
-                    "Live in 7 days — fully done for you",
-                    "Daily Facebook + social posts on autopilot",
-                    "Lead capture, follow-up & dashboard included",
-                  ].map((item) => (
-                    <li key={item} className="flex items-center gap-3 text-sm font-medium text-slate-200">
-                      <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-orange-400/20 text-xs font-black text-orange-400">✓</span>
-                      {item}
-                    </li>
-                  ))}
-                </ul>
-
-                <p className="mb-8 text-sm font-semibold text-orange-300">
-                  Starting at $97/mo — no contracts, cancel anytime
-                </p>
-
-                <div className="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
-                  <a
-                    href="/ai-chief-of-staff"
-                    className="rounded-2xl bg-orange-400 px-8 py-4 text-base font-black text-slate-950 shadow-xl shadow-orange-500/25 transition hover:bg-orange-300"
-                  >
-                    See How It Works →
-                  </a>
-                  <a
-                    href="mailto:therealvantaai@gmail.com?subject=AI Chief of Staff — Let's Talk"
-                    className="rounded-2xl border border-orange-400/40 px-8 py-4 text-base font-bold text-orange-300 transition hover:border-orange-400 hover:text-orange-200"
-                  >
-                    Book a Free 15-Min Call
-                  </a>
-                </div>
-                <p className="mt-4 text-xs text-slate-500">
-                  Live inside Florida Concrete Alliance · Accepting 3 new clients in April
-                </p>
-              </div>
-
-              {/* Right: feature highlights */}
-              <div className="space-y-4">
-                {[
-                  { icon: "📲", title: "Daily Social Posts", body: "AI writes and schedules your Facebook & social content automatically — every single day." },
-                  { icon: "⚡", title: "5-Minute Lead Response", body: "Every lead gets followed up within minutes, day or night. Never lose a job to slow response again." },
-                  { icon: "📊", title: "Live Dashboard", body: "See your leads, posts, and performance in one place. Full visibility, zero guesswork." },
-                ].map((f) => (
-                  <div key={f.title} className="flex items-start gap-4 rounded-2xl border border-slate-700/60 bg-slate-900/70 p-5">
-                    <span className="text-2xl">{f.icon}</span>
-                    <div>
-                      <p className="mb-1 font-bold text-white">{f.title}</p>
-                      <p className="text-sm text-slate-400">{f.body}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* EMAIL CAPTURE */}
-      <EmailCapture />
-
-      {/* BENEFITS */}
-      <section className="border-y border-slate-800 bg-slate-900/40">
-        <div className="mx-auto max-w-6xl px-6 py-16">
-          <div className="mb-12 text-center">
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-orange-400">Why Tauschus AI</p>
-            <h2 className="text-3xl font-black text-white">Not Another Generic AI Guide</h2>
-          </div>
-          <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-            {BENEFITS.map((b) => (
-              <div key={b.title} className="rounded-2xl border border-slate-800 bg-slate-900/60 p-6">
-                <div className="mb-4 text-3xl">{b.icon}</div>
-                <h3 className="mb-2 font-bold text-white">{b.title}</h3>
-                <p className="text-sm text-slate-400">{b.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ABOUT */}
-      <section id="about" className="mx-auto max-w-6xl px-6 py-16">
-        <div className="grid items-center gap-10 rounded-3xl border border-slate-800 bg-slate-900/60 p-8 lg:grid-cols-2 lg:p-12">
-          <div>
-            <p className="mb-4 text-xs font-bold uppercase tracking-widest text-orange-400">About Tauschus AI</p>
-            <h2 className="mb-4 text-3xl font-black text-white">Built by People Who Work With Contractors</h2>
-            <p className="mb-4 text-slate-400">We build AI systems for small trades businesses — the kind of tools that actually get used on job sites and in truck cabs, not just in boardrooms.</p>
-            <p className="mb-6 text-slate-400">Everything we publish is tested against real problems: bad estimates, slow follow-up, labor shortages, margin compression. If it does not solve a real problem, we do not publish it.</p>
-            <div className="flex flex-wrap gap-3">
-              <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer"
-                className="rounded-full border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-orange-400 hover:text-orange-300">
-                Follow on X ↗
-              </a>
-              <a href="https://vantaai3.gumroad.com" target="_blank" rel="noreferrer"
-                className="rounded-full border border-slate-600 px-5 py-2.5 text-sm font-semibold text-slate-300 transition hover:border-orange-400 hover:text-orange-300">
-                All Products ↗
-              </a>
-            </div>
-          </div>
-          <div className="space-y-4">
-            {[
-              { num: "5", label: "Products Live on Gumroad" },
-              { num: "4", label: "OpenClaw Skills Available" },
-              { num: "20+", label: "Tweets driving traffic daily" },
-              { num: "$0", label: "Cost to get started (free playbook)" },
-            ].map((s) => (
-              <div key={s.label} className="flex items-center gap-5 rounded-2xl border border-slate-800 bg-slate-950/60 px-6 py-4">
-                <span className="min-w-16 text-2xl font-black text-orange-400">{s.num}</span>
-                <span className="text-sm text-slate-400">{s.label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="bg-orange-400">
-        <div className="mx-auto max-w-4xl px-6 py-16 text-center">
-          <h2 className="mb-4 text-3xl font-black text-slate-950 lg:text-4xl">Start With the Free Playbook</h2>
-          <p className="mx-auto mb-8 max-w-xl text-lg text-slate-800">The most downloaded resource for concrete contractors learning to bid smarter with AI. Zero cost, instant access.</p>
-          <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer"
-            className="inline-block rounded-full bg-slate-950 px-10 py-4 text-base font-black text-white shadow-2xl transition hover:bg-slate-800">
-            Download Free Now ↗
-          </a>
-        </div>
-      </section>
-
-      {/* FOOTER */}
-      <footer className="border-t border-slate-800 bg-slate-950">
-        <div className="mx-auto flex max-w-6xl flex-wrap items-center justify-between gap-6 px-6 py-10">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-400 text-sm font-black text-slate-950">V</div>
-            <div>
-              <p className="text-sm font-bold text-white">Tauschus AI</p>
-              <p className="text-xs text-slate-500">Digital products for the trades</p>
-            </div>
-          </div>
-          <div className="flex flex-wrap gap-6 text-sm text-slate-500">
-            <a href="https://tauschus.gumroad.com/l/vbfat" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Free Playbook</a>
-            <a href="#skills" className="transition hover:text-orange-400">OpenClaw Skills</a>
-            <a href="https://vantaai3.gumroad.com/l/pdcsgr" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">Labor Guide ($9)</a>
-            <a href="https://x.com/Vanta410742" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">X / Twitter</a>
-            <a href="https://vantaai3.gumroad.com" target="_blank" rel="noreferrer" className="transition hover:text-orange-400">All Products</a>
-          </div>
-          <p className="w-full text-center text-xs text-slate-600 lg:w-auto lg:text-right">© 2026 Tauschus AI. Built for real contractors.</p>
-        </div>
       </footer>
-
-    </main>
+    </div>
   );
 }
