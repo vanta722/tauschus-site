@@ -90,6 +90,43 @@ function StarField() {
       shoots.push({ x: 0, y: 0, len: 0, speed: 0, op: 0, active: false, angle: 0 });
     }
 
+    // Spaceships
+    type Ship = { x: number; y: number; vy: number; speed: number; active: boolean; emoji: string; size: number; op: number; wobble: number; trail: {x:number;y:number}[] };
+    const ships: Ship[] = [];
+    for (let i = 0; i < 2; i++) ships.push({ x:0,y:0,vy:0,speed:0,active:false,emoji:'🛸',size:0,op:0,wobble:0,trail:[] });
+
+    const spawnShip = (s: Ship) => {
+      const fromRight = Math.random() > 0.5;
+      s.x = fromRight ? window.innerWidth + 80 : -80;
+      s.y = Math.random() * window.innerHeight * 0.55 + 40;
+      s.vy = (Math.random() - 0.5) * 0.4;
+      s.speed = (Math.random() * 2 + 1.5) * (fromRight ? -1 : 1);
+      s.emoji = Math.random() > 0.4 ? '🛸' : '🚀';
+      s.size = Math.random() * 14 + 22;
+      s.op = 0;
+      s.wobble = Math.random() * Math.PI * 2;
+      s.active = true;
+      s.trail = [];
+    };
+
+    // Aliens
+    type Alien = { x: number; y: number; vy: number; speed: number; active: boolean; op: number; wobble: number; size: number; pauseX: number; phase: string; phaseTimer: number };
+    const aliens: Alien[] = [{ x:0,y:0,vy:0,speed:0,active:false,op:0,wobble:0,size:0,pauseX:0,phase:'fly',phaseTimer:0 }];
+
+    const spawnAlien = (a: Alien) => {
+      a.x = -60;
+      a.y = Math.random() * window.innerHeight * 0.45 + 60;
+      a.speed = Math.random() * 1.2 + 0.8;
+      a.vy = 0;
+      a.size = Math.random() * 10 + 26;
+      a.op = 0;
+      a.wobble = 0;
+      a.pauseX = window.innerWidth * (0.3 + Math.random() * 0.4);
+      a.phase = 'fly';
+      a.phaseTimer = 0;
+      a.active = true;
+    };
+
     let t = 0;
     let frame: number;
 
@@ -161,6 +198,78 @@ function StarField() {
         void i;
       });
 
+      // ── Spaceships
+      ctx.font = `${24}px serif`;
+      ships.forEach((s) => {
+        if (!s.active) {
+          if (Math.random() < 0.0004) spawnShip(s);
+          return;
+        }
+        s.wobble += 0.03;
+        s.x += s.speed;
+        s.y += s.vy + Math.sin(s.wobble) * 0.4;
+        s.op = Math.min(1, s.op + 0.02);
+        // trail
+        s.trail.push({ x: s.x, y: s.y });
+        if (s.trail.length > 18) s.trail.shift();
+        // draw trail
+        s.trail.forEach((pt, ti) => {
+          const ratio = ti / s.trail.length;
+          ctx.beginPath();
+          ctx.arc(pt.x + (s.speed > 0 ? -s.size/2 : s.size/2), pt.y, 1.5 * ratio, 0, Math.PI*2);
+          ctx.fillStyle = `rgba(180,220,255,${ratio * 0.25 * s.op})`;
+          ctx.fill();
+        });
+        // draw emoji
+        ctx.save();
+        ctx.globalAlpha = s.op;
+        ctx.font = `${s.size}px serif`;
+        if (s.speed < 0) { ctx.scale(-1,1); ctx.fillText(s.emoji, -s.x - s.size/2, s.y + s.size/3); }
+        else { ctx.fillText(s.emoji, s.x - s.size/2, s.y + s.size/3); }
+        ctx.restore();
+        // deactivate when off screen
+        if (s.x > window.innerWidth + 120 || s.x < -120) s.active = false;
+      });
+
+      // ── Aliens
+      aliens.forEach((a) => {
+        if (!a.active) {
+          if (Math.random() < 0.00015) spawnAlien(a);
+          return;
+        }
+        a.wobble += 0.04;
+        a.op = Math.min(1, a.op + 0.015);
+
+        if (a.phase === 'fly') {
+          a.x += a.speed;
+          a.y += Math.sin(a.wobble) * 0.6;
+          if (a.x >= a.pauseX) { a.phase = 'hover'; a.phaseTimer = 0; }
+        } else if (a.phase === 'hover') {
+          a.y += Math.sin(a.wobble * 1.5) * 0.8;
+          a.phaseTimer++;
+          // blink "scan" circle
+          if (a.phaseTimer % 40 < 20) {
+            ctx.beginPath();
+            ctx.arc(a.x, a.y - a.size * 0.5, a.size * 0.9 + Math.sin(a.wobble*3)*4, 0, Math.PI*2);
+            ctx.strokeStyle = `rgba(0,255,180,${0.15 * a.op})`;
+            ctx.lineWidth = 1;
+            ctx.stroke();
+          }
+          if (a.phaseTimer > 180) { a.phase = 'leave'; }
+        } else {
+          a.x += a.speed * 1.8;
+          a.y += Math.sin(a.wobble) * 0.4;
+          a.op = Math.max(0, a.op - 0.015);
+          if (a.op <= 0) a.active = false;
+        }
+
+        ctx.save();
+        ctx.globalAlpha = a.op * 0.92;
+        ctx.font = `${a.size}px serif`;
+        ctx.fillText('👽', a.x - a.size/2, a.y + a.size/3);
+        ctx.restore();
+      });
+
       frame = requestAnimationFrame(animate);
     };
     animate();
@@ -172,6 +281,56 @@ function StarField() {
   }, []);
 
   return <canvas ref={canvasRef} className="fixed inset-0 pointer-events-none z-0" />;
+}
+
+// ─── BACKGROUND PLANETS ─────────────────────────────────────────────────────────────
+function Planets() {
+  return (
+    <>
+      {/* Mars-like planet — top left */}
+      <div className="planet-bob" style={{
+        position: "fixed", top: "8%", left: "4%", zIndex: 1,
+        width: 70, height: 70, borderRadius: "50%",
+        background: "radial-gradient(circle at 35% 30%, #E8714A 0%, #C0392B 40%, #7B241C 75%, #3B0E09 100%)",
+        boxShadow: "0 0 30px rgba(192,57,43,0.25), inset -12px -12px 20px rgba(0,0,0,0.6)",
+        animationDelay: "0s",
+      }} />
+
+      {/* Saturn-like planet — top right */}
+      <div className="planet-bob" style={{
+        position: "fixed", top: "12%", right: "6%", zIndex: 1,
+        animationDelay: "2s",
+      }}>
+        <div style={{
+          width: 90, height: 90, borderRadius: "50%",
+          background: "radial-gradient(circle at 35% 30%, #F5CBA7 0%, #D4A055 40%, #8B6914 75%, #3D2C07 100%)",
+          boxShadow: "0 0 35px rgba(212,160,85,0.2), inset -14px -14px 25px rgba(0,0,0,0.55)",
+          position: "relative",
+        }}>
+          {/* Ring */}
+          <div style={{
+            position: "absolute",
+            top: "38%", left: "-30%",
+            width: "160%", height: "24%",
+            borderRadius: "50%",
+            border: "3px solid rgba(212,160,85,0.35)",
+            boxShadow: "0 0 8px rgba(212,160,85,0.15)",
+            transform: "rotateX(70deg)",
+            pointerEvents: "none",
+          }} />
+        </div>
+      </div>
+
+      {/* Small icy moon — mid left */}
+      <div className="planet-bob" style={{
+        position: "fixed", top: "38%", left: "2%", zIndex: 1,
+        width: 36, height: 36, borderRadius: "50%",
+        background: "radial-gradient(circle at 35% 30%, #D6EAF8 0%, #85C1E9 40%, #2E86C1 75%, #0A2D47 100%)",
+        boxShadow: "0 0 20px rgba(133,193,233,0.2), inset -6px -6px 12px rgba(0,0,0,0.5)",
+        animationDelay: "4s",
+      }} />
+    </>
+  );
 }
 
 // ─── EARTH ────────────────────────────────────────────────────────────────────
@@ -273,6 +432,7 @@ export default function Home() {
     <div className="relative min-h-screen overflow-x-hidden font-body" style={{ background: "#020209", color: "#E8E8E8" }}>
       <StarField />
       <Earth />
+      <Planets />
 
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
@@ -445,6 +605,13 @@ export default function Home() {
           0%,100% { opacity:1; box-shadow: 0 0 0 0 rgba(74,222,128,0.4); }
           50% { opacity:0.7; box-shadow: 0 0 0 6px rgba(74,222,128,0); }
         }
+
+        /* ── Planets ── */
+        @keyframes planet-bob {
+          0%,100% { transform: translateY(0px); }
+          50% { transform: translateY(-10px); }
+        }
+        .planet-bob { animation: planet-bob 8s ease-in-out infinite; }
 
         /* ── Divider ── */
         .cosmic-line {
