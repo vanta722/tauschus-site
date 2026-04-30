@@ -49,8 +49,8 @@ const PICKS = [
     time: "1:40 PM ET — Today",
     bet: "ARI ML",
     betTeam: "ARI",
-    odds: "+106",
-    units: "1.0u",
+    odds: "+105",
+    units: "2.0u",
     confidence: 84,
     macSignal: "ERA GAP 2.13 — Soroka 2.53 ERA / 2.43 FIP vs Woodruff 4.66 ERA / 4.05 FIP",
     aceSignal: "VELO DECLINE — Woodruff 95.5→92.9 mph, career-low K/9 7.2, 4.81 ERA career vs ARI",
@@ -60,7 +60,7 @@ const PICKS = [
 ];
 
 const BET_LOG = [
-  { date: "APR 30", game: "ARI @ MIL", bet: "ARI ML", odds: "+106", result: "PENDING", units: "—" },
+  { date: "APR 30", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "PENDING", units: "—" },
   { date: "APR 29", game: "CHC @ SD", bet: "CHC ML", odds: "-110", result: "WIN", units: "+0.91u" },
   { date: "APR 29", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "WIN", units: "+1.05u" },
   { date: "APR 28", game: "BOS @ TOR", bet: "BOS ML", odds: "+100", result: "LOSS", units: "-1.0u" },
