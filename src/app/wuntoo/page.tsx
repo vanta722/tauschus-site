@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 // ─── LIVE DATA (update daily) ───────────────────────────────────────────────
 const STATS = {
-  record: "7-4",
-  roi: "+28.3%",
-  units: "+3.43u",
+  record: "7-5",
+  roi: "+10.1%",
+  units: "+1.43u",
   clv: "TBD",
-  streak: "W2",
-  bankroll: "$40.13",
+  streak: "L1",
+  bankroll: "$20.13",
   since: "APR 21 2026",
   lastUpdated: "APR 30 2026",
 };
@@ -42,25 +42,25 @@ const TEAM_LOGOS: Record<string, string> = {
 const PICKS = [
   {
     id: 1,
-    status: "LOCKED",
+    status: "LOST",
     game: "ARI @ MIL",
     awayTeam: "ARI",
     homeTeam: "MIL",
-    time: "1:40 PM ET — Today",
+    time: "Final: MIL 13 — ARI 1",
     bet: "ARI ML",
     betTeam: "ARI",
     odds: "+105",
-    units: "2.0u",
+    units: "-2.0u",
     confidence: 84,
     macSignal: "ERA GAP 2.13 — Soroka 2.53 ERA / 2.43 FIP vs Woodruff 4.66 ERA / 4.05 FIP",
     aceSignal: "VELO DECLINE — Woodruff 95.5→92.9 mph, career-low K/9 7.2, 4.81 ERA career vs ARI",
-    combined: "LOCKED",
-    tag: "LIVE 🔥",
+    combined: "LOST",
+    tag: "LOSS ❌",
   },
 ];
 
 const BET_LOG = [
-  { date: "APR 30", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "PENDING", units: "—" },
+  { date: "APR 30", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "LOSS", units: "-2.0u" },
   { date: "APR 29", game: "CHC @ SD", bet: "CHC ML", odds: "-110", result: "WIN", units: "+0.91u" },
   { date: "APR 29", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "WIN", units: "+1.05u" },
   { date: "APR 28", game: "BOS @ TOR", bet: "BOS ML", odds: "+100", result: "LOSS", units: "-1.0u" },

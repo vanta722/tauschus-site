@@ -69,11 +69,11 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "7-4-0",
-  unitsWagered: 12.1,
-  unitsNet: 3.43,
-  roi: "+28.3%",
-  bankroll: 40.13,
+  record: "7-5-0",
+  unitsWagered: 14.1,
+  unitsNet: 1.43,
+  roi: "+10.1%",
+  bankroll: 20.13,
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
   sport: "MLB",
