@@ -4,14 +4,14 @@ import { useEffect, useRef, useState } from "react";
 
 // ─── LIVE DATA (update daily) ───────────────────────────────────────────────
 const STATS = {
-  record: "5-4",
-  roi: "+14.6%",
-  units: "+1.47u",
+  record: "7-4",
+  roi: "+28.3%",
+  units: "+3.43u",
   clv: "TBD",
-  streak: "L1",
-  bankroll: "$20.54",
+  streak: "W2",
+  bankroll: "$40.13",
   since: "APR 21 2026",
-  lastUpdated: "APR 29 2026",
+  lastUpdated: "APR 30 2026",
 };
 
 // ─── TEAM LOGO MAP (ESPN CDN) ───────────────────────────────────────────────
@@ -42,43 +42,43 @@ const TEAM_LOGOS: Record<string, string> = {
 const PICKS = [
   {
     id: 1,
-    status: "LOCKED",
+    status: "WON",
     game: "CHC @ SD",
     awayTeam: "CHC",
     homeTeam: "SD",
-    time: "4:10 PM EDT — Today",
+    time: "Final: CHC 5 — SD 4",
     bet: "CHC ML",
     betTeam: "CHC",
     odds: "-110",
-    units: "1.0u",
+    units: "+0.91u",
     confidence: 87,
     macSignal: "ERA GAP 7.91 — Taillon 4.55 vs Waldron 12.46",
     aceSignal: "MKT SOFT — Book overregressing Waldron's 12.46 surface ERA",
-    combined: "LOCKED",
-    tag: "LIVE 🔥",
+    combined: "WON",
+    tag: "WON ✅",
   },
   {
     id: 2,
-    status: "LOCKED",
+    status: "WON",
     game: "ARI @ MIL",
     awayTeam: "ARI",
     homeTeam: "MIL",
-    time: "7:40 PM EDT — Today",
+    time: "Final: ARI 6 — MIL 2",
     bet: "ARI ML",
     betTeam: "ARI",
     odds: "+105",
-    units: "1.0u",
+    units: "+1.05u",
     confidence: 81,
     macSignal: "ERA GAP 3.56 — E.Rodriguez 2.89 vs Sproat 6.45",
     aceSignal: "PLUS MONEY EDGE — Stuff advantage, +3.4pp market edge",
-    combined: "LOCKED",
-    tag: "LIVE ⚡",
+    combined: "WON",
+    tag: "WON ✅",
   },
 ];
 
 const BET_LOG = [
-  { date: "APR 29", game: "CHC @ SD", bet: "CHC ML", odds: "-110", result: "PENDING", units: "—" },
-  { date: "APR 29", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "PENDING", units: "—" },
+  { date: "APR 29", game: "CHC @ SD", bet: "CHC ML", odds: "-110", result: "WIN", units: "+0.91u" },
+  { date: "APR 29", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "WIN", units: "+1.05u" },
   { date: "APR 28", game: "BOS @ TOR", bet: "BOS ML", odds: "+100", result: "LOSS", units: "-1.0u" },
   { date: "APR 27", game: "CHC @ SD", bet: "SD ML", odds: "-120", result: "WIN", units: "+1.25u" },
   { date: "APR 27", game: "TB @ CLE", bet: "CLE ML", odds: "-140", result: "LOSS", units: "-0.8u" },
@@ -505,7 +505,7 @@ export default function WunToo() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="font-body text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.5)", letterSpacing: "0.2em" }}>PICK #{pick.id}</span>
-                    <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: pick.status === "LOCKED" ? "rgba(74,222,128,0.1)" : "rgba(212,175,55,0.1)", color: pick.status === "LOCKED" ? "#4ADE80" : "#FFD700", border: `1px solid ${pick.status === "LOCKED" ? "rgba(74,222,128,0.3)" : "rgba(212,175,55,0.3)"}`, letterSpacing: "0.15em" }}>{pick.status}</span>
+                    <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: pick.status === "WON" ? "rgba(74,222,128,0.1)" : pick.status === "LOCKED" ? "rgba(212,175,55,0.08)" : "rgba(212,175,55,0.1)", color: pick.status === "WON" ? "#4ADE80" : "#FFD700", border: `1px solid ${pick.status === "WON" ? "rgba(74,222,128,0.3)" : "rgba(212,175,55,0.3)"}`, letterSpacing: "0.15em" }}>{pick.status}</span>
                     <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: "rgba(212,175,55,0.08)", color: "#D4AF37", border: "1px solid rgba(212,175,55,0.2)", letterSpacing: "0.1em" }}>{pick.tag}</span>
                   </div>
                   {/* Team logos + matchup */}
@@ -682,10 +682,10 @@ export default function WunToo() {
                   <div className="flex items-center gap-6">
                     <span className="font-body text-sm font-medium" style={{ color: "rgba(232,232,232,0.5)" }}>{bet.bet}</span>
                     <span className="font-body text-sm" style={{ color: "rgba(212,175,55,0.6)" }}>{bet.odds}</span>
-                    <span className={`font-body text-xs font-bold tracking-widest ${bet.result === "WIN" ? "win-tag" : bet.result === "LOSS" ? "loss-tag" : "pending-tag"}`}>
+                    <span className={`font-body text-xs font-bold tracking-widest ${bet.result === "WIN" ? "win-tag" : bet.result === "LOSS" ? "loss-tag" : "pending-tag"}`} style={{ letterSpacing: "0.15em" }}>
                       {bet.result}
                     </span>
-                    <span className={`font-body text-sm font-bold ${bet.units.startsWith("+") ? "win-tag" : "loss-tag"}`}>{bet.units}</span>
+                    <span className={`font-body text-sm font-bold ${bet.units.startsWith("+") ? "win-tag" : bet.units === "—" ? "" : "loss-tag"}`}>{bet.units}</span>
                   </div>
                 </div>
               ))}
