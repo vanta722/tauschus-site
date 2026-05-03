@@ -4,12 +4,12 @@ import { useEffect, useRef, useState } from "react";
 
 // ─── LIVE DATA (update daily) ───────────────────────────────────────────────
 const STATS = {
-  record: "8-6",
-  roi: "+5.1%",
-  units: "+0.93u",
+  record: "10-6",
+  roi: "+11.1%",
+  units: "+2.08u",
   clv: "TBD",
-  streak: "L1",
-  bankroll: "$18.38",
+  streak: "W2",
+  bankroll: "$24.10",
   since: "APR 21 2026",
   lastUpdated: "MAY 03 2026",
 };
@@ -121,37 +121,37 @@ const MLB_PASS_REASON = "No qualifying games today.";
 const PICKS = [
   {
     id: 1,
-    status: "ACTIVE",
+    status: "WON",
     game: "SF @ TB",
     awayTeam: "SF",
     homeTeam: "TB",
-    time: "Today, 1:41pm ET",
+    time: "TB — W",
     bet: "TB ML",
     betTeam: "TB",
-    odds: "-124",
+    odds: "-125",
     units: "1u",
     confidence: 72,
     macSignal: "ERA EDGE — Rasmussen 2.76 ERA vs Mahle 5.87 ERA — gap 3.11 ✅. TB 20-12, SF 13-20, Giants on 5-game losing streak.",
     aceSignal: "SERIES SWEEP IN PLAY — TB won Game 1 (3-0) and Game 2 (5-1). Mahle 13.00 ERA on the road, 1.63 WHIP. Rays bats shred soft contact starters.",
-    combined: "STRONG",
-    tag: "✅ BET PLACED",
+    combined: "WON",
+    tag: "WON ✅",
   },
   {
     id: 2,
-    status: "ACTIVE",
+    status: "WON",
     game: "PHI @ MIA",
     awayTeam: "PHI",
     homeTeam: "MIA",
-    time: "Today, 1:41pm ET",
+    time: "PHI — W",
     bet: "PHI ML",
     betTeam: "PHI",
-    odds: "-144",
+    odds: "-145",
     units: "0.5u",
     confidence: 68,
     macSignal: "ERA EDGE — Sánchez 1.59 ERA vs Paddack 6.11 ERA — gap 4.52 ✅. Juice at -144 triggers 0.5u size-down rule.",
     aceSignal: "PITCHER MISMATCH — Sánchez one of the best starters in the NL (39K, 1.59 ERA). Paddack 6.11 ERA through 28 IP. PHI 4-1 under new skipper Don Mattingly.",
-    combined: "LEAN",
-    tag: "✅ BET PLACED",
+    combined: "WON",
+    tag: "WON ✅",
   },
 ];
 
@@ -176,8 +176,8 @@ const NBA_BET_LOG = [
 ];
 
 const BET_LOG = [
-  { date: "MAY 03", game: "SF @ TB", bet: "TB ML", odds: "-124", result: "PENDING", units: "—" },
-  { date: "MAY 03", game: "PHI @ MIA", bet: "PHI ML", odds: "-144", result: "PENDING", units: "—" },
+  { date: "MAY 03", game: "SF @ TB", bet: "TB ML", odds: "-125", result: "WIN", units: "+$4.00" },
+  { date: "MAY 03", game: "PHI @ MIA", bet: "PHI ML", odds: "-145", result: "WIN", units: "+$1.72" },
   { date: "MAY 02", game: "HOU @ BOS", bet: "HOU ML", odds: "+105", result: "WIN", units: "+$8.25" },
   { date: "MAY 02", game: "NYM @ LAA", bet: "NYM ML", odds: "-125", result: "LOSS", units: "-$10.00" },
   { date: "APR 30", game: "ARI @ MIL", bet: "ARI ML", odds: "+105", result: "LOSS", units: "-2.0u" },
