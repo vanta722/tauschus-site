@@ -85,6 +85,21 @@ const LOTTERY_PICKS: {
 const NBA_PICKS = [
   {
     id: 1,
+    status: "ACTIVE",
+    game: "TOR @ CLE",
+    awayTeam: "TOR",
+    homeTeam: "CLE",
+    time: "Today, 7:30pm ET",
+    bet: "TOR ML",
+    betTeam: "TOR",
+    odds: "+250",
+    wager: "$15",
+    payout: "$52.50",
+    edge: "+8¢",
+    signal: "Raptors as live underdogs · Ace model edge · Also leg 3 of 3-bet parlay (Phillies · Rays · Raptors +964)",
+  },
+  {
+    id: 2,
     status: "WON",
     game: "PHI @ BOS",
     awayTeam: "PHI",
@@ -150,6 +165,7 @@ const NBA_STATS = {
 };
 
 const NBA_BET_LOG = [
+  { date: "MAY 03", game: "TOR @ CLE", bet: "TOR ML", odds: "+250", result: "PENDING", units: "—" },
   { date: "MAY 02", game: "PHI @ BOS", bet: "PHI ML", odds: "+250", result: "WIN", units: "+$26.36" },
   { date: "MAY 01", game: "3-LEG PARLAY", bet: "DET + TOR + LAL", odds: "+856", result: "WIN", units: "+$43.89" },
   { date: "MAY 01", game: "DET @ ORL", bet: "DET ML", odds: "-160", result: "WIN", units: "+$3.12" },
