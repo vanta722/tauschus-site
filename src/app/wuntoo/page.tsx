@@ -85,11 +85,11 @@ const LOTTERY_PICKS: {
 const NBA_PICKS = [
   {
     id: 1,
-    status: "ACTIVE",
+    status: "LOST",
     game: "TOR @ CLE",
     awayTeam: "TOR",
     homeTeam: "CLE",
-    time: "Today, 7:30pm ET",
+    time: "Final: CLE 114 — TOR 102",
     bet: "TOR ML",
     betTeam: "TOR",
     odds: "+250",
@@ -157,15 +157,15 @@ const PICKS = [
 
 // ─── NBA STATS ───────────────────────────────────────────────────────────
 const NBA_STATS = {
-  record: "6-1",
-  roi: "+85.7%",
+  record: "6-2",
+  roi: "75.0%",
   units: "+112.87",
   since: "APR 30 2026",
-  lastUpdated: "MAY 03 2026",
+  lastUpdated: "MAY 04 2026",
 };
 
 const NBA_BET_LOG = [
-  { date: "MAY 03", game: "TOR @ CLE", bet: "TOR ML", odds: "+250", result: "PENDING", units: "—" },
+  { date: "MAY 03", game: "TOR @ CLE", bet: "TOR ML", odds: "+250", result: "LOSS", units: "-$15.00" },
   { date: "MAY 02", game: "PHI @ BOS", bet: "PHI ML", odds: "+250", result: "WIN", units: "+$26.36" },
   { date: "MAY 01", game: "3-LEG PARLAY", bet: "DET + TOR + LAL", odds: "+856", result: "WIN", units: "+$43.89" },
   { date: "MAY 01", game: "DET @ ORL", bet: "DET ML", odds: "-160", result: "WIN", units: "+$3.12" },
@@ -965,7 +965,7 @@ export default function WunToo() {
                 <div className="flex-1">
                   <div className="flex items-center gap-3 mb-4">
                     <span className="font-body text-xs tracking-widest" style={{ color: "rgba(212,175,55,0.5)", letterSpacing: "0.2em" }}>NBA PICK #{pick.id}</span>
-                    <span className="font-body text-xs px-2 py-0.5 rounded-sm animate-pulse-gold" style={{ background: "rgba(74,222,128,0.12)", color: "#4ADE80", border: "1px solid rgba(74,222,128,0.35)", letterSpacing: "0.15em" }}>● ACTIVE</span>
+                    <span className="font-body text-xs px-2 py-0.5 rounded-sm" style={{ background: pick.status === "LOST" ? "rgba(248,113,113,0.12)" : "rgba(74,222,128,0.12)", color: pick.status === "LOST" ? "#F87171" : "#4ADE80", border: pick.status === "LOST" ? "1px solid rgba(248,113,113,0.35)" : "1px solid rgba(74,222,128,0.35)", letterSpacing: "0.15em" }}>{pick.status === "LOST" ? "✕ LOST" : "● ACTIVE"}</span>
                   </div>
                   <div className="flex items-center gap-4 mb-3">
                     <div className="flex flex-col items-center gap-2">
@@ -1257,7 +1257,7 @@ export default function WunToo() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
               {[
                 { label: "RECORD", value: NBA_STATS.record, sub: "W-L" },
-                { label: "NET P&L", value: "+$86.51", sub: "actual P&L" },
+                { label: "NET P&L", value: "+$71.51", sub: "actual P&L" },
                 { label: "WIN RATE", value: NBA_STATS.roi, sub: "win percentage" },
                 { label: "SINCE", value: NBA_STATS.since, sub: "tracking start" },
               ].map((s) => (
