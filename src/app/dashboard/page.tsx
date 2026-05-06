@@ -69,15 +69,15 @@ const CRON_JOBS = [
 const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
 
 const BETTING_STATS = {
-  record: "7-5-0",
+  record: "10-7-0 MLB | 7-2 NBA",
   unitsWagered: 16.1,
-  unitsNet: 1.43,
-  roi: "+10.1%",
-  bankroll: 20.13,
+  unitsNet: 1.12,
+  roi: "+6.2% MLB",
+  bankroll: 29.73,
   activeSince: "Apr 21, 2026",
   book: "Hard Rock Bet",
-  sport: "MLB",
-  lastUpdated: "2026-05-05",
+  sport: "MLB + NBA",
+  lastUpdated: "2026-05-06",
 };
 
 // Apr 28 picks — Mac + ACE cross-validated
@@ -203,8 +203,11 @@ export default function Dashboard() {
     { id: 7, date: "2026-04-27", game: "Rays @ Guardians", bet: "Guardians ML", odds: "-140", units: 0.8, result: "Lost", pnl: -0.8, wager: "$4", toWin: "$6.86" },
     { id: 8, date: "2026-04-27", game: "Cubs @ Padres", bet: "Padres ML", odds: "-120", units: 1.5, result: "Won", pnl: 1.25, wager: "$20", toWin: "$36.67" },
     { id: 9, date: "2026-04-28", game: "Red Sox @ Blue Jays", bet: "Red Sox ML", odds: "+100", units: 1.0, result: "Pending", pnl: 0, wager: "$17", toWin: "$34.00" },
-    { id: 10, date: "2026-05-05", game: "Guardians @ Royals", bet: "Guardians ML", odds: "-120", units: 1, result: "Pending", pnl: 0, wager: "$5", toWin: "$4.17" },
-    { id: 11, date: "2026-05-05", game: "Rangers @ Yankees", bet: "Rangers ML", odds: "+105", units: 1, result: "Pending", pnl: 0, wager: "$5", toWin: "$5.25" },
+    { id: 10, date: "2026-05-05", game: "Guardians @ Royals", bet: "Guardians ML", odds: "-120", units: 1, result: "Won", pnl: 0.18, wager: "$5", toWin: "$5.18" },
+    { id: 11, date: "2026-05-05", game: "Rangers @ Yankees", bet: "Rangers ML", odds: "+105", units: 1, result: "Lost", pnl: -5.0, wager: "$5", toWin: "$10.25" },
+    { id: 12, date: "2026-05-05", game: "Lakers @ OKC", bet: "Lakers ML", odds: "+650", units: 0.5, result: "Lost", pnl: -2.5, wager: "$2.50", toWin: "$18.75" },
+    { id: 13, date: "2026-05-05", game: "CLE @ Pistons", bet: "Pistons ML", odds: "-150", units: 1, result: "Won", pnl: 2.05, wager: "$5", toWin: "$7.05" },
+    { id: 14, date: "2026-05-06", game: "Braves @ Mariners", bet: "Braves ML", odds: "+116", units: 1, result: "Pending", pnl: 0, wager: "$5", toWin: "$10.80" },
   ];
   const LS_KEY = "tauschus_bets_v1";
   const loadBets = (): BetEntry[] => {
@@ -1329,14 +1332,14 @@ export default function Dashboard() {
             {/* ── TODAY — BETS PLACED ── */}
             <div className="rounded-xl border-l-4 border-orange-500 bg-slate-900 ring-1 ring-orange-500/40 shadow-[0_0_18px_rgba(249,115,22,0.25)] p-5">
               <div className="mb-3">
-                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TODAY'S BETS — May 5, 2026</p>
-                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB · $10 at risk · Results pending</p>
+                <p className="text-sm font-black uppercase tracking-widest text-orange-400">⚾ TODAY'S PICK — May 6, 2026</p>
+                <p className="mt-0.5 text-xs text-slate-400">Hard Rock Bet · MLB · $5 at risk · May 5 results logged</p>
               </div>
               <ul className="space-y-2.5">
-                <li className="text-sm text-slate-300">✅ BET PLACED: <span className="font-bold text-white">Guardians ML -120</span> — CLE @ KC · 7:40 PM ET · $5 → $9.17</li>
-                <li className="text-sm text-slate-300">✅ BET PLACED: <span className="font-bold text-white">Rangers ML +105</span> — TEX @ NYY · 7:05 PM ET · $5 → $10.25</li>
-                <li className="text-sm text-slate-300 text-slate-500">Model: ERA gap 2.70 (Williams 2.70 vs Cameron 5.40) | ERA gap 2.49 (deGrom 2.01 vs Rodriguez ~4.50)</li>
-                <li className="text-sm text-slate-300 text-slate-500">Co-validated by ACE · Mac + ACE both confirm · Max 2 picks rule applied</li>
+                <li className="text-sm text-slate-300">🎯 PICK: <span className="font-bold text-white">ATL Braves ML +116</span> — ATL @ SEA · 4:10 PM ET · $5 → $10.80</li>
+                <li className="text-sm text-slate-300">✅ MAY 5 RESULTS: Guardians +$0.18 (CO) · Rangers -$5.00 · Lakers -$2.50 · Pistons +$2.05 (CO) → Net: <span className="text-red-400 font-bold">-$5.27</span></li>
+                <li className="text-sm text-slate-500">Model: Holmes 2.45 ERA vs Woo ~5.40 ERA · ERA gap ~3.0 · Only 1 pick clears filters today</li>
+                <li className="text-sm text-slate-500">Bankroll: ~$29.73 · Record: 10-7-0 MLB | 7-2 NBA</li>
               </ul>
             </div>
 
