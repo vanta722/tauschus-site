@@ -9,7 +9,7 @@ const PROJECTS = [
     name: "LionX AI",
     tag: "WEB3 · AI TOOLS",
     desc: "Token-gated AI platform. Pay crypto, access premium intelligence. Built on Tron.",
-    href: "https://lion-xai.com",
+    href: "https://lionx.cc",
     color: "#7C3AED",
     glow: "rgba(124,58,237,0.3)",
     border: "rgba(124,58,237,0.3)",

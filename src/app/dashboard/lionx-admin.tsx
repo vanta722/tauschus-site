@@ -54,7 +54,7 @@ export default function LionXAdmin() {
         const [tokenRes, blackHoleRes, treasuryRes, paymentsRes] = await Promise.all([
           fetch(`https://apilist.tronscanapi.com/api/token_trc20?contract=${ADDRESSES.LDA_V1}`),
           fetch(`https://apilist.tronscanapi.com/api/account?address=${ADDRESSES.BLACK_HOLE}`),
-          fetch(`https://lion-xai.com/api/treasury-balance`),
+          fetch(`https://lionx.cc/api/treasury-balance`),
           fetch(`https://apilist.tronscanapi.com/api/contract/events?contract=${ADDRESSES.LDA_V1}&toAddress=${ADDRESSES.TREASURY}&limit=10`),
         ])
 
@@ -139,7 +139,7 @@ export default function LionXAdmin() {
             <div className="font-black text-lg" style={{ color: "#f5a623" }}>Lion X Mission Control</div>
             <div className="text-xs" style={{ color: "#4a5a6a" }}>
               Network: <span style={{ color: "#22c55e" }}>MAINNET</span>
-              {" · "}Domain: <a href="https://lion-xai.com" target="_blank" rel="noreferrer" style={{ color: "#14b8a6", textDecoration: "none" }}>lion-xai.com</a>
+              {" · "}Domain: <a href="https://lionx.cc" target="_blank" rel="noreferrer" style={{ color: "#14b8a6", textDecoration: "none" }}>lionx.cc</a>
               {" · "}Model: <span style={{ color: "#a78bfa" }}>Gemini 2.5 Flash</span>
             </div>
           </div>
@@ -149,7 +149,7 @@ export default function LionXAdmin() {
             <span className="w-2 h-2 rounded-full" style={{ background: "#22c55e", boxShadow: "0 0 8px #22c55e", display: "inline-block" }}/>
             <span className="text-xs font-bold" style={{ color: "#22c55e" }}>LIVE</span>
           </div>
-          <a href="https://lion-xai.com/tools" target="_blank" rel="noreferrer"
+          <a href="https://lionx.cc/tools" target="_blank" rel="noreferrer"
             className="px-3 py-1.5 rounded-lg text-xs font-bold no-underline"
             style={{ background: "rgba(20,184,166,0.1)", border: "1px solid rgba(20,184,166,0.2)", color: "#14b8a6" }}>
             Open Platform →
@@ -219,9 +219,9 @@ export default function LionXAdmin() {
               <div className="text-xs font-bold uppercase tracking-wider mb-3" style={{ color: "#4a5a6a" }}>Quick Links</div>
               <div className="flex gap-2 flex-wrap">
                 {[
-                  ["🌐 Platform",       "https://lion-xai.com"],
-                  ["⚡ Tools",          "https://lion-xai.com/tools"],
-                  ["📊 Dashboard",      "https://lion-xai.com/dashboard"],
+                  ["🌐 Platform",       "https://lionx.cc"],
+                  ["⚡ Tools",          "https://lionx.cc/tools"],
+                  ["📊 Dashboard",      "https://lionx.cc/dashboard"],
                   ["💻 GitHub",         "https://github.com/vanta722/lionx-platform"],
                   ["🔍 Treasury",       `https://tronscan.org/#/address/${ADDRESSES.TREASURY}`],
                   ["🔥 Burn Wallet",    `https://tronscan.org/#/address/${ADDRESSES.BLACK_HOLE}`],
@@ -403,7 +403,7 @@ export default function LionXAdmin() {
                   ["HIGH", "toAddress verify", "Empty string + mismatch both rejected", true],
                   ["HIGH", "Error detail stripping", "Internal errors never leak to client", true],
                   ["HIGH", "Input sanitization", "500 char cap + special char strip + format validation", true],
-                  ["HIGH", "CORS whitelist", "lion-xai.com + www + vercel preview only", true],
+                  ["HIGH", "CORS whitelist", "lionx.cc + www + vercel preview only", true],
                   ["HIGH", "AI field whitelist", "score/verdict/analysis/metrics/flags only", true],
                   ["MED",  "Wallet signature", "TronLink signMessageV2 — mandatory, catch is fatal", true],
                   ["MED",  "Share URL privacy", "queriedBy stripped before encoding", true],
