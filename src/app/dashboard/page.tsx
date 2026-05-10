@@ -185,7 +185,7 @@ export default function Dashboard() {
   const [history, setHistory] = useState<{ time: string; btc: number; eth: number }[]>([]);
 
   // Memory viewer state
-  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "lionx" | "betting" | "clearance">("ops");
+  const [activeTab, setActiveTab] = useState<"ops" | "memory" | "fca" | "nova" | "lionx" | "betting" | "clearance">("ops");
 
   // Sports Betting state
   interface BetEntry {
@@ -499,7 +499,7 @@ export default function Dashboard() {
 
         {/* Tab switcher */}
         <div className="flex gap-2 border-b border-slate-800 pb-0 flex-wrap">
-          {(["ops", "fca", "memory", "lionx", "betting", "clearance"] as const).map((tab) => (
+          {(["ops", "fca", "memory", "nova", "lionx", "betting", "clearance"] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
@@ -509,7 +509,7 @@ export default function Dashboard() {
                   : "border-transparent text-slate-500 hover:text-slate-300"
               }`}
             >
-              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "lionx" ? "🦁 Lion X" : tab === "betting" ? "⚾ Sports Betting" : "🛒 Clearance"}
+              {tab === "ops" ? "⚙️ Operations" : tab === "fca" ? "🏗️ FCA Operations" : tab === "memory" ? "🧠 Mac's Memory" : tab === "nova" ? "✨ Nova's Files" : tab === "lionx" ? "🦁 Lion X" : tab === "betting" ? "⚾ Sports Betting" : "🛒 Clearance"}
             </button>
           ))}
         </div>
@@ -640,6 +640,120 @@ export default function Dashboard() {
                     </div>
                     <pre className="text-xs text-slate-300 whitespace-pre-wrap font-mono leading-relaxed overflow-auto max-h-[600px]">
                       {fileContent}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            </div>
+          </section>
+        )}
+
+        {activeTab === "nova" && (
+          <section className="space-y-4">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="text-xs font-bold uppercase tracking-widest text-purple-400">Nova&apos;s Workspace Files</p>
+              <button
+                onClick={() => { setNovaFiles([]); fetchNovaFiles(); }}
+                className="rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 hover:border-purple-400 hover:text-purple-400 transition"
+              >
+                ↻ Reload Files
+              </button>
+            </div>
+
+            {novaError && !novaLoading && (
+              <div className="rounded-2xl border border-red-500/30 bg-red-500/10 px-5 py-4 text-sm text-red-300">{novaError}</div>
+            )}
+
+            <div className="grid gap-4 lg:grid-cols-4">
+              {/* File list sidebar */}
+              <div className="lg:col-span-1 space-y-2">
+                {novaFiles.length === 0 && !novaError && (
+                  <div className="text-xs text-slate-600 py-4 text-center">Loading files…</div>
+                )}
+
+                {/* Core files */}
+                {novaFiles.filter(f => f.group === "core").length > 0 && (
+                  <div>
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Core</p>
+                    {novaFiles.filter(f => f.group === "core").map(f => (
+                      <button
+                        key={f.key}
+                        onClick={() => setSelectedNovaFile(f.key)}
+                        className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-semibold transition ${
+                          selectedNovaFile === f.key
+                            ? "bg-purple-400/20 text-purple-300 border border-purple-400/30"
+                            : "bg-slate-800/60 text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Memory files */}
+                {novaFiles.filter(f => f.group === "memory").length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Memory</p>
+                    {novaFiles.filter(f => f.group === "memory").map(f => (
+                      <button
+                        key={f.key}
+                        onClick={() => setSelectedNovaFile(f.key)}
+                        className={`w-full text-left rounded-xl px-3 py-2.5 text-xs font-semibold transition ${
+                          selectedNovaFile === f.key
+                            ? "bg-purple-400/20 text-purple-300 border border-purple-400/30"
+                            : "bg-slate-800/60 text-slate-300 hover:bg-slate-800 hover:text-white"
+                        }`}
+                      >
+                        {f.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+
+                {/* Daily logs */}
+                {novaFiles.filter(f => f.group === "daily").length > 0 && (
+                  <div className="mt-3">
+                    <p className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-1 px-1">Daily Logs</p>
+                    <div className="max-h-64 overflow-y-auto space-y-1">
+                      {novaFiles.filter(f => f.group === "daily").map(f => (
+                        <button
+                          key={f.key}
+                          onClick={() => setSelectedNovaFile(f.key)}
+                          className={`w-full text-left rounded-xl px-3 py-2 text-xs font-semibold transition ${
+                            selectedNovaFile === f.key
+                              ? "bg-purple-400/20 text-purple-300 border border-purple-400/30"
+                              : "bg-slate-800/60 text-slate-400 hover:bg-slate-800 hover:text-white"
+                          }`}
+                        >
+                          {f.label}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* File content viewer */}
+              <div className="lg:col-span-3 rounded-2xl border border-slate-800 bg-slate-900/60 p-5 min-h-[400px]">
+                {!selectedNovaFile && (
+                  <div className="flex items-center justify-center h-full text-slate-600 text-sm">
+                    ← Select a file to view
+                  </div>
+                )}
+                {selectedNovaFile && novaLoading && (
+                  <div className="flex items-center justify-center h-full text-slate-500 text-sm animate-pulse">
+                    Loading {selectedNovaFile}…
+                  </div>
+                )}
+                {selectedNovaFile && !novaLoading && novaFileContent && (
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <p className="text-sm font-bold text-white">{selectedNovaFile}</p>
+                      {novaFileUpdatedAt && <p className="text-xs text-slate-500">Updated: {novaFileUpdatedAt}</p>}
+                    </div>
+                    <pre className="text-xs text-slate-300 whitespace-pre-wrap font-mono leading-relaxed overflow-auto max-h-[600px]">
+                      {novaFileContent}
                     </pre>
                   </div>
                 )}
