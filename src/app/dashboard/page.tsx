@@ -262,6 +262,14 @@ export default function Dashboard() {
   const [memLoading, setMemLoading] = useState(false);
   const [memError, setMemError] = useState<string | null>(null);
 
+  // Nova memory viewer state
+  const [novaFiles, setNovaFiles] = useState<{ key: string; label: string; group: string }[]>([]);
+  const [selectedNovaFile, setSelectedNovaFile] = useState<string | null>(null);
+  const [novaFileContent, setNovaFileContent] = useState<string>("");
+  const [novaFileUpdatedAt, setNovaFileUpdatedAt] = useState<string>("");
+  const [novaLoading, setNovaLoading] = useState(false);
+  const [novaError, setNovaError] = useState<string | null>(null);
+
   // FCA state
   type LeadStage = "New Lead" | "Contacted" | "Estimate Sent" | "Follow-Up" | "Booked" | "Lost";
   type JobStatus = "Scheduled" | "In Progress" | "Completed";
@@ -391,6 +399,37 @@ export default function Dashboard() {
     setMemLoading(false);
   }, []);
 
+  const fetchNovaFiles = useCallback(async () => {
+    setNovaError(null);
+    try {
+      const r = await fetch("/api/nova-memory");
+      const d = await r.json();
+      if (d.error) { setNovaError(d.error); return; }
+      setNovaFiles(d.files || []);
+    } catch {
+      setNovaError("Could not reach Nova memory API.");
+    }
+  }, []);
+
+  const fetchNovaFileContent = useCallback(async (key: string) => {
+    setNovaLoading(true);
+    setNovaError(null);
+    setNovaFileContent("");
+    setNovaFileUpdatedAt("");
+    try {
+      const r = await fetch(`/api/nova-memory?file=${encodeURIComponent(key)}`);
+      const d = await r.json();
+      if (d.error) { setNovaError(d.error); }
+      else {
+        setNovaFileContent(d.content || "");
+        setNovaFileUpdatedAt(d.updatedAt ? new Date(d.updatedAt).toLocaleString() : "");
+      }
+    } catch {
+      setNovaError("Failed to load file.");
+    }
+    setNovaLoading(false);
+  }, []);
+
   const fetchClearance = async () => {
     setClearanceLoading(true);
     try {
@@ -435,6 +474,14 @@ export default function Dashboard() {
   useEffect(() => {
     if (selectedFile) fetchFileContent(selectedFile);
   }, [selectedFile, fetchFileContent]);
+
+  useEffect(() => {
+    if (authed && activeTab === "nova" && novaFiles.length === 0) fetchNovaFiles();
+  }, [authed, activeTab, novaFiles.length, fetchNovaFiles]);
+
+  useEffect(() => {
+    if (selectedNovaFile) fetchNovaFileContent(selectedNovaFile);
+  }, [selectedNovaFile, fetchNovaFileContent]);
 
   useEffect(() => { if (authed) { fetchData(); const iv = setInterval(fetchData, 60000); return () => clearInterval(iv); } }, [authed]);
 
