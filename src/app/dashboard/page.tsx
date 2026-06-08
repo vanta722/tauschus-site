@@ -61,12 +61,12 @@ const CRON_JOBS = [
     name: "📊 Dashboard Sync",
     schedule: "Mon / Wed / Fri 4:00 AM ET · Haiku model",
     status: "ACTIVE",
-    last: "Re-enabled 2026-04-13 — lean version. Reads 3 files only, Haiku model, 3x/week.",
+    last: "Last run ✅ 2026-06-08 08:00 UTC",
     detail: "Updates data constants only (tasks, pipeline, alerts) → pushes to GitHub. No full file rewrite.",
   },
 ];
 
-const CRON_LAST_UPDATED = "2026-04-15 08:00 UTC";
+const CRON_LAST_UPDATED = "2026-06-08 08:00 UTC";
 
 const BETTING_STATS = {
   record: "10-7-0 MLB | 7-2 NBA",
