@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "BidForge Private Preview",
+  title: "Build My Bid Private Preview",
   description:
-    "Private preview for BidForge Build My Bid, a contractor bid draft workflow.",
+    "Private preview for Build My Bid, a contractor bid draft workflow.",
   robots: {
     index: false,
     follow: false,
@@ -27,7 +27,10 @@ const questions = [
   "Would this help you respond before another contractor does?",
 ];
 
-export default function BidForgePrivatePreview() {
+const smsHref =
+  "sms:?&body=Walkthrough%20-%20I%20have%20a%20recent%20job%20to%20test";
+
+export default function BuildMyBidPrivatePreview() {
   return (
     <main className="min-h-screen bg-[#f4f1ea] text-[#16130f]">
       <section className="border-b border-[#d7d0c4] bg-[#25211b] text-[#fffaf0]">
@@ -38,16 +41,28 @@ export default function BidForgePrivatePreview() {
                 Private contractor preview
               </div>
               <p className="mb-3 text-sm font-bold uppercase text-[#c69a54]">
-                BidForge
+                Build My Bid
               </p>
               <h1 className="max-w-2xl text-5xl font-black leading-[0.96] sm:text-6xl lg:text-7xl">
                 Turn messy job notes into a clean bid draft.
               </h1>
               <p className="mt-6 max-w-xl text-lg leading-8 text-[#ddd3c1]">
                 Built for concrete, driveway, apron, patio, walkway, and small
-                slab work. The goal is simple: help contractors get a clean bid
-                in front of the customer faster.
+                slab work. Get a clean bid to the customer before the other
+                contractor even calls back.
               </p>
+              <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:items-center">
+                <a
+                  href={smsHref}
+                  className="inline-flex min-h-12 items-center justify-center rounded bg-[#d7b06a] px-5 py-3 text-sm font-black text-[#25211b] shadow-lg shadow-black/20"
+                >
+                  Book a free 15-minute walkthrough
+                </a>
+                <p className="max-w-sm text-sm leading-6 text-[#d8cab5]">
+                  Bring a job you recently quoted. Watch it build the bid live.
+                  Nothing to install.
+                </p>
+              </div>
             </div>
 
             <div className="grid gap-3 sm:grid-cols-3">
@@ -72,7 +87,7 @@ export default function BidForgePrivatePreview() {
                 <div className="mb-3 flex items-center justify-between border-b border-[#d6cec0] pb-3">
                   <div>
                     <p className="text-xs font-black uppercase text-[#8b6537]">
-                      BidForge
+                      Contractor note
                     </p>
                     <p className="text-lg font-black">Build My Bid</p>
                   </div>
@@ -237,7 +252,7 @@ export default function BidForgePrivatePreview() {
         </div>
       </section>
 
-      <section className="border-t border-[#d7d0c4] bg-[#fffaf7]">
+      <section id="book-walkthrough" className="border-t border-[#d7d0c4] bg-[#fffaf7]">
         <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 sm:px-8 lg:grid-cols-[0.9fr_1.1fr] lg:px-10">
           <div>
             <p className="text-sm font-bold uppercase text-[#8b6537]">
@@ -247,10 +262,26 @@ export default function BidForgePrivatePreview() {
               Preview first. Live AI test by private walkthrough.
             </h2>
             <p className="mt-4 text-base leading-7 text-[#5f574d]">
-              BidForge is in private validation. The goal is not to sell a
-              polished dashboard yet. The goal is to test whether a contractor
-              would send the draft, edit it, or pay for faster quoting.
+              This is an early preview. The live AI is connected during the
+              walkthrough, not on this page. The goal is to test whether a
+              contractor would send the draft, edit it, or pay for faster
+              quoting.
             </p>
+            <div className="mt-6 rounded border border-[#d7d0c4] bg-[#f7f1e7] p-4">
+              <p className="text-sm font-black uppercase text-[#28241f]">
+                To book the walkthrough
+              </p>
+              <p className="mt-2 text-base leading-7 text-[#514a40]">
+                Tap the button or reply to the message that sent you this link
+                with: walkthrough. Bring one real job you quoted recently.
+              </p>
+              <a
+                href={smsHref}
+                className="mt-4 inline-flex min-h-12 items-center justify-center rounded bg-[#25211b] px-5 py-3 text-sm font-black text-white"
+              >
+                Text back: walkthrough
+              </a>
+            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -277,8 +308,8 @@ export default function BidForgePrivatePreview() {
             <div className="rounded border border-[#d7d0c4] bg-white p-5">
               <p className="text-lg font-black">$19 founding test</p>
               <p className="mt-2 text-sm leading-6 text-[#645b50]">
-                If it saves real quoting time, the first users can test a simple
-                founding version.
+                Founding users lock in $19/month only if it saves real quoting
+                time.
               </p>
             </div>
           </div>
